@@ -1,11 +1,11 @@
 //game configuration
 let config = {
     type: Phaser.AUTO,
-    width: 800,
-    height: 800,
+    width: 400,
+    height: 400,
     scene: [ Test, Play ],
     scale: { 
-        autoCenter: Phaser.Scale.CENTER_BOTH 
+        autoCenter: Phaser.Scale.CENTER_BOTH
     }
 }
 
