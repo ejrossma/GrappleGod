@@ -6,6 +6,18 @@ let config = {
     scene: [ Test, Play ],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH 
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false,
+            gravity: {y: 200}
+        },
+        default: 'matter',
+        matter: {
+            debug: true,
+            gravity: {y: 1}
+        }
     }
 }
 
