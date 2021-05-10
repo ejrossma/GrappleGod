@@ -21,6 +21,12 @@ class Test extends Phaser.Scene {
     preload() {
         this.load.image('arrow', './assets/arrowTile.png');
         this.load.image('blank', './assets/blankTile.png');
+
+        this.load.image('player', './assets/playerArt.png');
+        this.load.image('treePlatform', './assets/treePlatform.png');
+        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
+        this.load.image('smallBranch', './assets/smallBranch.png');
+        this.load.image('bigBranch', './assets/bigBranch.png');
     }
 
     create() {
@@ -35,7 +41,7 @@ class Test extends Phaser.Scene {
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width; i+= 32)
         {
-            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'blank').setScale(1).setOrigin(0);
+            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'treePlatform').setScale(1).setOrigin(0);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -45,8 +51,10 @@ class Test extends Phaser.Scene {
 
         this.addPlatform(200, 100, 'r', 5);
 
+        this.testBranch = this.add.sprite(250, 150, 'bigBranch').setOrigin(0);
+
         // create player
-        this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
+        this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');
         // add physics collider
         this.physics.add.collider(this.player, this.platforms);
         this.player.setCollideWorldBounds(true);
@@ -87,20 +95,17 @@ class Test extends Phaser.Scene {
         //loop through to place
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
-            //make an arrow if > 0.20 else make blank
-            if (temp < 0.20) {
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'arrow').setOrigin(0);
+            if (temp < 0.4) {
+                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo').setOrigin(0);
                 platformGround.body.immovable = true;
                 platformGround.body.allowGravity = false;
                 this.platforms.add(platformGround);
-                //this.platforms.create(x + dir * (32 * i), y, 'arrow').setOrigin(0);
             }
             else{
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'blank').setOrigin(0);
+                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'treePlatform').setOrigin(0);
                 platformGround.body.immovable = true;
                 platformGround.body.allowGravity = false;
                 this.platforms.add(platformGround);
-                //this.platforms.create(x + dir * (32 * i), y, 'blank').setOrigin(0);
             }
         }
     }
@@ -115,7 +120,7 @@ class Test extends Phaser.Scene {
         this.physics.add.collider(this.player, poly);
         //this.hookGroup.add(hook);
     }
-    hookCharacter(){
+    hookCharacter() {
         
     }
 }
