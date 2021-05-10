@@ -7,7 +7,7 @@ class Test extends Phaser.Scene {
                   arcade: {
                       debug: true,
                       gravity: {
-                        y: 200
+                        y: 1000
                       }
                   },
                   matter: {
@@ -31,8 +31,11 @@ class Test extends Phaser.Scene {
 
     create() {
         // variables and settings
-        this.MAX_VELOCITY = 200;
-        this.JUMP_VELOCITY = -500;
+        this.MAX_VELOCITY = 2;
+        this.JUMP_VELOCITY = -5;
+        this.jumps = 1;
+        this.MAX_JUMPS = 1;
+        this.jumping = false;
         this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
@@ -46,6 +49,9 @@ class Test extends Phaser.Scene {
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
         }
+        let newPlatform = this.matter.add.rectangle(0, game.config.height, game.config.width*2, 64, {
+            isStatic:true
+        });
 
         this.addPlatform(64, 256, 'r', 3);
 
@@ -54,10 +60,16 @@ class Test extends Phaser.Scene {
         this.testBranch = this.add.sprite(250, 150, 'bigBranch').setOrigin(0);
 
         // create player
-        this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');
+        this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'player');   // player using matter physics
+        this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
+        //this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
+
         // add physics collider
         this.physics.add.collider(this.player, this.platforms);
-        this.player.setCollideWorldBounds(true);
+        //this.player.setCollideWorldBounds(true);
+
+        // matter physics world bounds
+        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
 
         //add group for hooks
         this.hookGroup = this.add.group();
@@ -73,7 +85,7 @@ class Test extends Phaser.Scene {
 
     update() {
         // update the player
-        this.player.update();
+        this.updatePlayer();
         if (cursors.up.isDown && this.player.isGrappled == false){
             console.log('grapple');
             this.player.isGrappled = true;
@@ -122,5 +134,56 @@ class Test extends Phaser.Scene {
     }
     hookCharacter() {
         
+    }
+
+    // updates the player sprite
+    updatePlayer()
+    {
+        // horizontal movement
+        if (cursors.right.isDown) 
+        {
+            this.matter.setVelocityX(this.player, this.MAX_VELOCITY);
+            //this.player.body.velocity.x = this.MAX_VELOCITY;
+        }
+        else if(cursors.left.isDown)
+        {
+            this.matter.setVelocityX(this.player, -this.MAX_VELOCITY);
+            //this.player.body.velocity.x = -this.MAX_VELOCITY;
+        }
+        else
+        {
+            this.matter.setVelocityX(this.player, 0);
+            //this.player.body.velocity.x = 0;
+        }
+
+        // vertical movement
+        // check if grounded
+        //console.log(this.player.x)
+        this.isGrounded = true;
+
+        // if so, can jump
+        if (this.isGrounded)
+        {
+            this.jumps = this.MAX_JUMPS;
+            this.jumping = false;
+        }
+        else
+        {
+
+        }
+
+        // actual jumping
+        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
+        {
+            this.matter.setVelocityY(this.player, this.JUMP_VELOCITY);
+            this.jumping = true;
+        }
+
+        // letting go of space key subtracting a jump
+        if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
+        {
+            this.jumps--;
+            this.jumping = false;
+        }
     }
 }
