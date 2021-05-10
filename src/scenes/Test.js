@@ -7,7 +7,7 @@ class Test extends Phaser.Scene {
                   arcade: {
                       debug: true,
                       gravity: {
-                        y: 200
+                        y: 1000
                       }
                   },
                   matter: {
@@ -27,7 +27,6 @@ class Test extends Phaser.Scene {
         // variables and settings
         this.MAX_VELOCITY = 200;
         this.JUMP_VELOCITY = -500;
-        this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);
