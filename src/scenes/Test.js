@@ -1,6 +1,21 @@
 class Test extends Phaser.Scene {
-    constructor() {
-        super("testScene");
+    constructor(config) {
+        super({
+            key: 'testScene',
+            physics: {
+                default: 'arcade',
+                  arcade: {
+                      debug: true,
+                      gravity: {
+                        y: 200
+                      }
+                  },
+                  matter: {
+                    debug: true,
+                    gravity: { y: 0.5 }
+                }
+            },
+        });
     }
 
     preload() {
@@ -32,15 +47,36 @@ class Test extends Phaser.Scene {
 
         // create player
         this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
-
         // add physics collider
         this.physics.add.collider(this.player, this.platforms);
         this.player.setCollideWorldBounds(true);
+
+        //add group for hooks
+        this.hookGroup = this.add.group();
+        //give player grappled status
+        this.player.isGrappled = false;
+        console.log(this.player.isGrappled);
+        //add hook
+        this.addHook(300, 200);
+                //Set keys 
+                keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+                keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
 
     update() {
         // update the player
         this.player.update();
+        if (cursors.up.isDown && this.player.isGrappled == false){
+            console.log('grapple');
+            this.player.isGrappled = true;
+        }
+        //temp add
+        if(keyRIGHT.isDown){
+            this.matter.applyForceFromAngle(this.hero, 0.00005, 0);
+        }
+        if(keyLEFT.isDown){
+            this.matter.applyForceFromAngle(this.hero, 0.00005, 180);
+        }
     }
 
     addPlatform(x, y, direction, length) {
@@ -67,5 +103,19 @@ class Test extends Phaser.Scene {
                 //this.platforms.create(x + dir * (32 * i), y, 'blank').setOrigin(0);
             }
         }
+    }
+    addHook(x, y){
+        let poly = this.matter.add.rectangle(x, y, 22, 22, {
+            isStatic:true
+        });
+        this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
+            restitution: 0.5
+        });
+        this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
+        this.physics.add.collider(this.player, poly);
+        //this.hookGroup.add(hook);
+    }
+    hookCharacter(){
+        
     }
 }
