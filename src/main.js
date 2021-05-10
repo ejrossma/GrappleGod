@@ -5,7 +5,7 @@ let config = {
     type: Phaser.AUTO,
     width: 400,
     height: 400,
-    scene: [ Test, Play ],
+    scene: [ Test,  Play ],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH
     },

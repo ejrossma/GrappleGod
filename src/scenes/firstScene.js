@@ -1,7 +1,7 @@
-class Test extends Phaser.Scene {
+class firstScene extends Phaser.Scene {
     constructor(config) {
         super({
-            key: 'testScene',
+            key: 'firstScene',
             physics: {
                 default: 'arcade',
                   arcade: {
@@ -47,12 +47,15 @@ class Test extends Phaser.Scene {
             isStatic:true
         });
 
-        this.addPlatform(64, 256, 'r', 3);
+        this.addPlatform(0, game.config.height - 64, 'r', 7);
+        this.addPlatform(0, game.config.height - 96, 'r', 7);
+        this.addPlatform(0, game.config.height - 128, 'r', 4);
+        this.addPlatform(0, game.config.height - 160, 'r', 4);
 
-        this.addPlatform(200, 100, 'r', 5);
+        this.addPlatform(100, 100, 'r', 9);
 
         // create player
-        this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'arrow');   // player using matter physics
+        this.player = this.matter.add.sprite(game.config.width*0.75, game.config.height/2, 'arrow');   // player using matter physics
         this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
         //this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
 
