@@ -39,10 +39,10 @@ class Test extends Phaser.Scene {
         this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);
+        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
         // ground level platforms (add platforms to the group)
-        for (let i = 0; i < game.config.width; i+= 32)
+        for (let i = 0; i < game.config.width * 3; i+= 32)
         {
             let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'treePlatform').setScale(1).setOrigin(0);
             platformGround.body.immovable = true;
@@ -69,7 +69,7 @@ class Test extends Phaser.Scene {
         //this.player.setCollideWorldBounds(true);
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
+        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);
 
         //add group for hooks
         this.hookGroup = this.add.group();
@@ -78,9 +78,13 @@ class Test extends Phaser.Scene {
         console.log(this.player.isGrappled);
         //add hook
         this.addHook(300, 200);
-                //Set keys 
-                keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-                keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //Set keys 
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        //camera setup
+        this.cameras.main.setBounds(0, 0, 1800, 400);
+        this.cameras.main.startFollow(this.player);
     }
 
     update() {
