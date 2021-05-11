@@ -108,15 +108,11 @@ class Test extends Phaser.Scene {
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
             if (temp < 0.4) {
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo').setOrigin(0);
-                platformGround.body.immovable = true;
-                platformGround.body.allowGravity = false;
+                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
             else{
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'treePlatform').setOrigin(0);
-                platformGround.body.immovable = true;
-                platformGround.body.allowGravity = false;
+                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
         }
@@ -129,7 +125,6 @@ class Test extends Phaser.Scene {
             restitution: 0.5
         });
         this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
-        this.physics.add.collider(this.player, poly);
         //this.hookGroup.add(hook);
     }
     hookCharacter() {
