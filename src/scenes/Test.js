@@ -38,12 +38,12 @@ class Test extends Phaser.Scene {
         this.jumping = false;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);
+        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
         // ground level platforms (add platforms to the group)
-        for (let i = 0; i < game.config.width; i+= 32)
+        for (let i = 0; i < game.config.width * 3; i+= 32)
         {
-            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'treePlatform').setScale(1).setOrigin(0);
+            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -56,8 +56,6 @@ class Test extends Phaser.Scene {
 
         this.addPlatform(200, 100, 'r', 5);
 
-        this.testBranch = this.add.sprite(250, 150, 'bigBranch').setOrigin(0);
-
         // create player
         this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'player');   // player using matter physics
         this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
@@ -68,7 +66,7 @@ class Test extends Phaser.Scene {
         //this.player.setCollideWorldBounds(true);
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
+        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);
 
         //add group for hooks
         this.hookGroup = this.add.group();
@@ -77,9 +75,13 @@ class Test extends Phaser.Scene {
         console.log(this.player.isGrappled);
         //add hook
         this.addHook(300, 200);
-                //Set keys 
-                keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-                keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //Set keys 
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+
+        //camera setup
+        this.cameras.main.setBounds(0, 0, 1800, 400);
+        this.cameras.main.startFollow(this.player);
     }
 
     update() {
@@ -117,9 +119,8 @@ class Test extends Phaser.Scene {
         }
     }
     addHook(x, y){
-        let poly = this.matter.add.rectangle(x, y, 22, 22, {
-            isStatic:true
-        });
+        let poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
+
         this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
             restitution: 0.5
         });
