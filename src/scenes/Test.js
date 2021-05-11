@@ -44,7 +44,7 @@ class Test extends Phaser.Scene {
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width * 3; i+= 32)
         {
-            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'treePlatform').setScale(1).setOrigin(0);
+            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -56,8 +56,6 @@ class Test extends Phaser.Scene {
         this.addPlatform(64, 256, 'r', 3);
 
         this.addPlatform(200, 100, 'r', 5);
-
-        this.testBranch = this.add.sprite(250, 150, 'bigBranch').setOrigin(0);
 
         // create player
         this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'player');   // player using matter physics
@@ -122,9 +120,8 @@ class Test extends Phaser.Scene {
         }
     }
     addHook(x, y){
-        let poly = this.matter.add.rectangle(x, y, 22, 22, {
-            isStatic:true
-        });
+        let poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
+
         this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
             restitution: 0.5
         });
