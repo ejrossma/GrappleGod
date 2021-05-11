@@ -48,22 +48,16 @@ class Test extends Phaser.Scene {
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
         }
-        let newPlatform = this.matter.add.rectangle(0, game.config.height, game.config.width*2, 64, {
-            isStatic:true
-        });
 
         this.addPlatform(64, 256, 'r', 3);
 
         this.addPlatform(200, 100, 'r', 5);
 
         // create player
-        this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'player');   // player using matter physics
-        this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
-        //this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
+        this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         // add physics collider
-        this.physics.add.collider(this.player, this.platforms);
-        //this.player.setCollideWorldBounds(true);
+        
 
         // matter physics world bounds
         this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);
@@ -78,6 +72,7 @@ class Test extends Phaser.Scene {
         //Set keys 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
         this.cameras.main.setBounds(0, 0, 1800, 400);
@@ -86,17 +81,17 @@ class Test extends Phaser.Scene {
 
     update() {
         // update the player
-        this.updatePlayer();
-        if (cursors.up.isDown && this.player.isGrappled == false){
-            console.log('grapple');
-            this.player.isGrappled = true;
-        }
+        this.player.update();
+        // if (cursors.up.isDown && this.player.isGrappled == false){
+        //     console.log('grapple');
+        //     this.player.isGrappled = true;
+        // }
         //temp add
-        if(keyRIGHT.isDown){
-            this.matter.applyForceFromAngle(this.hero, 0.00005, 0);
+        if(this.player.isGrappling && cursors.right.isDown){
+            this.matter.applyForceFromAngle(this.player, 0.0005, 0);
         }
-        if(keyLEFT.isDown){
-            this.matter.applyForceFromAngle(this.hero, 0.00005, 180);
+        else if(this.player.isGrappling && cursors.left.isDown){
+            this.matter.applyForceFromAngle(this.player, 0.0005, 180);
         }
     }
 
@@ -119,66 +114,18 @@ class Test extends Phaser.Scene {
         }
     }
     addHook(x, y){
-        let poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
+        this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
 
-        this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
-            restitution: 0.5
-        });
-        this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
+        // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
+        //     restitution: 0.5
+        // });
+        // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
         //this.hookGroup.add(hook);
     }
     hookCharacter() {
-        
+        this.rope = this.matter.add.constraint(this.player, this.poly, 70, 0);
     }
-
-    // updates the player sprite
-    updatePlayer()
-    {
-        // horizontal movement
-        if (cursors.right.isDown) 
-        {
-            this.matter.setVelocityX(this.player, this.MAX_VELOCITY);
-            //this.player.body.velocity.x = this.MAX_VELOCITY;
-        }
-        else if(cursors.left.isDown)
-        {
-            this.matter.setVelocityX(this.player, -this.MAX_VELOCITY);
-            //this.player.body.velocity.x = -this.MAX_VELOCITY;
-        }
-        else
-        {
-            this.matter.setVelocityX(this.player, 0);
-            //this.player.body.velocity.x = 0;
-        }
-
-        // vertical movement
-        // check if grounded
-        //console.log(this.player.x)
-        this.isGrounded = true;
-
-        // if so, can jump
-        if (this.isGrounded)
-        {
-            this.jumps = this.MAX_JUMPS;
-            this.jumping = false;
-        }
-        else
-        {
-
-        }
-
-        // actual jumping
-        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
-        {
-            this.matter.setVelocityY(this.player, this.JUMP_VELOCITY);
-            this.jumping = true;
-        }
-
-        // letting go of space key subtracting a jump
-        if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
-        {
-            this.jumps--;
-            this.jumping = false;
-        }
+    unHookCharacter() {
+        this.matter.world.remove(this.rope);
     }
 }

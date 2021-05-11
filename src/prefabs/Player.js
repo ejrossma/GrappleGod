@@ -1,43 +1,61 @@
-class Player extends Phaser.Physics.Matter.Sprite {
+class Player extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, velocity, jump_velocity, texture){
-        super(scene, x, y, texture);
+        super(scene.matter.world, x, y, texture);
         scene.add.existing(this);
-        scene.physics.add.existing(this);
+        //scene.physics.add.existing(this);
 
         // horizontal movement variables
         this.MAX_VELOCITY = velocity;
+        this.CURRENT_VELOCITY = 0;
 
         // jump variables
         this.JUMP_VELOCITY = jump_velocity;
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.jumping = false;
-        this.currentVelocity = 0;
+
+        // other variables
+        this.isGrappling = false;
+
+        // other things
+        this.setFriction(0);             // remove sliding on walls
+        this.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
     }
 
     update()
     {
+        // grappling
+        if (!this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
+        {
+            this.isGrappling = true;
+            this.scene.hookCharacter();     // hook the character
+        }
+        else if (this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
+        {
+            this.isGrappling = false;
+            this.scene.unHookCharacter();   // unhook the character
+        }
+
         // horizontal movement
-        if (cursors.right.isDown) 
+        if (!this.isGrappling && cursors.right.isDown) 
         {
-            if(this.currentVelocity <= this.MAX_VELOCITY){
-                this.currentVelocity += 0.1;
-            }
-            this.body.velocity.x = this.currentVelocity;
+            this.setVelocityX(this.MAX_VELOCITY);       // move right
         }
-        else if(cursors.left.isDown)
+        else if(!this.isGrappling && cursors.left.isDown)
         {
-            this.body.velocity.x = -this.MAX_VELOCITY;
+            this.setVelocityX(-this.MAX_VELOCITY);      // move left
         }
-        else
+        else if (!this.isGrappling)
         {
-            this.currentVelocity = 0;
+            this.setVelocityX(0);                       // dont move
         }
 
         // vertical movement
         // check if grounded
-        this.isGrounded = this.body.touching.down;
+        //console.log(this.player.x)
         
+        this.isGrounded = true;
+
         // if so, can jump
         if (this.isGrounded)
         {
@@ -52,7 +70,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // actual jumping
         if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
         {
-            this.body.velocity.y = this.JUMP_VELOCITY;
+            this.setVelocityY(this.JUMP_VELOCITY);
             this.jumping = true;
         }
 
@@ -62,5 +80,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             this.jumps--;
             this.jumping = false;
         }
+
+
     }
 }
