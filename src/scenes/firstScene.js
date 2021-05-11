@@ -1,7 +1,7 @@
-class Test extends Phaser.Scene {
+class firstScene extends Phaser.Scene {
     constructor(config) {
         super({
-            key: 'testScene',
+            key: 'firstScene',
             physics: {
                 default: 'arcade',
                   arcade: {
@@ -21,12 +21,6 @@ class Test extends Phaser.Scene {
     preload() {
         this.load.image('arrow', './assets/arrowTile.png');
         this.load.image('blank', './assets/blankTile.png');
-
-        this.load.image('player', './assets/playerArt.png');
-        this.load.image('treePlatform', './assets/treePlatform.png');
-        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
-        this.load.image('smallBranch', './assets/smallBranch.png');
-        this.load.image('bigBranch', './assets/bigBranch.png');
     }
 
     create() {
@@ -39,12 +33,12 @@ class Test extends Phaser.Scene {
         this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
+        this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
         // ground level platforms (add platforms to the group)
-        for (let i = 0; i < game.config.width * 3; i+= 32)
+        for (let i = 0; i < game.config.width; i+= 32)
         {
-            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'treePlatform').setScale(1).setOrigin(0);
+            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'blank').setScale(1).setOrigin(0);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -53,14 +47,15 @@ class Test extends Phaser.Scene {
             isStatic:true
         });
 
-        this.addPlatform(64, 256, 'r', 3);
+        this.addPlatform(0, game.config.height - 64, 'r', 7);
+        this.addPlatform(0, game.config.height - 96, 'r', 7);
+        this.addPlatform(0, game.config.height - 128, 'r', 4);
+        this.addPlatform(0, game.config.height - 160, 'r', 4);
 
-        this.addPlatform(200, 100, 'r', 5);
-
-        this.testBranch = this.add.sprite(250, 150, 'bigBranch').setOrigin(0);
+        this.addPlatform(100, 100, 'r', 9);
 
         // create player
-        this.player = this.matter.add.sprite(game.config.width/2, game.config.height/2, 'player');   // player using matter physics
+        this.player = this.matter.add.sprite(game.config.width*0.75, game.config.height/2, 'arrow');   // player using matter physics
         this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
         //this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
 
@@ -69,7 +64,7 @@ class Test extends Phaser.Scene {
         //this.player.setCollideWorldBounds(true);
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);
+        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
 
         //add group for hooks
         this.hookGroup = this.add.group();
@@ -78,13 +73,9 @@ class Test extends Phaser.Scene {
         console.log(this.player.isGrappled);
         //add hook
         this.addHook(300, 200);
-        //Set keys 
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-
-        //camera setup
-        this.cameras.main.setBounds(0, 0, 1800, 400);
-        this.cameras.main.startFollow(this.player);
+                //Set keys 
+                keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+                keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     }
 
     update() {
@@ -111,13 +102,20 @@ class Test extends Phaser.Scene {
         //loop through to place
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
-            if (temp < 0.4) {
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
+            //make an arrow if > 0.20 else make blank
+            if (temp < 0.20) {
+                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'arrow').setOrigin(0);
+                platformGround.body.immovable = true;
+                platformGround.body.allowGravity = false;
                 this.platforms.add(platformGround);
+                //this.platforms.create(x + dir * (32 * i), y, 'arrow').setOrigin(0);
             }
             else{
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'blank').setOrigin(0);
+                platformGround.body.immovable = true;
+                platformGround.body.allowGravity = false;
                 this.platforms.add(platformGround);
+                //this.platforms.create(x + dir * (32 * i), y, 'blank').setOrigin(0);
             }
         }
     }
@@ -129,9 +127,10 @@ class Test extends Phaser.Scene {
             restitution: 0.5
         });
         this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
+        this.physics.add.collider(this.player, poly);
         //this.hookGroup.add(hook);
     }
-    hookCharacter() {
+    hookCharacter(){
         
     }
 
