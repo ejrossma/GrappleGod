@@ -3,16 +3,16 @@ class Test extends Phaser.Scene {
         super({
             key: 'testScene',
             physics: {
-                default: 'arcade',
-                  arcade: {
+                default: 'matter',
+                  matter: {
                       debug: true,
                       gravity: {
-                        y: 1000
+                        y: 0.5
                       }
                   },
-                  matter: {
+                  arcade: {
                     debug: true,
-                    gravity: { y: 0.5 }
+                    gravity: { y: 1000 }
                 }
             },
         });
@@ -36,7 +36,6 @@ class Test extends Phaser.Scene {
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.jumping = false;
-        this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);

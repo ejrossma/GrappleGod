@@ -1,4 +1,4 @@
-class Player extends Phaser.Physics.Arcade.Sprite {
+class Player extends Phaser.Physics.Matter.Sprite {
     constructor(scene, x, y, velocity, jump_velocity, texture){
         super(scene, x, y, texture);
         scene.add.existing(this);
@@ -12,6 +12,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.jumping = false;
+        this.currentVelocity = 0;
     }
 
     update()
@@ -19,7 +20,10 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         // horizontal movement
         if (cursors.right.isDown) 
         {
-            this.body.velocity.x = this.MAX_VELOCITY;
+            if(this.currentVelocity <= this.MAX_VELOCITY){
+                this.currentVelocity += 0.1;
+            }
+            this.body.velocity.x = this.currentVelocity;
         }
         else if(cursors.left.isDown)
         {
@@ -27,7 +31,7 @@ class Player extends Phaser.Physics.Arcade.Sprite {
         }
         else
         {
-            this.body.velocity.x = 0;
+            this.currentVelocity = 0;
         }
 
         // vertical movement
