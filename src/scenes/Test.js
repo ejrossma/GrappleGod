@@ -128,10 +128,12 @@ class Test extends Phaser.Scene {
         }
 
         // if less than minumum set it to the minimum length
-        if (this.constraintLength < 50)
+        if (this.constraintLength < 70)
         {
-            this.constraintLength = 50;     // minimum length of constraint
+            this.constraintLength = 70;     // minimum length of constraint
         }
+
+        console.log(this.constraintLength);
         
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
