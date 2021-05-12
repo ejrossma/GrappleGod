@@ -83,14 +83,6 @@ class Test extends Phaser.Scene {
     update() {
         // update the player/branches
         this.player.update();       // main player update function
- 
-        // swinging force
-        if(this.player.isGrappling && cursors.right.isDown){
-            this.matter.applyForceFromAngle(this.player, 0.0005, 0);
-        }
-        else if(this.player.isGrappling && cursors.left.isDown){
-            this.matter.applyForceFromAngle(this.player, 0.0005, 180);
-        }
     }
 
     addPlatform(x, y, direction, length) {
@@ -145,5 +137,24 @@ class Test extends Phaser.Scene {
     }
     unHookCharacter() {
         this.matter.world.remove(this.rope);    // delete constraint
+    }
+
+    // apply force on the swing
+    applyForce(player, branch)
+    {
+        if(player.isGrappling && cursors.right.isDown && player.canSwing){
+            this.matter.applyForceFromAngle(this.player, 0.0005, 0);
+        }
+        else if(player.isGrappling && cursors.left.isDown && player.canSwing){
+            this.matter.applyForceFromAngle(this.player, 0.0005, 180);
+        }
+        if (!player.isGrappling && player.x < branch.x)
+        {
+            this.matter.applyForceFromAngle(this.player, 0.005, 0);
+        }
+        else if (!player.isGrappling && player.x > branch.x)
+        {
+            this.matter.applyForceFromAngle(this.player, 0.005, 180);
+        }
     }
 }
