@@ -143,18 +143,18 @@ class Test extends Phaser.Scene {
     applyForce(player, branch)
     {
         if(player.isGrappling && cursors.right.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005, 0);
+            this.matter.applyForceFromAngle(player, 0.0005, 0);
         }
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005, 180);
+            this.matter.applyForceFromAngle(player, 0.0005, 180);
         }
-        if (!player.isGrappling && player.x < branch.x)
+        if (!player.canSwing && player.x < branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005, 0);
+            this.matter.applyForceFromAngle(player, 0.00075, 90);
         }
-        else if (!player.isGrappling && player.x > branch.x)
+        else if (!player.canSwing && player.x > branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005, 180);
+            this.matter.applyForceFromAngle(player, 0.00075, 90);
         }
     }
 }
