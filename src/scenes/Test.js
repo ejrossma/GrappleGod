@@ -56,19 +56,20 @@ class Test extends Phaser.Scene {
         // create player
         this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
-        // add physics collider
-        
-
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);
+        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);       // world bounds
 
         //add group for hooks
         this.hookGroup = this.add.group();
+        // add hook
+        this.branch1 = new Branch(this, 300, 200, 'bigBranch');     // spawn branch
+        this.branch2 = new Branch(this, 500, 150, 'bigBranch');     // spawn branch
+
         //give player grappled status
         this.player.isGrappled = false;
         console.log(this.player.isGrappled);
         //add hook
-        this.addHook(300, 200);
+        //this.addHook(300, 200);
         //Set keys 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -80,13 +81,10 @@ class Test extends Phaser.Scene {
     }
 
     update() {
-        // update the player
-        this.player.update();
-        // if (cursors.up.isDown && this.player.isGrappled == false){
-        //     console.log('grapple');
-        //     this.player.isGrappled = true;
-        // }
-        //temp add
+        // update the player/branches
+        this.player.update();       // main player update function
+ 
+        // swinging force
         if(this.player.isGrappling && cursors.right.isDown){
             this.matter.applyForceFromAngle(this.player, 0.0005, 0);
         }
@@ -122,10 +120,30 @@ class Test extends Phaser.Scene {
         // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
         //this.hookGroup.add(hook);
     }
-    hookCharacter() {
-        this.rope = this.matter.add.constraint(this.player, this.poly, 70, 0);
+    hookCharacter(player, branch) {
+        // calculate how long the constraint should be
+        if (player.x > branch.x)
+        {
+            this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
+        }
+        else if (this.player < branch.x)
+        {
+            this.constraintLength = (((branch.x - player.x)^2)+((branch.y-player.y)^2))^0.5;
+        }
+        else
+        {
+            this.constraintLength = player.y - branch.y;
+        }
+
+        // if less than minumum set it to the minimum length
+        if (this.constraintLength < 50)
+        {
+            this.constraintLength = 50;     // minimum length of constraint
+        }
+        
+        this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
     unHookCharacter() {
-        this.matter.world.remove(this.rope);
+        this.matter.world.remove(this.rope);    // delete constraint
     }
 }

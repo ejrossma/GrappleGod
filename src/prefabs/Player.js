@@ -2,7 +2,6 @@ class Player extends Phaser.Physics.Matter.Image {
     constructor(scene, x, y, velocity, jump_velocity, texture){
         super(scene.matter.world, x, y, texture);
         scene.add.existing(this);
-        //scene.physics.add.existing(this);
 
         // horizontal movement variables
         this.MAX_VELOCITY = velocity;
@@ -16,24 +15,23 @@ class Player extends Phaser.Physics.Matter.Image {
 
         // other variables
         this.isGrappling = false;
+        this.inVicinity = false;
 
         // other things
         this.setFriction(0);             // remove sliding on walls
+        //this.setFrictionAir(0)
         this.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
     }
 
     update()
     {
         // grappling
-        if (!this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
+        this.checkGrapple();
+
+        if (this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
         {
-            this.isGrappling = true;
-            this.scene.hookCharacter();     // hook the character
-        }
-        else if (this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
-        {
-            this.isGrappling = false;
             this.scene.unHookCharacter();   // unhook the character
+            this.isGrappling = false;       // set bool to false
         }
 
         // horizontal movement
@@ -79,8 +77,31 @@ class Player extends Phaser.Physics.Matter.Image {
         {
             this.jumps--;
             this.jumping = false;
+        }        
+    }
+
+    // check if can grapple
+    checkGrapple()
+    {
+        if (!this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
+        {
+            if (this.x < this.scene.branch1.x + 90 && this.x > this.scene.branch1.x - 90)
+            {
+                if (this.y >= this.scene.branch1.y && this.y <= this.scene.branch1.y + 60)
+                {
+                    this.scene.hookCharacter(this, this.scene.branch1);
+                    this.isGrappling = true;
+                }
+            }
+            if (this.x < this.scene.branch2.x + 90 && this.x > this.scene.branch2.x - 90)
+            {
+                if (this.y >= this.scene.branch2.y && this.y <= this.scene.branch2.y + 80)
+                {
+                    this.scene.hookCharacter(this, this.scene.branch2);
+                    this.isGrappling = true;
+                }
+            }
         }
-
-
+        
     }
 }
