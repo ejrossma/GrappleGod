@@ -84,7 +84,7 @@ class Player extends Phaser.Physics.Matter.Image {
         {
             if (this.currentBranch = 1)
             {
-                if (this.y >= this.scene.branch1.y + 150)
+                if (this.y >= this.scene.branch1.y + 20)
                 {
                     this.canSwing = true;
                     this.scene.applyForce(this, this.scene.branch1, deltaMultiplier);
@@ -97,7 +97,7 @@ class Player extends Phaser.Physics.Matter.Image {
             }
             if (this.currentBranch = 2)
             {
-                if (this.y >= this.scene.branch2.y + 40)
+                if (this.y >= this.scene.branch2.y + 10)
                 {
                     this.canSwing = true;
                     this.scene.applyForce(this, this.scene.branch2, deltaMultiplier);
