@@ -3,6 +3,7 @@
 //game configuration
 let config = {
     type: Phaser.AUTO,
+    pixelArt: true,
     width: 600,
     height: 400,
     scene: [ Test,  Play ],
