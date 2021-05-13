@@ -3,8 +3,10 @@
 //game configuration
 let config = {
     type: Phaser.AUTO,
-    width: 600,
+    pixelArt: true,
+    width: 600, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
+    zoom: 2,
     scene: [ Test,  Play ],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH
