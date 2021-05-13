@@ -1,7 +1,7 @@
-class Test extends Phaser.Scene {
+class secondScene extends Phaser.Scene {
     constructor(config) {
         super({
-            key: 'testScene',
+            key: 'secondScene',
             physics: {
                 default: 'matter',
                   matter: {
@@ -49,21 +49,20 @@ class Test extends Phaser.Scene {
             this.platforms.add(platformGround);
         }
 
-        this.addPlatform(64, 256, 'r', 3);
-
-        this.addPlatform(200, 100, 'r', 5);
+        this.addPlatform(0, 160, 'r', 6);
+        this.addPlatform(440, 160, 'r', 6);
 
         // create player
-        this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
+        this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);       // world bounds
+        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);       // world bounds
 
         //add group for hooks
         this.hookGroup = this.add.group();
         // add hook
-        this.branch1 = new Branch(this, 300, 200, 'bigBranch');     // spawn branch
-        this.branch2 = new Branch(this, 500, 150, 'bigBranch');     // spawn branch
+        this.branch1 = new Branch(this, 300, 50, 'bigBranch');     // spawn branch
+        this.branch2 = new Branch(this, -100, 50, 'bigBranch');     // spawn branch
 
         //give player grappled status
         this.player.isGrappled = false;
@@ -76,7 +75,7 @@ class Test extends Phaser.Scene {
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
-        this.cameras.main.setBounds(0, 0, 1800, 400);
+        this.cameras.main.setBounds(0, 0, 600, 400);
         this.cameras.main.startFollow(this.player);
     }
 
@@ -149,13 +148,22 @@ class Test extends Phaser.Scene {
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
             this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
         }
-        if (!player.canSwing && player.x < branch.x)
+        if (!player.isGrappling && player.x < branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 0);
         }
-        else if (!player.canSwing && player.x > branch.x)
+        else if (!player.isGrappling && player.x > branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 180);
+        }
+        if(player.isGrappling && cursors.up.isDown && this.rope.length > 20){
+            this.rope.length -= 1;
+        }
+        if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
+            this.rope.length += 1;
         }
     }
 }
+
+/* this.addPlatform(0, 160, 'r', 6);
+        this.addPlatform(440, 160, 'r', 6); */

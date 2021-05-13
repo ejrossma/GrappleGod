@@ -3,16 +3,16 @@ class firstScene extends Phaser.Scene {
         super({
             key: 'firstScene',
             physics: {
-                default: 'arcade',
-                  arcade: {
+                default: 'matter',
+                  matter: {
                       debug: true,
                       gravity: {
-                        y: 1000
+                        y: 0.5
                       }
                   },
-                  matter: {
+                  arcade: {
                     debug: true,
-                    gravity: { y: 0.5 }
+                    gravity: { y: 1000 }
                 }
             },
         });
@@ -21,77 +21,71 @@ class firstScene extends Phaser.Scene {
     preload() {
         this.load.image('arrow', './assets/arrowTile.png');
         this.load.image('blank', './assets/blankTile.png');
+
+        this.load.image('player', './assets/playerArt.png');
+        this.load.image('treePlatform', './assets/treePlatform.png');
+        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
+        this.load.image('smallBranch', './assets/smallBranch.png');
+        this.load.image('bigBranch', './assets/bigBranch.png');
     }
 
     create() {
+        this.branch1 = new Branch(this, 800, 200, 'bigBranch');     // spawn branch
+        this.branch2 = new Branch(this, 800, 150, 'bigBranch');     // spawn branch
         // variables and settings
         this.MAX_VELOCITY = 2;
         this.JUMP_VELOCITY = -5;
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.jumping = false;
-        this.physics.world.gravity.y = 1000;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.height, game.config.width, 0x6e6e6e).setOrigin(0);
+        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
         // ground level platforms (add platforms to the group)
-        for (let i = 0; i < game.config.width; i+= 32)
+        for (let i = 0; i < game.config.width * 3; i+= 32)
         {
-            let platformGround = this.physics.add.sprite(i, game.config.height - 32, 'blank').setScale(1).setOrigin(0);
+            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
         }
-        let newPlatform = this.matter.add.rectangle(0, game.config.height, game.config.width*2, 64, {
-            isStatic:true
-        });
 
-        this.addPlatform(0, game.config.height - 64, 'r', 7);
-        this.addPlatform(0, game.config.height - 96, 'r', 7);
-        this.addPlatform(0, game.config.height - 128, 'r', 4);
-        this.addPlatform(0, game.config.height - 160, 'r', 4);
-
-        this.addPlatform(100, 100, 'r', 9);
+        this.addPlatform(10, game.config.height - 48, 'r', 7);
+        this.addPlatform(10, game.config.height - 80, 'r', 7);
+        this.addPlatform(10, game.config.height - 112, 'r', 4);
+        this.addPlatform(10, game.config.height - 144, 'r', 4);
+        
+        this.addPlatform(170, 160, 'r', 17);
 
         // create player
-        this.player = this.matter.add.sprite(game.config.width*0.75, game.config.height/2, 'arrow');   // player using matter physics
-        this.player.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
-        //this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'arrow');
-
-        // add physics collider
-        this.physics.add.collider(this.player, this.platforms);
-        //this.player.setCollideWorldBounds(true);
+        this.player = new Player(this, game.config.width*0.85, game.config.height - 48, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);
+        this.matter.world.setBounds(0, 0, 700, game.config.height);       // world bounds
 
         //add group for hooks
         this.hookGroup = this.add.group();
+
         //give player grappled status
         this.player.isGrappled = false;
         console.log(this.player.isGrappled);
         //add hook
-        this.addHook(300, 200);
-                //Set keys 
-                keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-                keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //this.addHook(300, 200);
+        //Set keys 
+        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+        //camera setup
+        this.cameras.main.setBounds(0, 0, 700, 400);
+        this.cameras.main.startFollow(this.player);
     }
 
-    update() {
-        // update the player
-        this.updatePlayer();
-        if (cursors.up.isDown && this.player.isGrappled == false){
-            console.log('grapple');
-            this.player.isGrappled = true;
-        }
-        //temp add
-        if(keyRIGHT.isDown){
-            this.matter.applyForceFromAngle(this.hero, 0.00005, 0);
-        }
-        if(keyLEFT.isDown){
-            this.matter.applyForceFromAngle(this.hero, 0.00005, 180);
-        }
+    update(time, delta) {
+        let deltaMultiplier = (delta/16.66667);
+        // update the player/branches
+        this.player.update(deltaMultiplier);       // main player update function
     }
 
     addPlatform(x, y, direction, length) {
@@ -102,86 +96,74 @@ class firstScene extends Phaser.Scene {
         //loop through to place
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
-            //make an arrow if > 0.20 else make blank
-            if (temp < 0.20) {
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'arrow').setOrigin(0);
-                platformGround.body.immovable = true;
-                platformGround.body.allowGravity = false;
+            if (temp < 0.4) {
+                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
-                //this.platforms.create(x + dir * (32 * i), y, 'arrow').setOrigin(0);
             }
             else{
-                let platformGround = this.physics.add.sprite(x + dir * (32 * i), y, 'blank').setOrigin(0);
-                platformGround.body.immovable = true;
-                platformGround.body.allowGravity = false;
+                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
-                //this.platforms.create(x + dir * (32 * i), y, 'blank').setOrigin(0);
             }
         }
     }
     addHook(x, y){
-        let poly = this.matter.add.rectangle(x, y, 22, 22, {
-            isStatic:true
-        });
-        this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
-            restitution: 0.5
-        });
-        this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
-        this.physics.add.collider(this.player, poly);
+        this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
+
+        // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
+        //     restitution: 0.5
+        // });
+        // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
         //this.hookGroup.add(hook);
     }
-    hookCharacter(){
+    hookCharacter(player, branch) {
+        // calculate how long the constraint should be
+        if (player.x > branch.x)
+        {
+            this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
+        }
+        else if (this.player < branch.x)
+        {
+            this.constraintLength = (((branch.x - player.x)^2)+((branch.y-player.y)^2))^0.5;
+        }
+        else
+        {
+            this.constraintLength = player.y - branch.y;
+        }
+
+        // if less than minumum set it to the minimum length
+        if (this.constraintLength < 50)
+        {
+            this.constraintLength = 50;     // minimum length of constraint
+        }
         
+        this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
+    }
+    unHookCharacter() {
+        this.matter.world.remove(this.rope);    // delete constraint
     }
 
-    // updates the player sprite
-    updatePlayer()
+    // apply force on the swing
+    applyForce(player, branch, deltaMultiplier)
     {
-        // horizontal movement
-        if (cursors.right.isDown) 
-        {
-            this.matter.setVelocityX(this.player, this.MAX_VELOCITY);
-            //this.player.body.velocity.x = this.MAX_VELOCITY;
+        if(player.isGrappling && cursors.right.isDown && player.canSwing){
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
         }
-        else if(cursors.left.isDown)
-        {
-            this.matter.setVelocityX(this.player, -this.MAX_VELOCITY);
-            //this.player.body.velocity.x = -this.MAX_VELOCITY;
+        else if(player.isGrappling && cursors.left.isDown && player.canSwing){
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
         }
-        else
+        if (!player.isGrappling && player.x < branch.x)
         {
-            this.matter.setVelocityX(this.player, 0);
-            //this.player.body.velocity.x = 0;
+            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 0);
         }
-
-        // vertical movement
-        // check if grounded
-        //console.log(this.player.x)
-        this.isGrounded = true;
-
-        // if so, can jump
-        if (this.isGrounded)
+        else if (!player.isGrappling && player.x > branch.x)
         {
-            this.jumps = this.MAX_JUMPS;
-            this.jumping = false;
+            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 180);
         }
-        else
-        {
-
+        if(player.isGrappling && cursors.up.isDown && this.rope.length > 20){
+            this.rope.length -= 1;
         }
-
-        // actual jumping
-        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
-        {
-            this.matter.setVelocityY(this.player, this.JUMP_VELOCITY);
-            this.jumping = true;
-        }
-
-        // letting go of space key subtracting a jump
-        if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
-        {
-            this.jumps--;
-            this.jumping = false;
+        if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
+            this.rope.length += 1;
         }
     }
 }

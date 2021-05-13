@@ -16,6 +16,7 @@ class Player extends Phaser.Physics.Matter.Image {
         // other variables
         this.isGrappling = false;
         this.inVicinity = false;
+        this.canSwing = true;
 
         // other things
         this.setFriction(0);             // remove sliding on walls
@@ -23,7 +24,7 @@ class Player extends Phaser.Physics.Matter.Image {
         this.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
     }
 
-    update()
+    update(deltaMultiplier)
     {
         // grappling
         this.checkGrapple();
@@ -33,15 +34,14 @@ class Player extends Phaser.Physics.Matter.Image {
             this.scene.unHookCharacter();   // unhook the character
             this.isGrappling = false;       // set bool to false
         }
-
         // horizontal movement
         if (!this.isGrappling && cursors.right.isDown) 
         {
-            this.setVelocityX(this.MAX_VELOCITY);       // move right
+            this.setVelocityX(this.MAX_VELOCITY * deltaMultiplier);       // move right
         }
         else if(!this.isGrappling && cursors.left.isDown)
         {
-            this.setVelocityX(-this.MAX_VELOCITY);      // move left
+            this.setVelocityX(-this.MAX_VELOCITY * deltaMultiplier);      // move left
         }
         else if (!this.isGrappling)
         {
@@ -66,18 +66,49 @@ class Player extends Phaser.Physics.Matter.Image {
         }
 
         // actual jumping
-        if (this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
+        if (!this.isGrappling && this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
         {
             this.setVelocityY(this.JUMP_VELOCITY);
             this.jumping = true;
         }
 
         // letting go of space key subtracting a jump
-        if (this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
+        if (!this.isGrappling && this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
         {
             this.jumps--;
             this.jumping = false;
-        }        
+        }
+        
+        // check if can swing so you cant go in a full
+        if (this.isGrappling)
+        {
+            if (this.currentBranch = 1)
+            {
+                if (this.y >= this.scene.branch1.y + 20)
+                {
+                    this.canSwing = true;
+                    this.scene.applyForce(this, this.scene.branch1, deltaMultiplier);
+                }
+                else
+                {
+                    this.canSwing = false;
+                    this.scene.applyForce(this, this.scene.branch1, deltaMultiplier);
+                }
+            }
+            if (this.currentBranch = 2)
+            {
+                if (this.y >= this.scene.branch2.y + 10)
+                {
+                    this.canSwing = true;
+                    this.scene.applyForce(this, this.scene.branch2, deltaMultiplier);
+                }
+                else
+                {
+                    this.canSwing = false;
+                    this.scene.applyForce(this, this.scene.branch2, deltaMultiplier);
+                }
+            }
+        }
     }
 
     // check if can grapple
@@ -87,9 +118,10 @@ class Player extends Phaser.Physics.Matter.Image {
         {
             if (this.x < this.scene.branch1.x + 90 && this.x > this.scene.branch1.x - 90)
             {
-                if (this.y >= this.scene.branch1.y && this.y <= this.scene.branch1.y + 60)
+                if (this.y >= this.scene.branch1.y && this.y <= this.scene.branch1.y + 80)
                 {
                     this.scene.hookCharacter(this, this.scene.branch1);
+                    this.currentBranch = 1;
                     this.isGrappling = true;
                 }
             }
@@ -98,6 +130,7 @@ class Player extends Phaser.Physics.Matter.Image {
                 if (this.y >= this.scene.branch2.y && this.y <= this.scene.branch2.y + 80)
                 {
                     this.scene.hookCharacter(this, this.scene.branch2);
+                    this.currentBranch = 2;
                     this.isGrappling = true;
                 }
             }
