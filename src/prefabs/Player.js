@@ -12,11 +12,13 @@ class Player extends Phaser.Physics.Matter.Image {
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.jumping = false;
+        this.isGrounded = true;
 
         // other variables
         this.isGrappling = false;
         this.inVicinity = false;
         this.canSwing = true;
+        this.finishedGrappling = true;
 
         // other things
         this.setFriction(0);             // remove sliding on walls
@@ -50,9 +52,6 @@ class Player extends Phaser.Physics.Matter.Image {
 
         // vertical movement
         // check if grounded
-        //console.log(this.player.x)
-        
-        this.isGrounded = true;
 
         // if so, can jump
         if (this.isGrounded)
@@ -70,6 +69,8 @@ class Player extends Phaser.Physics.Matter.Image {
         {
             this.setVelocityY(this.JUMP_VELOCITY);
             this.jumping = true;
+            this.isGrounded = false;
+            this.setFrictionAir(0);
         }
 
         // letting go of space key subtracting a jump
@@ -82,32 +83,13 @@ class Player extends Phaser.Physics.Matter.Image {
         // check if can swing so you cant go in a full
         if (this.isGrappling)
         {
-            if (this.currentBranch = 1)
-            {
-                if (this.y >= this.scene.branch1.y + this.width*0.5)
-                {
-                    this.canSwing = true;
-                    this.scene.applyForce(this, this.scene.branch1, deltaMultiplier);
-                }
-                else
-                {
-                    this.canSwing = false;
-                    this.scene.applyForce(this, this.scene.branch1, deltaMultiplier);
-                }
-            }
-            if (this.currentBranch = 2)
-            {
-                if (this.y >= this.scene.branch2.y + this.width*0.5)
-                {
-                    this.canSwing = true;
-                    this.scene.applyForce(this, this.scene.branch2, deltaMultiplier);
-                }
-                else
-                {
-                    this.canSwing = false;
-                    this.scene.applyForce(this, this.scene.branch2, deltaMultiplier);
-                }
-            }
+            this.grapplingUpdate(this.currentHook, deltaMultiplier);
+        }
+
+        // continue momentum
+        if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling)
+        {
+            this.setFrictionAir(0.025);
         }
     }
 
@@ -116,25 +98,41 @@ class Player extends Phaser.Physics.Matter.Image {
     {
         if (!this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
         {
-            if (this.x < this.scene.branch1.x + 90 && this.x > this.scene.branch1.x - 90)
+            // check each individual branch
+            for (var i = 0; i < this.scene.branchChildren.length; i++)
             {
-                if (this.y >= this.scene.branch1.y && this.y <= this.scene.branch1.y + 80)
+                if (this.x < this.scene.branchChildren[i].x + this.scene.branchChildren[i].xBound && this.x > this.scene.branchChildren[i].x - this.scene.branchChildren[i].xBound)
                 {
-                    this.scene.hookCharacter(this, this.scene.branch1);
-                    this.currentBranch = 1;
-                    this.isGrappling = true;
-                }
-            }
-            if (this.x < this.scene.branch2.x + 90 && this.x > this.scene.branch2.x - 90)
-            {
-                if (this.y >= this.scene.branch2.y && this.y <= this.scene.branch2.y + 80)
-                {
-                    this.scene.hookCharacter(this, this.scene.branch2);
-                    this.currentBranch = 2;
-                    this.isGrappling = true;
+                    if (this.y >= this.scene.branchChildren[i].y && this.y <= this.scene.branchChildren[i].y + this.scene.branchChildren[i].yBound)
+                    {
+                        this.scene.hookCharacter(this, this.scene.branchChildren[i]);
+                        this.currentHook = this.scene.branchChildren[i];
+                        this.setFrictionAir(0);
+                        this.finishedGrappling = false;
+                        this.isGrappling = true;
+                    }
                 }
             }
         }
-        
+    }
+
+    setTouchingDown()
+    {
+        this.finishedGrappling = true;
+        this.isGrounded = true;
+    }
+
+    grapplingUpdate(hook, deltaMultiplier)
+    {
+        if (this.y >= hook.y - this.width*0.25)
+        {
+            this.canSwing = true;
+            this.scene.applyForce(this, hook, deltaMultiplier);
+        }
+        else
+        {
+            this.canSwing = false;
+            this.scene.applyForce(this, hook, deltaMultiplier);    
+        }
     }
 }

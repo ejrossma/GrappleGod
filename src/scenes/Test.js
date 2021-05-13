@@ -31,11 +31,13 @@ class Test extends Phaser.Scene {
 
     create() {
         // variables and settings
-        this.MAX_VELOCITY = 2;
-        this.JUMP_VELOCITY = -5;
-        this.jumps = 1;
-        this.MAX_JUMPS = 1;
+        this.MAX_VELOCITY = 5;      // player horizontal speed
+        this.JUMP_VELOCITY = -5;    // player vertical speed
+        this.jumps = 1;             // current amount of jumps
+        this.MAX_JUMPS = 1;         // max amount of jumps
+        this.MIN_CONSTRAINT_LENGTH = 70;
         this.jumping = false;
+
         cursors = this.input.keyboard.createCursorKeys();
 
         this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
@@ -62,12 +64,18 @@ class Test extends Phaser.Scene {
         //add group for hooks
         this.hookGroup = this.add.group();
         // add hook
-        this.branch1 = new Branch(this, 300, 200, 'bigBranch');     // spawn branch
-        this.branch2 = new Branch(this, 500, 150, 'bigBranch');     // spawn branch
-
+        this.branches = this.add.group();
+        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 80);     // spawn branch
+        this.branches.add(this.branch1);
+        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 90, 80);     // spawn branch
+        this.branches.add(this.branch2);
+        // children of grounp
+        this.branchChildren = this.branches.getChildren();
+        this.platformChildren = this.platforms.getChildren();
+        
         //give player grappled status
-        this.player.isGrappled = false;
-        console.log(this.player.isGrappled);
+        // this.player.isGrappled = false;
+        // console.log(this.player.isGrappled);
         //add hook
         //this.addHook(300, 200);
         //Set keys 
@@ -78,6 +86,14 @@ class Test extends Phaser.Scene {
         //camera setup
         this.cameras.main.setBounds(0, 0, game.config.width * 3, game.config.height);
         this.cameras.main.startFollow(this.player);
+
+        // collision
+        for (var i = 0; i < this.platformChildren.length; i++)
+        {
+            this.player.setOnCollideWith(this.platformChildren[i], pair => {
+                this.player.setTouchingDown();
+            });
+        }
     }
 
     update(time, delta) {
@@ -104,15 +120,15 @@ class Test extends Phaser.Scene {
             }
         }
     }
-    addHook(x, y){
-        this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
+    // addHook(x, y){
+    //     this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
 
-        // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
-        //     restitution: 0.5
-        // });
-        // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
-        //this.hookGroup.add(hook);
-    }
+    //     // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
+    //     //     restitution: 0.5
+    //     // });
+    //     // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
+    //     //this.hookGroup.add(hook);
+    // }
     hookCharacter(player, branch) {
         // calculate how long the constraint should be
         if (player.x > branch.x)
@@ -129,12 +145,12 @@ class Test extends Phaser.Scene {
         }
 
         // if less than minumum set it to the minimum length
-        if (this.constraintLength < 70)
+        if (this.constraintLength < this.MIN_CONSTRAINT_LENGTH)
         {
-            this.constraintLength = 70;     // minimum length of constraint
+            this.constraintLength = this.MIN_CONSTRAINT_LENGTH;     // minimum length of constraint
         }
 
-        console.log(this.constraintLength);
+        //console.log(this.constraintLength);
         
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
@@ -153,11 +169,13 @@ class Test extends Phaser.Scene {
         }
         if (!player.canSwing && player.x < branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
         }
         else if (!player.canSwing && player.x > branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
         }
     }
 }
