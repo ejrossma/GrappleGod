@@ -76,7 +76,7 @@ class Test extends Phaser.Scene {
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
-        this.cameras.main.setBounds(0, 0, 1800, 400);
+        this.cameras.main.setBounds(0, 0, game.config.width * 3, game.config.height);
         this.cameras.main.startFollow(this.player);
     }
 
