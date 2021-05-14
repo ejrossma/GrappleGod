@@ -33,7 +33,7 @@ class secondScene extends Phaser.Scene {
     create() {
         // variables and settings
         this.MAX_VELOCITY = 5;
-        this.JUMP_VELOCITY = -5;
+        this.JUMP_VELOCITY = -12;
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.MIN_CONSTRAINT_LENGTH = 70;

@@ -67,7 +67,7 @@ class Player extends Phaser.Physics.Matter.Image {
         // actual jumping
         if (!this.isGrappling && this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
         {
-            this.setVelocityY(this.JUMP_VELOCITY);
+            this.setVelocityY(this.JUMP_VELOCITY * deltaMultiplier);
             this.jumping = true;
             this.isGrounded = false;
             this.setFrictionAir(0);

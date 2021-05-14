@@ -32,7 +32,7 @@ class Test extends Phaser.Scene {
     create() {
         // variables and settings
         this.MAX_VELOCITY = 5;      // player horizontal speed
-        this.JUMP_VELOCITY = -5;    // player vertical speed
+        this.JUMP_VELOCITY = -12;    // player vertical speed
         this.jumps = 1;             // current amount of jumps
         this.MAX_JUMPS = 1;         // max amount of jumps
         this.MIN_CONSTRAINT_LENGTH = 70;

@@ -39,7 +39,7 @@ class firstScene extends Phaser.Scene {
         this.branches.add(this.branch2);
         // variables and settings
         this.MAX_VELOCITY = 5;
-        this.JUMP_VELOCITY = -5;
+        this.JUMP_VELOCITY = -12;
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.MIN_CONSTRAINT_LENGTH = 70;
