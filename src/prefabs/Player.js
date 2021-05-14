@@ -124,7 +124,7 @@ class Player extends Phaser.Physics.Matter.Image {
 
     grapplingUpdate(hook, deltaMultiplier)
     {
-        if (this.y >= hook.y - this.width*0.25)
+        if (this.y >= hook.y + this.height)
         {
             this.canSwing = true;
             this.scene.applyForce(this, hook, deltaMultiplier);

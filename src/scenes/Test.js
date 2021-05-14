@@ -169,13 +169,13 @@ class Test extends Phaser.Scene {
         }
         if (!player.canSwing && player.x < branch.x)
         {
-            player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
+            //player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
         }
         else if (!player.canSwing && player.x > branch.x)
         {
-            player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
+            //player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
         }
     }
 }
