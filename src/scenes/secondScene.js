@@ -201,6 +201,3 @@ class secondScene extends Phaser.Scene {
         });
     }
 }
-
-/* this.addPlatform(0, 160, 'r', 6);
-        this.addPlatform(440, 160, 'r', 6); */

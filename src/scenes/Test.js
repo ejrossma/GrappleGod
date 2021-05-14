@@ -160,20 +160,32 @@ class Test extends Phaser.Scene {
     applyForce(player, branch, deltaMultiplier)
     {
         if(player.isGrappling && cursors.right.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
+            this.matter.applyForceFromAngle(this.player, 0.00035 * deltaMultiplier, 0);
         }
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
+            this.matter.applyForceFromAngle(this.player, 0.00035 * deltaMultiplier, 180);
         }
         if (!player.canSwing && player.x < branch.x)
         {
             //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
         }
         else if (!player.canSwing && player.x > branch.x)
         {
             //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
+        }
+        if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'right')
+        {
+            this.matter.applyForceFromAngle(this.player, 0.025 * deltaMultiplier, 0);
+        }
+        else if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'left')
+        {
+            this.matter.applyForceFromAngle(this.player, 0.025 * deltaMultiplier, 180);
+        }
+        else if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'center')
+        {
+
         }
     }
 
