@@ -32,7 +32,7 @@ class Test extends Phaser.Scene {
     create() {
         // variables and settings
         this.MAX_VELOCITY = 5;      // player horizontal speed
-        this.JUMP_VELOCITY = -5;    // player vertical speed
+        this.JUMP_VELOCITY = -12;    // player vertical speed
         this.jumps = 1;             // current amount of jumps
         this.MAX_JUMPS = 1;         // max amount of jumps
         this.MIN_CONSTRAINT_LENGTH = 70;
@@ -89,6 +89,9 @@ class Test extends Phaser.Scene {
                 this.player.setTouchingDown();
             });
         }
+
+        // temp change scenes screen
+        this.changeScene();
     }
 
     update(time, delta) {
@@ -164,13 +167,32 @@ class Test extends Phaser.Scene {
         }
         if (!player.canSwing && player.x < branch.x)
         {
-            player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
+            //player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
         }
         else if (!player.canSwing && player.x > branch.x)
         {
-            player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
+            //player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
         }
+    }
+
+    changeScene()
+    {
+        this.input.keyboard.on('keydown', (event) => {
+            switch(event.key) {
+                case '1':
+                    this.scene.start('firstScene');
+                    break;
+                case '2':
+                    this.scene.start('secondScene');
+                    break;
+                case 't':
+                    this.scene.start('testScene')
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }
