@@ -27,9 +27,11 @@ class firstScene extends Phaser.Scene {
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
+        this.load.image('background', './assets/starterBackground.png');
     }
 
     create() {
+        this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
         this.branch1 = new Branch(this, 800, 200, 'bigBranch');     // spawn branch
         this.branch2 = new Branch(this, 800, 150, 'bigBranch');     // spawn branch
         // variables and settings
@@ -40,7 +42,6 @@ class firstScene extends Phaser.Scene {
         this.jumping = false;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width * 3; i+= 32)
@@ -51,12 +52,12 @@ class firstScene extends Phaser.Scene {
             this.platforms.add(platformGround);
         }
 
-        this.addPlatform(10, game.config.height - 48, 'r', 7);
-        this.addPlatform(10, game.config.height - 80, 'r', 7);
-        this.addPlatform(10, game.config.height - 112, 'r', 4);
-        this.addPlatform(10, game.config.height - 144, 'r', 4);
+        this.addPlatform(10, game.config.height - 48, 'r', 8);
+        this.addPlatform(10, game.config.height - 80, 'r', 8);
+        this.addPlatform(10, game.config.height - 112, 'r', 5);
+        this.addPlatform(10, game.config.height - 144, 'r', 5);
         
-        this.addPlatform(170, 160, 'r', 17);
+        this.addPlatform(240, 160, 'r', 15);
 
         // create player
         this.player = new Player(this, game.config.width*0.85, game.config.height - 48, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics

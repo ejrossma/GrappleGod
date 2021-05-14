@@ -27,6 +27,7 @@ class secondScene extends Phaser.Scene {
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
+        this.load.image('background', './assets/starter2Background.png');
     }
 
     create() {
@@ -38,16 +39,8 @@ class secondScene extends Phaser.Scene {
         this.jumping = false;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
+        this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
         this.platforms = this.add.group();
-        // ground level platforms (add platforms to the group)
-        for (let i = 0; i < game.config.width * 3; i+= 32)
-        {
-            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
-            platformGround.body.immovable = true;
-            platformGround.body.allowGravity = false;
-            this.platforms.add(platformGround);
-        }
 
         this.addPlatform(0, 160, 'r', 6);
         this.addPlatform(440, 160, 'r', 6);
