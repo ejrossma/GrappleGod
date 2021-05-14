@@ -7,7 +7,7 @@ class secondScene extends Phaser.Scene {
                   matter: {
                       debug: true,
                       gravity: {
-                        y: 0.5
+                        y: 0.8
                       }
                   },
                   arcade: {
@@ -27,7 +27,7 @@ class secondScene extends Phaser.Scene {
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
-        this.load.image('background', './assets/starter2Background.png');
+        this.load.image('background2', './assets/starter2Background.png');
     }
 
     create() {
@@ -39,37 +39,58 @@ class secondScene extends Phaser.Scene {
         this.jumping = false;
         cursors = this.input.keyboard.createCursorKeys();
 
-        this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
+        this.background = this.add.tileSprite(0, 0, 300, 100, 'background2').setOrigin(0, 0).setScale(4, 4);
         this.platforms = this.add.group();
-
+        //add ground reset
         this.addPlatform(0, 160, 'r', 6);
-        this.addPlatform(440, 160, 'r', 6);
+        this.addPlatform(500, 160, 'r', 6);
+        this.addPlatform(1200, 160, 'l', 8);
 
         // create player
         this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         // matter physics world bounds
-        this.matter.world.setBounds(0, 0, game.config.width, game.config.height);       // world bounds
+        this.matter.world.setBounds(0, 0, 1200, game.config.height);       // world bounds
 
         //add group for hooks
         this.hookGroup = this.add.group();
-        // add hook
-        this.branch1 = new Branch(this, 300, 50, 'bigBranch');     // spawn branch
-        this.branch2 = new Branch(this, -100, 50, 'bigBranch');     // spawn branch
-
+        // add hooks
+        this.branches = this.add.group();
+        this.branch1 = new Branch(this, 330, 50, 'bigBranch', 90, 80);     // spawn branch
+        this.branches.add(this.branch1);
+        this.branch2 = new Branch(this, 800, 50, 'bigBranch', 90, 80);     // spawn branch
+        this.branches.add(this.branch2);
+        // children of grounp
+        this.branchChildren = this.branches.getChildren();
+        this.platformChildren = this.platforms.getChildren();
         //give player grappled status
         this.player.isGrappled = false;
         console.log(this.player.isGrappled);
-        //add hook
-        //this.addHook(300, 200);
         //Set keys 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
-        this.cameras.main.setBounds(0, 0, 600, 400);
+        this.cameras.main.setBounds(0, 0, 1200, 400);
         this.cameras.main.startFollow(this.player);
+        //set jumps when hits ground
+        for (var i = 0; i < this.platformChildren.length; i++)
+        {
+            this.player.setOnCollideWith(this.platformChildren[i], pair => {
+                this.player.setTouchingDown();
+            });
+        }
+        //player goes to next stage
+        let next = this.matter.add.image(1168, 112, 'player').setOrigin(0.5, 0.5);
+        this.player.setOnCollideWith(next, pair => {
+            this.scene.start("secondScene");
+        });
+        //resets when hits floor
+        let reset = this.matter.add.image(1168, game.config.height - 16, 'player').setOrigin(0.5, 0.5);
+        this.player.setOnCollideWith(reset, pair => {
+            this.scene.start("secondScene");
+        });
     }
 
     update(time, delta) {
@@ -96,18 +117,10 @@ class secondScene extends Phaser.Scene {
             }
         }
     }
-    addHook(x, y){
-        this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
 
-        // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
-        //     restitution: 0.5
-        // });
-        // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
-        //this.hookGroup.add(hook);
-    }
     hookCharacter(player, branch) {
         // calculate how long the constraint should be
-        if (player.x > branch.x)
+        /*if (player.x > branch.x)
         {
             this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
         }
@@ -121,11 +134,13 @@ class secondScene extends Phaser.Scene {
         }
 
         // if less than minumum set it to the minimum length
-        if (this.constraintLength < 50)
+        if (this.constraintLength < this.MIN_CONSTRAINT_LENGTH)
         {
-            this.constraintLength = 50;     // minimum length of constraint
+            this.constraintLength = this.MIN_CONSTRAINT_LENGTH;     // minimum length of constraint
         }
-        
+        */
+        //console.log(this.constraintLength);
+        this.constraintLength = 80;
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
     unHookCharacter() {
@@ -141,22 +156,15 @@ class secondScene extends Phaser.Scene {
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
             this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
         }
-        if (!player.isGrappling && player.x < branch.x)
+        if (!player.canSwing && player.x < branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 0);
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
         }
-        else if (!player.isGrappling && player.x > branch.x)
+        else if (!player.canSwing && player.x > branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 180);
-        }
-        if(player.isGrappling && cursors.up.isDown && this.rope.length > 20){
-            this.rope.length -= 1;
-        }
-        if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
-            this.rope.length += 1;
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
         }
     }
 }
-
-/* this.addPlatform(0, 160, 'r', 6);
-        this.addPlatform(440, 160, 'r', 6); */

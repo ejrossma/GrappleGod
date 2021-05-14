@@ -7,7 +7,7 @@ class firstScene extends Phaser.Scene {
                   matter: {
                       debug: true,
                       gravity: {
-                        y: 0.5
+                        y: 0.8
                       }
                   },
                   arcade: {
@@ -32,8 +32,7 @@ class firstScene extends Phaser.Scene {
 
     create() {
         this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
-        this.branch1 = new Branch(this, 800, 200, 'bigBranch');     // spawn branch
-        this.branch2 = new Branch(this, 800, 150, 'bigBranch');     // spawn branch
+
         // variables and settings
         this.MAX_VELOCITY = 2;
         this.JUMP_VELOCITY = -5;
@@ -67,6 +66,11 @@ class firstScene extends Phaser.Scene {
 
         //add group for hooks
         this.hookGroup = this.add.group();
+        // add hook 
+        this.branches = this.add.group();
+        // children of grounp
+        this.branchChildren = this.branches.getChildren();
+        this.platformChildren = this.platforms.getChildren();
 
         //give player grappled status
         this.player.isGrappled = false;
@@ -81,6 +85,18 @@ class firstScene extends Phaser.Scene {
         //camera setup
         this.cameras.main.setBounds(0, 0, 700, 400);
         this.cameras.main.startFollow(this.player);
+        //set jumps when hits ground
+        for (var i = 0; i < this.platformChildren.length; i++)
+        {
+            this.player.setOnCollideWith(this.platformChildren[i], pair => {
+                this.player.setTouchingDown();
+            });
+        }
+        //player goes to next stage
+        let next = this.matter.add.image(668, 112, 'player').setOrigin(0.5, 0.5);
+        this.player.setOnCollideWith(next, pair => {
+            this.scene.start("secondScene");
+        });
     }
 
     update(time, delta) {
@@ -132,10 +148,12 @@ class firstScene extends Phaser.Scene {
         }
 
         // if less than minumum set it to the minimum length
-        if (this.constraintLength < 50)
+        if (this.constraintLength < this.MIN_CONSTRAINT_LENGTH)
         {
-            this.constraintLength = 50;     // minimum length of constraint
+            this.constraintLength = this.MIN_CONSTRAINT_LENGTH;     // minimum length of constraint
         }
+
+        //console.log(this.constraintLength);
         
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
@@ -152,19 +170,15 @@ class firstScene extends Phaser.Scene {
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
             this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
         }
-        if (!player.isGrappling && player.x < branch.x)
+        if (!player.canSwing && player.x < branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 0);
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
         }
-        else if (!player.isGrappling && player.x > branch.x)
+        else if (!player.canSwing && player.x > branch.x)
         {
-            this.matter.applyForceFromAngle(this.player, 0.005 * deltaMultiplier, 180);
-        }
-        if(player.isGrappling && cursors.up.isDown && this.rope.length > 20){
-            this.rope.length -= 1;
-        }
-        if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
-            this.rope.length += 1;
+            player.setVelocity(0,0);
+            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
         }
     }
 }

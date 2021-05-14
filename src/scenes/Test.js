@@ -72,12 +72,7 @@ class Test extends Phaser.Scene {
         // children of grounp
         this.branchChildren = this.branches.getChildren();
         this.platformChildren = this.platforms.getChildren();
-        
-        //give player grappled status
-        // this.player.isGrappled = false;
-        // console.log(this.player.isGrappled);
-        //add hook
-        //this.addHook(300, 200);
+
         //Set keys 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
