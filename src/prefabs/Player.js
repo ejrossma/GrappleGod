@@ -89,6 +89,7 @@ class Player extends Phaser.Physics.Matter.Image {
         // continue momentum
         if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling)
         {
+            this.scene.applyForce(this, this.currentHook, deltaMultiplier);
             this.setFrictionAir(0.025);
         }
     }
@@ -133,6 +134,18 @@ class Player extends Phaser.Physics.Matter.Image {
         {
             this.canSwing = false;
             this.scene.applyForce(this, hook, deltaMultiplier);    
+        }
+        if (this.x > hook.x)
+        {
+            this.direction = 'right';
+        }
+        else if (this.x < hook.x)
+        {
+            this.direction = 'left';
+        }
+        else
+        {
+            this.direction = 'center';
         }
     }
 }
