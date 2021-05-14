@@ -2,12 +2,11 @@
 
 //game configuration
 let config = {
-    type: Phaser.AUTO,
-    pixelArt: true,
+    type: Phaser.CANVAS,
     width: 600, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
     zoom: 2,
-    scene: [ Test,  Play ],
+    scene: [ secondScene, Test,  Play ],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
@@ -17,6 +16,9 @@ let config = {
             debug: true,
             gravity: { y: 0.5 }
         }
+    },
+    render: {
+        pixelArt: true
     },
 }
 
