@@ -59,7 +59,7 @@ class secondScene extends Phaser.Scene {
         this.branches = this.add.group();
         this.branch1 = new Branch(this, 300, 50, 'bigBranch', 90, 80);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch2 = new Branch(this, -100, 50, 'bigBranch', 90, 80);     // spawn branch
+        this.branch2 = new Branch(this, 850, 50, 'bigBranch', 90, 80);     // spawn branch
         this.branches.add(this.branch2);
 
         // children of groups
