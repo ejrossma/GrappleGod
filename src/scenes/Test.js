@@ -94,6 +94,9 @@ class Test extends Phaser.Scene {
                 this.player.setTouchingDown();
             });
         }
+
+        // temp change scenes screen
+        this.changeScene();
     }
 
     update(time, delta) {
@@ -177,5 +180,24 @@ class Test extends Phaser.Scene {
             //player.setVelocity(0,0);
             this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
         }
+    }
+
+    changeScene()
+    {
+        this.input.keyboard.on('keydown', (event) => {
+            switch(event.key) {
+                case '1':
+                    this.scene.start('firstScene');
+                    break;
+                case '2':
+                    this.scene.start('secondScene');
+                    break;
+                case 't':
+                    this.scene.start('testScene')
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }

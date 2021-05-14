@@ -97,6 +97,9 @@ class firstScene extends Phaser.Scene {
                 this.player.setTouchingDown();
             });
         }
+
+        // temp change scenes screen
+        this.changeScene();
     }
 
     update(time, delta) {
@@ -184,5 +187,24 @@ class firstScene extends Phaser.Scene {
         if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
             this.rope.length += 1;
         }
+    }
+
+    changeScene()
+    {
+        this.input.keyboard.on('keydown', (event) => {
+            switch(event.key) {
+                case '1':
+                    this.scene.start('firstScene');
+                    break;
+                case '2':
+                    this.scene.start('secondScene');
+                    break;
+                case 't':
+                    this.scene.start('testScene')
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }

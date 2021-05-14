@@ -6,7 +6,7 @@ let config = {
     width: 600, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
     zoom: 2,
-    scene: [ secondScene, Test,  Play ],
+    scene: [ firstScene, secondScene, Test,  Play ],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
