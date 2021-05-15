@@ -7,7 +7,7 @@ class firstScene extends Phaser.Scene {
                   matter: {
                       debug: true,
                       gravity: {
-                        y: 0.8
+                        y: 0.5
                       }
                   },
                   arcade: {
@@ -33,13 +33,13 @@ class firstScene extends Phaser.Scene {
     create() {
         this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 80);     // spawn branch
+        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90);     // spawn branch
         this.branches.add(this.branch1);
         this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80);     // spawn branch
         this.branches.add(this.branch2);
         // variables and settings
         this.MAX_VELOCITY = 5;
-        this.JUMP_VELOCITY = -12;
+        this.JUMP_VELOCITY = -8;
         this.jumps = 1;
         this.MAX_JUMPS = 1;
         this.MIN_CONSTRAINT_LENGTH = 70;
@@ -172,27 +172,30 @@ class firstScene extends Phaser.Scene {
     // apply force on the swing
     applyForce(player, branch, deltaMultiplier)
     {
+        // while grappled
         if(player.isGrappling && cursors.right.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 0);
+            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);
         }
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 180);
+            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180);
         }
-        if (!player.canSwing && player.x < branch.x)
+
+        // when letting go of grapple
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == true)
         {
-            //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);
         }
-        else if (!player.canSwing && player.x > branch.x)
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == true)
         {
-            //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.00075 * deltaMultiplier, 90);
+            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);
         }
-        if(player.isGrappling && cursors.up.isDown && this.rope.length > 20){
-            this.rope.length -= 1;
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == false)
+        {
+            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -45);
         }
-        if(player.isGrappling && cursors.down.isDown && this.rope.length < 70){
-            this.rope.length += 1;
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == false)
+        {
+            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -135);
         }
     }
 

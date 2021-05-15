@@ -37,15 +37,15 @@ class Player extends Phaser.Physics.Matter.Image {
             this.isGrappling = false;       // set bool to false
         }
         // horizontal movement
-        if (!this.isGrappling && cursors.right.isDown) 
+        if (!this.isGrappling && this.finishedGrappling &&  cursors.right.isDown) 
         {
             this.setVelocityX(this.MAX_VELOCITY * deltaMultiplier);       // move right
         }
-        else if(!this.isGrappling && cursors.left.isDown)
+        else if(!this.isGrappling && this.finishedGrappling && cursors.left.isDown)
         {
             this.setVelocityX(-this.MAX_VELOCITY * deltaMultiplier);      // move left
         }
-        else if (!this.isGrappling)
+        else if (!this.isGrappling && this.finishedGrappling)
         {
             this.setVelocityX(0);                       // dont move
         }
@@ -65,7 +65,7 @@ class Player extends Phaser.Physics.Matter.Image {
         }
 
         // actual jumping
-        if (!this.isGrappling && this.jumps > 0 && Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
+        if (!this.isGrappling && this.jumps > 0 && this.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
         {
             this.setVelocityY(this.JUMP_VELOCITY * deltaMultiplier);
             this.jumping = true;
@@ -74,7 +74,7 @@ class Player extends Phaser.Physics.Matter.Image {
         }
 
         // letting go of space key subtracting a jump
-        if (!this.isGrappling && this.jumping && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
+        if (!this.isGrappling && this.jumping && this.finishedGrappling && Phaser.Input.Keyboard.UpDuration(cursors.space)) 
         {
             this.jumps--;
             this.jumping = false;
@@ -87,10 +87,15 @@ class Player extends Phaser.Physics.Matter.Image {
         }
 
         // continue momentum
-        if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling)
+        if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling && this.canSwing)
         {
             this.scene.applyForce(this, this.currentHook, deltaMultiplier);
-            this.setFrictionAir(0.025);
+            this.setFrictionAir(0.015);
+        }
+        else if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling && !this.canSwing)
+        {
+            this.scene.applyForce(this, this.currentHook, deltaMultiplier);
+            this.setFrictionAir(0.02);
         }
     }
 
@@ -106,6 +111,8 @@ class Player extends Phaser.Physics.Matter.Image {
                 {
                     if (this.y >= this.scene.branchChildren[i].y && this.y <= this.scene.branchChildren[i].y + this.scene.branchChildren[i].yBound)
                     {
+                        this.setVelocityX(0);
+                        this.setVelocityY(2.5);
                         this.scene.hookCharacter(this, this.scene.branchChildren[i]);
                         this.currentHook = this.scene.branchChildren[i];
                         this.setFrictionAir(0);
@@ -125,27 +132,19 @@ class Player extends Phaser.Physics.Matter.Image {
 
     grapplingUpdate(hook, deltaMultiplier)
     {
-        if (this.y >= hook.y + this.height)
+        if (this.isGrappling && this.y >= hook.y + this.height)
         {
             this.canSwing = true;
             this.scene.applyForce(this, hook, deltaMultiplier);
         }
-        else
+        else if (this.isGrappling)
         {
             this.canSwing = false;
             this.scene.applyForce(this, hook, deltaMultiplier);    
         }
-        if (this.x > hook.x)
-        {
-            this.direction = 'right';
-        }
-        else if (this.x < hook.x)
-        {
-            this.direction = 'left';
-        }
         else
         {
-            this.direction = 'center';
+            this.scene.applyForce(this, hook, deltaMultiplier);
         }
     }
 }

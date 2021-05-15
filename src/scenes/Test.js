@@ -65,9 +65,12 @@ class Test extends Phaser.Scene {
         this.hookGroup = this.add.group();
         // add hook
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 80);     // spawn branch
+        this.branch1Bounds = this.add.rectangle(300 - 90, 200, 90*2, 90, 0xff0000, 0.2).setOrigin(0);    // bounds
+        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 90);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 90, 80);     // spawn branch
+        this.branch2Bounds = this.add.rectangle(500 - 90, 150, 90*2, 90, 0xff0000, 0.2).setOrigin(0);    // bounds                
+        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 90, 90);     // spawn branch
+        //this.branch2Bounds = new CollisionBounds(this, 500, 150, 90, 80, 0xff0000);
         this.branches.add(this.branch2);
         // children of grounp
         this.branchChildren = this.branches.getChildren();
@@ -159,33 +162,30 @@ class Test extends Phaser.Scene {
     // apply force on the swing
     applyForce(player, branch, deltaMultiplier)
     {
+        // while grappled
         if(player.isGrappling && cursors.right.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.00035 * deltaMultiplier, 0);
+            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);
         }
         else if(player.isGrappling && cursors.left.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(this.player, 0.00035 * deltaMultiplier, 180);
+            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180);
         }
-        if (!player.canSwing && player.x < branch.x)
-        {
-            //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
-        }
-        else if (!player.canSwing && player.x > branch.x)
-        {
-            //player.setVelocity(0,0);
-            this.matter.applyForceFromAngle(this.player, 0.0005 * deltaMultiplier, 90);
-        }
-        if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'right')
-        {
-            this.matter.applyForceFromAngle(this.player, 0.025 * deltaMultiplier, 0);
-        }
-        else if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'left')
-        {
-            this.matter.applyForceFromAngle(this.player, 0.025 * deltaMultiplier, 180);
-        }
-        else if (!this.player.isGrappling && !this.player.isGrounded && !this.player.finishedGrappling && this.player.direction == 'center')
-        {
 
+        // when letting go of grapple
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == true)
+        {
+            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);
+        }
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == true)
+        {
+            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);
+        }
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == false)
+        {
+            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -45);
+        }
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == false)
+        {
+            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -135);
         }
     }
 
