@@ -60,8 +60,8 @@ class secondScene extends Phaser.Scene {
         this.branch1Bounds = this.add.rectangle(300 - 90, 50, 90*2, 90, 0xff0000, 0.2).setOrigin(0);    // bounds
         this.branch1 = new Branch(this, 300, 50, 'bigBranch', 90, 90);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch1Bounds = this.add.rectangle(800 - 90, 50, 90*2, 90, 0xff0000, 0.2).setOrigin(0);    // bounds
-        this.branch2 = new Branch(this, 800, 50, 'bigBranch', 90, 90);     // spawn branch
+        this.branch1Bounds = this.add.rectangle(850 - 90, 50, 90*2, 90, 0xff0000, 0.2).setOrigin(0);    // bounds
+        this.branch2 = new Branch(this, 850, 50, 'bigBranch', 90, 90);     // spawn branch
         this.branches.add(this.branch2);
 
         // children of groups

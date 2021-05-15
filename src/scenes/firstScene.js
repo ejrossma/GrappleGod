@@ -102,7 +102,6 @@ class firstScene extends Phaser.Scene {
         this.player.setOnCollideWith(next, pair => {
             this.scene.start("secondScene");
         });
-
         // temp change scenes screen
         this.changeScene();
     }
