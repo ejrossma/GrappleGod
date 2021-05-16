@@ -27,20 +27,22 @@ class firstScene extends Phaser.Scene {
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
+        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
         this.load.image('background', './assets/starterBackground.png');
     }
 
     create() {
         this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
+
+        // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90);     // spawn branch
+        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80);     // spawn branch
+        this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80, 70, false);     // spawn branch
         this.branches.add(this.branch2);
         // variables and settings
         this.MAX_VELOCITY = 5;      // x-velocity
         this.JUMP_VELOCITY = -8;    // y-velocity
-        this.MIN_CONSTRAINT_LENGTH = 70;    // min length for this scenes constraint
         cursors = this.input.keyboard.createCursorKeys();   // cursor keys
 
         this.platforms = this.add.group();  // platform group
@@ -91,7 +93,7 @@ class firstScene extends Phaser.Scene {
     update(time, delta) {
         let deltaMultiplier = (delta/16.66667);
         // update the player/branches
-        this.player.update(deltaMultiplier);
+        this.player.update(this.branchChildren, deltaMultiplier);
     }
 
     addPlatform(x, y, direction, length) {

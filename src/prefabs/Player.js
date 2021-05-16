@@ -32,10 +32,10 @@ class Player extends Phaser.Physics.Matter.Image {
         }
     }
 
-    update(deltaMultiplier)
+    update(branchChildren, deltaMultiplier)
     {
         // detect if and where to grapple
-        this.checkGrapple();
+        this.checkGrapple(branchChildren);
 
         // if currently grappling, Q to release
         if (this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
@@ -85,6 +85,16 @@ class Player extends Phaser.Physics.Matter.Image {
         if (this.isGrappling)
         {
             this.grapplingUpdate(this.currentHook, deltaMultiplier);
+            
+            // update branches when grappling
+            for (var i = 0; i < branchChildren.length; i++)
+            {
+                branchChildren[i].update(deltaMultiplier);
+
+                // disable tint
+                branchChildren[i].setAlpha(1);
+                branchChildren[i].tempTintedImage.setAlpha(0);
+            }
         }
 
         // after letting go of grapple, continue momentum until hitting ground
@@ -98,24 +108,51 @@ class Player extends Phaser.Physics.Matter.Image {
             this.applyForceVertical(this, this.currentHook, deltaMultiplier);
             this.setFrictionAir(0.02);
         }
+
+        // highlight the branch if within range
+        if (!this.isGrappling)
+        {
+            // check each individual branch
+            for (var i = 0; i < branchChildren.length; i++)
+            {
+                if (this.x < branchChildren[i].x + branchChildren[i].xBound && this.x > branchChildren[i].x - branchChildren[i].xBound)
+                {
+                    if (this.y >= branchChildren[i].y && this.y <= branchChildren[i].y + branchChildren[i].yBound)
+                    {
+                        branchChildren[i].setAlpha(0);
+                        branchChildren[i].tempTintedImage.setAlpha(1);
+                    }
+                    else
+                    {
+                        branchChildren[i].setAlpha(1);
+                        branchChildren[i].tempTintedImage.setAlpha(0);
+                    }
+                }
+                else
+                {
+                    branchChildren[i].setAlpha(1);
+                    branchChildren[i].tempTintedImage.setAlpha(0);
+                }
+            }
+        }
     }
 
     // check if can grapple
-    checkGrapple()
+    checkGrapple(branchChildren)
     {
         if (!this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
         {
             // check each individual branch
-            for (var i = 0; i < this.scene.branchChildren.length; i++)
+            for (var i = 0; i < branchChildren.length; i++)
             {
-                if (this.x < this.scene.branchChildren[i].x + this.scene.branchChildren[i].xBound && this.x > this.scene.branchChildren[i].x - this.scene.branchChildren[i].xBound)
+                if (this.x < branchChildren[i].x + branchChildren[i].xBound && this.x > branchChildren[i].x - branchChildren[i].xBound)
                 {
-                    if (this.y >= this.scene.branchChildren[i].y && this.y <= this.scene.branchChildren[i].y + this.scene.branchChildren[i].yBound)
+                    if (this.y >= branchChildren[i].y && this.y <= branchChildren[i].y + branchChildren[i].yBound)
                     {
                         this.setVelocityX(0);       // stop x momentum 
                         this.setVelocityY(2.5);     // slow y momentum if necessary
-                        this.scene.branchChildren[i].hookCharacter(this, this.scene.branchChildren[i]); // hook to branch
-                        this.currentHook = this.scene.branchChildren[i];        // remember current branch
+                        branchChildren[i].hookCharacter(this, branchChildren[i]); // hook to branch
+                        this.currentHook = branchChildren[i];        // remember current branch
                         this.setFrictionAir(0);     // reset air friction
                         this.finishedGrappling = false;    // set finished grappling to false
                         this.isGrappling = true;           // set currently grappling boolean to true

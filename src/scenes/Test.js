@@ -27,13 +27,13 @@ class Test extends Phaser.Scene {
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
+        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
     }
 
     create() {
         // variables and settings
         this.MAX_VELOCITY = 5;      // player horizontal speed
         this.JUMP_VELOCITY = -8;    // player vertical speed
-        this.MIN_CONSTRAINT_LENGTH = 70;
         this.jumping = false;
 
         cursors = this.input.keyboard.createCursorKeys();
@@ -57,12 +57,13 @@ class Test extends Phaser.Scene {
         this.matter.world.setBounds(0, 0, game.config.width * 3, game.config.height);       // world bounds
 
         // add hook
+        // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 90);     // spawn branch
+        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
         this.branches.add(this.branch1);             
-        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 90, 90);     // spawn branch
-        //this.branch2Bounds = new CollisionBounds(this, 500, 150, 90, 80, 0xff0000);
+        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 20, game.config.height - 182, 70, true, 50);     // spawn branch
         this.branches.add(this.branch2);
+
         // children of grounp
         this.branchChildren = this.branches.getChildren();
         this.platformChildren = this.platforms.getChildren();
@@ -86,7 +87,7 @@ class Test extends Phaser.Scene {
     update(time, delta) {
         let deltaMultiplier = (delta/16.66667);
         // update the player/branches
-        this.player.update(deltaMultiplier);       // main player update function
+        this.player.update(this.branchChildren, deltaMultiplier);       // main player update function
     }
 
     addPlatform(x, y, direction, length) {
