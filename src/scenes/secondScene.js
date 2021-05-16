@@ -74,6 +74,7 @@ class secondScene extends Phaser.Scene {
         //player goes to next stage
         let next = this.matter.add.image(1168, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
+            this.walk.stop();
             this.scene.start("secondScene");
         });
         //resets when hits floor
