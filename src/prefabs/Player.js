@@ -22,8 +22,15 @@ class Player extends Phaser.Physics.Matter.Image {
 
         // other things
         this.setFriction(0);             // remove sliding on walls
-        //this.setFrictionAir(0)
         this.setFixedRotation(0);        // prevent player sprite from unnecessarily spinning when moving
+
+        // collision for jumping
+        for (var i = 0; i < this.scene.platformChildren.length; i++)
+        {
+            this.setOnCollideWith(this.scene.platformChildren[i], pair => {
+                this.setTouchingDown();
+            });
+        }
     }
 
     update(deltaMultiplier)
@@ -33,7 +40,7 @@ class Player extends Phaser.Physics.Matter.Image {
 
         if (this.isGrappling && Phaser.Input.Keyboard.JustDown(keyQ))
         {
-            this.scene.unHookCharacter();   // unhook the character
+            this.currentHook.unHookCharacter();   // unhook the character
             this.isGrappling = false;       // set bool to false
         }
         // horizontal movement
@@ -89,12 +96,12 @@ class Player extends Phaser.Physics.Matter.Image {
         // continue momentum
         if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling && this.canSwing)
         {
-            this.scene.applyForce(this, this.currentHook, deltaMultiplier);
+            this.applyForce(this, this.currentHook, deltaMultiplier);
             this.setFrictionAir(0.015);
         }
-        else if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling && !this.canSwing)
+        if (!this.isGrappling && !this.isGrounded && !this.finishedGrappling && !this.canSwing)
         {
-            this.scene.applyForce(this, this.currentHook, deltaMultiplier);
+            this.applyForceVertical(this, this.currentHook, deltaMultiplier);
             this.setFrictionAir(0.02);
         }
     }
@@ -113,7 +120,7 @@ class Player extends Phaser.Physics.Matter.Image {
                     {
                         this.setVelocityX(0);
                         this.setVelocityY(2.5);
-                        this.scene.hookCharacter(this, this.scene.branchChildren[i]);
+                        this.scene.branchChildren[i].hookCharacter(this, this.scene.branchChildren[i]);
                         this.currentHook = this.scene.branchChildren[i];
                         this.setFrictionAir(0);
                         this.finishedGrappling = false;
@@ -135,16 +142,57 @@ class Player extends Phaser.Physics.Matter.Image {
         if (this.isGrappling && this.y >= hook.y + this.height)
         {
             this.canSwing = true;
-            this.scene.applyForce(this, hook, deltaMultiplier);
-        }
-        else if (this.isGrappling)
-        {
-            this.canSwing = false;
-            this.scene.applyForce(this, hook, deltaMultiplier);    
+            this.applyForce(this, hook, deltaMultiplier);
         }
         else
         {
-            this.scene.applyForce(this, hook, deltaMultiplier);
+            this.canSwing = false;
+            this.applyForce(this, hook, deltaMultiplier);    
+        }
+        if (this.isGrappling && this.x > hook.x)
+        {
+            this.direction = 'right';
+        }
+        else if (this.isGrappling && this.x < hook.x)
+        {
+            this.direction = 'left';
+        }
+    }
+
+    applyForce(player, branch, deltaMultiplier)
+    {
+        // while grappled
+        if(player.isGrappling && cursors.right.isDown && player.canSwing){
+            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);
+        }
+        else if(player.isGrappling && cursors.left.isDown && player.canSwing){
+            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180);
+        }
+
+        // when letting go of grapple
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == true)
+        {
+            this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);
+        }
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == true)
+        {
+            this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);
+        }
+    }
+
+    applyForceVertical(player, branch, deltaMultiplier)
+    {
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == false)
+        {
+            player.x += 3*deltaMultiplier;
+            player.y += 3&deltaMultiplier
+            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);
+        }
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
+        {
+            player.x += -3*deltaMultiplier;
+            player.y += 3&deltaMultiplier
+            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);
         }
     }
 }

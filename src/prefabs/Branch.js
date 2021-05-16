@@ -9,10 +9,43 @@ class Branch extends Phaser.Physics.Matter.Image {
         // area of detection
         this.xBound = xBound;
         this.yBound = yBound;
+
+        // visual bounds comment out to remove
+        this.scene.add.rectangle(x - xBound, y, xBound*2, yBound, 0xff0000, 0.2).setOrigin(0);    // bounds
     }
 
     update()
     {
 
+    }
+
+    hookCharacter(player, branch) {
+        // calculate how long the constraint should be
+        if (player.x > branch.x)
+        {
+            this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
+        }
+        else if (player < branch.x)
+        {
+            this.constraintLength = (((branch.x - player.x)^2)+((branch.y-player.y)^2))^0.5;
+        }
+        else
+        {
+            this.constraintLength = player.y - branch.y;
+        }
+
+        // if less than minumum set it to the minimum length
+        if (this.constraintLength < this.scene.MIN_CONSTRAINT_LENGTH)
+        {
+            this.constraintLength = this.scene.MIN_CONSTRAINT_LENGTH;     // minimum length of constraint
+        }
+
+        //console.log(this.constraintLength);
+        
+        this.rope = this.scene.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
+    }
+
+    unHookCharacter() {
+        this.scene.matter.world.remove(this.rope);    // delete constraint
     }
 }

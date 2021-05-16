@@ -40,10 +40,7 @@ class firstScene extends Phaser.Scene {
         // variables and settings
         this.MAX_VELOCITY = 5;
         this.JUMP_VELOCITY = -8;
-        this.jumps = 1;
-        this.MAX_JUMPS = 1;
         this.MIN_CONSTRAINT_LENGTH = 70;
-        this.jumping = false;
         cursors = this.input.keyboard.createCursorKeys();
 
         this.platforms = this.add.group();
@@ -73,14 +70,6 @@ class firstScene extends Phaser.Scene {
         // matter physics world bounds
         this.matter.world.setBounds(0, 0, 700, game.config.height);       // world bounds
 
-        // //add group for hooks
-        // this.hookGroup = this.add.group();
-
-        // //give player grappled status
-        // this.player.isGrappled = false;
-        // console.log(this.player.isGrappled);
-        //add hook
-        //this.addHook(300, 200);
         //Set keys 
         keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
         keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
@@ -128,73 +117,6 @@ class firstScene extends Phaser.Scene {
                 let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
-        }
-    }
-    // addHook(x, y){
-    //     this.poly =  this.matter.add.image(x, y, 'bigBranch', null, { isStatic: true }).setOrigin(0.5);
-
-    //     // this.hero = this.matter.add.rectangle(game.config.width / 3, game.config.height / 3, 10, 10, {
-    //     //     restitution: 0.5
-    //     // });
-    //     // this.rope = this.matter.add.constraint(this.hero, poly, 50, 0);
-    //     //this.hookGroup.add(hook);
-    // }
-    hookCharacter(player, branch) {
-        // calculate how long the constraint should be
-        if (player.x > branch.x)
-        {
-            this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
-        }
-        else if (this.player < branch.x)
-        {
-            this.constraintLength = (((branch.x - player.x)^2)+((branch.y-player.y)^2))^0.5;
-        }
-        else
-        {
-            this.constraintLength = player.y - branch.y;
-        }
-
-        // if less than minumum set it to the minimum length
-        if (this.constraintLength < this.MIN_CONSTRAINT_LENGTH)
-        {
-            this.constraintLength = this.MIN_CONSTRAINT_LENGTH;     // minimum length of constraint
-        }
-
-        //console.log(this.constraintLength);
-        
-        this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
-    }
-    unHookCharacter() {
-        this.matter.world.remove(this.rope);    // delete constraint
-    }
-
-    // apply force on the swing
-    applyForce(player, branch, deltaMultiplier)
-    {
-        // while grappled
-        if(player.isGrappling && cursors.right.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);
-        }
-        else if(player.isGrappling && cursors.left.isDown && player.canSwing){
-            this.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180);
-        }
-
-        // when letting go of grapple
-        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == true)
-        {
-            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);
-        }
-        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == true)
-        {
-            this.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);
-        }
-        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x > branch.x && player.canSwing == false)
-        {
-            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -45);
-        }
-        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.x < branch.x && player.canSwing == false)
-        {
-            this.matter.applyForceFromAngle(player, 0.00075 * deltaMultiplier, -135);
         }
     }
 
