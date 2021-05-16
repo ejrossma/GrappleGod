@@ -261,7 +261,7 @@ class Player extends Phaser.Physics.Matter.Image {
             }
             else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
             {
-                player.x += -player.MAX_VELOCITY*deltaMultiplier; // add a little bit of backward momentum
+                player.x += -player.MAX_VELOCITY*0.5*deltaMultiplier; // add a little bit of backward momentum
                 player.y += -3*deltaMultiplier;  // add a little bit of verticle momentum
                 this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
             }
