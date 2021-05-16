@@ -19,6 +19,8 @@ class Player extends Phaser.Physics.Matter.Image {
         this.inVicinity = false;
         this.canSwing = true;
         this.finishedGrappling = true;
+        this.isWalking = false;
+        this.walked = false;
 
         // other things
         this.setFriction(0);             // remove sliding on walls
@@ -40,19 +42,42 @@ class Player extends Phaser.Physics.Matter.Image {
         if (!this.isGrappling && this.finishedGrappling &&  cursors.right.isDown) 
         {
             this.setVelocityX(this.MAX_VELOCITY * deltaMultiplier);       // move right
+            //Play walking sound effect
+            if(!this.isWalking && this.isGrounded){
+                this.isWalking = true;
+                if(this.walked == false){
+                    this.scene.walk.play();
+                }
+                else{
+                    this.scene.walk.resume();
+                }
+            }
         }
         else if(!this.isGrappling && this.finishedGrappling && cursors.left.isDown)
         {
             this.setVelocityX(-this.MAX_VELOCITY * deltaMultiplier);      // move left
+            //Play walking sound effect
+            if(!this.isWalking && this.isGrounded){
+                this.isWalking = true;
+                if(this.walked == false){
+                    this.scene.walk.play();
+                }
+                else{
+                    this.scene.walk.resume();
+                }
+            }
         }
         else if (!this.isGrappling && this.finishedGrappling)
         {
             this.setVelocityX(0);                       // dont move
         }
-
+        //Stop walking sound effect when not moving
+        if(this.isWalking && cursors.left.isUp && cursors.right.isUp && !cursors.left.isDown && !cursors.right.isDown){
+            this.scene.walk.pause();
+            this.isWalking = false;
+        }
         // vertical movement
         // check if grounded
-
         // if so, can jump
         if (this.isGrounded)
         {
@@ -71,6 +96,9 @@ class Player extends Phaser.Physics.Matter.Image {
             this.jumping = true;
             this.isGrounded = false;
             this.setFrictionAir(0);
+            //Stop playing walking sound when in the air
+            this.scene.walk.pause();
+            this.isWalking = false;
         }
 
         // letting go of space key subtracting a jump

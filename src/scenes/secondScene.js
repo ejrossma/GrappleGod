@@ -97,9 +97,17 @@ class secondScene extends Phaser.Scene {
         //resets when hits floor
         let reset = this.matter.add.image(1168, game.config.height - 16, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(reset, pair => {
+            this.walk.stop();
             this.scene.start("secondScene");
         });
 
+        //sound for walking
+        this.walk = this.sound.add('walking', {
+            loop:true
+        });
+        //sound for hooking
+        this.hook = this.sound.add('hooking');
+        
         // temp change scenes screen
         this.changeScene();
     }
@@ -150,7 +158,7 @@ class secondScene extends Phaser.Scene {
         }
 
         //console.log(this.constraintLength);
-        
+        this.hook.play(); //play hooking sound effect
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
     unHookCharacter() {
@@ -190,6 +198,7 @@ class secondScene extends Phaser.Scene {
     changeScene()
     {
         this.input.keyboard.on('keydown', (event) => {
+            this.walk.stop();
             switch(event.key) {
                 case '1':
                     this.scene.start('firstScene');

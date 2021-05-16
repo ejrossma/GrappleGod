@@ -93,6 +93,13 @@ class Test extends Phaser.Scene {
             });
         }
 
+        //sound for walking
+        this.walk = this.sound.add('walking', {
+            loop:true
+        });
+        //sound for hooking
+        this.hook = this.sound.add('hooking');
+
         // temp change scenes screen
         this.changeScene();
     }
@@ -152,7 +159,7 @@ class Test extends Phaser.Scene {
         }
 
         //console.log(this.constraintLength);
-        
+        this.hook.play(); //play hooking sound effect
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
     unHookCharacter() {
@@ -192,6 +199,7 @@ class Test extends Phaser.Scene {
     changeScene()
     {
         this.input.keyboard.on('keydown', (event) => {
+            this.walk.stop();
             switch(event.key) {
                 case '1':
                     this.scene.start('firstScene');

@@ -28,6 +28,8 @@ class firstScene extends Phaser.Scene {
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
         this.load.image('background', './assets/starterBackground.png');
+        this.load.audio('walking', './assets/Walking.wav');
+        this.load.audio('hooking', './assets/hook.wav');
     }
 
     create() {
@@ -100,8 +102,17 @@ class firstScene extends Phaser.Scene {
         //player goes to next stage
         let next = this.matter.add.image(668, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
+            this.walk.stop();
             this.scene.start("secondScene");
         });
+
+        //sound for walking
+        this.walk = this.sound.add('walking', {
+            loop:true
+        });
+        //sound for hooking
+        this.hook = this.sound.add('hooking');
+
         // temp change scenes screen
         this.changeScene();
     }
@@ -161,7 +172,7 @@ class firstScene extends Phaser.Scene {
         }
 
         //console.log(this.constraintLength);
-        
+        this.hook.play(); //play hooking sound effect
         this.rope = this.matter.add.constraint(player, branch, this.constraintLength, 0);       // create constraint
     }
     unHookCharacter() {
@@ -201,6 +212,7 @@ class firstScene extends Phaser.Scene {
     changeScene()
     {
         this.input.keyboard.on('keydown', (event) => {
+            this.walk.stop();
             switch(event.key) {
                 case '1':
                     this.scene.start('firstScene');
