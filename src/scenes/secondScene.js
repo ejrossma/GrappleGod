@@ -32,13 +32,13 @@ class secondScene extends Phaser.Scene {
 
     create() {
         // variables and settings
-        this.MAX_VELOCITY = 5;
-        this.JUMP_VELOCITY = -8;
-        this.MIN_CONSTRAINT_LENGTH = 80;
-        cursors = this.input.keyboard.createCursorKeys();
+        this.MAX_VELOCITY = 5;      // x-velocity
+        this.JUMP_VELOCITY = -8;    // y-velocity
+        this.MIN_CONSTRAINT_LENGTH = 80;    // minimum constraint lengths for swinging in current scene
+        cursors = this.input.keyboard.createCursorKeys();   // create cursor keys
 
         this.background = this.add.tileSprite(0, 0, 300, 100, 'background2').setOrigin(0, 0).setScale(4, 4);
-        this.platforms = this.add.group();
+        this.platforms = this.add.group();  // platform group
         //add ground reset
         this.addPlatform(0, 160, 'r', 6);
         this.addPlatform(500, 160, 'r', 6);
@@ -54,11 +54,11 @@ class secondScene extends Phaser.Scene {
         this.branch2 = new Branch(this, 850, 50, 'bigBranch', 90, 90);     // spawn branch
         this.branches.add(this.branch2);
 
-        // children of groups
+        // children of groups (used for detection)
         this.branchChildren = this.branches.getChildren();
         this.platformChildren = this.platforms.getChildren();
 
-        // create player
+        // create player (must set below the creation of platform/branch children)
         this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         //Set keys 

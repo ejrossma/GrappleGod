@@ -67,7 +67,7 @@ class Test extends Phaser.Scene {
         this.branchChildren = this.branches.getChildren();
         this.platformChildren = this.platforms.getChildren();
 
-        // create player
+        // create player (must set below the creation of platform/branch children)
         this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         //Set keys 

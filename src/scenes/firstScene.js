@@ -38,12 +38,12 @@ class firstScene extends Phaser.Scene {
         this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80);     // spawn branch
         this.branches.add(this.branch2);
         // variables and settings
-        this.MAX_VELOCITY = 5;
-        this.JUMP_VELOCITY = -8;
-        this.MIN_CONSTRAINT_LENGTH = 70;
-        cursors = this.input.keyboard.createCursorKeys();
+        this.MAX_VELOCITY = 5;      // x-velocity
+        this.JUMP_VELOCITY = -8;    // y-velocity
+        this.MIN_CONSTRAINT_LENGTH = 70;    // min length for this scenes constraint
+        cursors = this.input.keyboard.createCursorKeys();   // cursor keys
 
-        this.platforms = this.add.group();
+        this.platforms = this.add.group();  // platform group
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width * 3; i+= 32)
         {
@@ -60,11 +60,11 @@ class firstScene extends Phaser.Scene {
         
         this.addPlatform(240, 160, 'r', 15);
 
-        // children of groups
+        // children of groups (used for detection)
         this.branchChildren = this.branches.getChildren();
         this.platformChildren = this.platforms.getChildren();
 
-        // create player
+        // create player (must set below the creation of platform/branch children)
         this.player = new Player(this, game.config.width*0.85, game.config.height - 48, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
         // matter physics world bounds
@@ -79,13 +79,6 @@ class firstScene extends Phaser.Scene {
         this.cameras.main.setBounds(0, 0, 700, 400);
         this.cameras.main.startFollow(this.player);
 
-        // collision for jumping
-        for (var i = 0; i < this.platformChildren.length; i++)
-        {
-            this.player.setOnCollideWith(this.platformChildren[i], pair => {
-                this.player.setTouchingDown();
-            });
-        }
         //player goes to next stage
         let next = this.matter.add.image(668, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
@@ -98,7 +91,7 @@ class firstScene extends Phaser.Scene {
     update(time, delta) {
         let deltaMultiplier = (delta/16.66667);
         // update the player/branches
-        this.player.update(deltaMultiplier);       // main player update function
+        this.player.update(deltaMultiplier);
     }
 
     addPlatform(x, y, direction, length) {
