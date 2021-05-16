@@ -79,7 +79,7 @@ class Branch extends Phaser.Physics.Matter.Image {
         {
             this.constraint_size = 'large';
         }
-        
+        this.scene.hook.play(); //play hooking sound effect
         // create constraint
         this.rope = this.scene.matter.add.constraint(player, branch, this.constraintLength, 0);
     }
