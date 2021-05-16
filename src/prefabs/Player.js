@@ -225,38 +225,46 @@ class Player extends Phaser.Physics.Matter.Image {
     applyForce(player, branch, deltaMultiplier)
     {
         // while grappled
-        if(player.isGrappling && cursors.right.isDown && player.canSwing){
+        if(player.isGrappling && cursors.right.isDown && player.canSwing)
+        {
             this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);    // force right
         }
-        else if(player.isGrappling && cursors.left.isDown && player.canSwing){
+        else if(player.isGrappling && cursors.left.isDown && player.canSwing)
+        {
             this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180); // force left
         }
 
-        // after letting go of grapple
-        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == true)
+        if (player.y <= branch.y + branch.yBound + player.height)
         {
-            this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);     // force right
-        }
-        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == true)
-        {
-            this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);   // force left
+            // after letting go of grapple
+            if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == true)
+            {
+                this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);     // force right
+            }
+            else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == true)
+            {
+                this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);   // force left
+            }
         }
     }
 
     // apply force if grapple is released above canSwing bounds
     applyForceVertical(player, branch, deltaMultiplier)
     {
-        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == false)
+        if (player.y <= branch.y + branch.yBound + player.height)
         {
-            player.x += 3*deltaMultiplier;  // add a little bit of forward momentum
-            player.y += -3&deltaMultiplier;  // add a little bit of vertical momentum
-            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
-        }
-        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
-        {
-            player.x += -3*deltaMultiplier; // add a little bit of backward momentum
-            player.y += -3&deltaMultiplier;  // add a little bit of verticle momentum
-            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
+            if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == false)
+            {
+                player.x += player.MAX_VELOCITY*deltaMultiplier;  // add a little bit of forward momentum
+                player.y += -3*deltaMultiplier;  // add a little bit of vertical momentum
+                this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
+            }
+            else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
+            {
+                player.x += -player.MAX_VELOCITY*deltaMultiplier; // add a little bit of backward momentum
+                player.y += -3*deltaMultiplier;  // add a little bit of verticle momentum
+                this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
+            }
         }
     }
 }

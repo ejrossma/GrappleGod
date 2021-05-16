@@ -26,8 +26,8 @@ class Test extends Phaser.Scene {
         this.load.image('treePlatform', './assets/treePlatform.png');
         this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
-        this.load.image('bigBranch', './assets/bigBranch.png');
-        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
+        this.load.image('bigbranch', './assets/bigbranch.png');
+        this.load.image('bigbranchHighlight', './assets/bigbranchHighlight.png');
     }
 
     create() {
@@ -59,9 +59,9 @@ class Test extends Phaser.Scene {
         // add hook
         // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 300, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
+        this.branch1 = new Branch(this, 300, 200, 'bigbranch', 90, 90, 70, false);     // spawn branch
         this.branches.add(this.branch1);             
-        this.branch2 = new Branch(this, 500, 150, 'bigBranch', 20, game.config.height - 182, 70, true, 50);     // spawn branch
+        this.branch2 = new Branch(this, 500, 150, 'bigbranch', 20, game.config.height - 182, 70, true, 50);     // spawn branch
         this.branches.add(this.branch2);
 
         // children of grounp
