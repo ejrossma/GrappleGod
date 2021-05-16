@@ -92,13 +92,16 @@ class firstScene extends Phaser.Scene {
 
         //sound for walking
         this.walk = this.sound.add('walking', {
-            loop:true
+            loop:true,
+            volume:0.5
         });
         //sound for hooking
-        this.hook = this.sound.add('hooking');
+        this.hook = this.sound.add('hooking', {volume: 0.5});
 
         // temp change scenes screen
         this.changeScene();
+
+        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
     }
 
     update(time, delta) {

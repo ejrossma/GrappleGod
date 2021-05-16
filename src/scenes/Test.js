@@ -81,10 +81,11 @@ class Test extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
         //sound for walking
         this.walk = this.sound.add('walking', {
-            loop:true
+            loop:true,
+            volume: 0.5
         });
         //sound for hooking
-        this.hook = this.sound.add('hooking');
+        this.hook = this.sound.add('hooking', {volume: 0.5});
         // temp change scenes screen
         this.changeScene();
     }
