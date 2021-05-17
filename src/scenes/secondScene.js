@@ -18,19 +18,6 @@ class secondScene extends Phaser.Scene {
         });
     }
 
-    preload() {
-        this.load.image('arrow', './assets/arrowTile.png');
-        this.load.image('blank', './assets/blankTile.png');
-
-        this.load.image('player', './assets/playerArt.png');
-        this.load.image('treePlatform', './assets/treePlatform.png');
-        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
-        this.load.image('smallBranch', './assets/smallBranch.png');
-        this.load.image('bigBranch', './assets/bigBranch.png');
-        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
-        this.load.image('background2', './assets/starter2Background.png');
-    }
-
     create() {
         // variables and settings
         this.MAX_VELOCITY = 5;      // x-velocity
@@ -62,9 +49,7 @@ class secondScene extends Phaser.Scene {
         // create player (must set below the creation of platform/branch children)
         this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
-        //Set keys 
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //Set grapple
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
@@ -72,13 +57,13 @@ class secondScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         //player goes to next stage
-        let next = this.matter.add.image(1168, 112, 'player').setOrigin(0.5, 0.5);
+        let next = this.matter.add.sprite(1168, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
             this.walk.stop();
             this.scene.start("secondScene");
         });
         //resets when hits floor
-        let reset = this.matter.add.image(1168, game.config.height - 16, 'player').setOrigin(0.5, 0.5);
+        let reset = this.matter.add.sprite(1168, game.config.height - 16, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(reset, pair => {
             this.walk.stop();
             this.scene.start("secondScene");
@@ -111,11 +96,11 @@ class secondScene extends Phaser.Scene {
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
             if (temp < 0.4) {
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
             else{
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
         }
@@ -133,8 +118,10 @@ class secondScene extends Phaser.Scene {
                     this.scene.start('secondScene');
                     break;
                 case 't':
-                    this.scene.start('testScene')
+                    this.scene.start('testScene');
                     break;
+                case 's':
+                    this.scene.start('tilemapScene');
                 default:
                     break;
             }

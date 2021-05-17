@@ -1,4 +1,4 @@
-class Player extends Phaser.Physics.Matter.Image {
+class Player extends Phaser.Physics.Matter.Sprite {
     constructor(scene, x, y, velocity, jump_velocity, texture){
         super(scene.matter.world, x, y, texture);
         scene.add.existing(this);

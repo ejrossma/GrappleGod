@@ -18,21 +18,6 @@ class firstScene extends Phaser.Scene {
         });
     }
 
-    preload() {
-        this.load.image('arrow', './assets/arrowTile.png');
-        this.load.image('blank', './assets/blankTile.png');
-
-        this.load.image('player', './assets/playerArt.png');
-        this.load.image('treePlatform', './assets/treePlatform.png');
-        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
-        this.load.image('smallBranch', './assets/smallBranch.png');
-        this.load.image('bigBranch', './assets/bigBranch.png');
-        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
-        this.load.image('background', './assets/starterBackground.png');
-        this.load.audio('walking', './assets/Walking.wav');
-        this.load.audio('hooking', './assets/hook.wav');
-    }
-
     create() {
         this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
 
@@ -51,7 +36,7 @@ class firstScene extends Phaser.Scene {
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width * 3; i+= 32)
         {
-            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+            let platformGround = this.matter.add.sprite(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -74,9 +59,7 @@ class firstScene extends Phaser.Scene {
         // matter physics world bounds
         this.matter.world.setBounds(0, 0, 700, game.config.height);       // world bounds
 
-        //Set keys 
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //Set grapple
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
@@ -84,7 +67,7 @@ class firstScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         //player goes to next stage
-        let next = this.matter.add.image(668, 112, 'player').setOrigin(0.5, 0.5);
+        let next = this.matter.add.sprite(668, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
             this.walk.stop();
             this.scene.start("secondScene");
@@ -119,11 +102,11 @@ class firstScene extends Phaser.Scene {
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
             if (temp < 0.4) {
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
             else{
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
         }
@@ -141,8 +124,10 @@ class firstScene extends Phaser.Scene {
                     this.scene.start('secondScene');
                     break;
                 case 't':
-                    this.scene.start('testScene')
+                    this.scene.start('testScene');
                     break;
+                case 's':
+                    this.scene.start('tilemapScene');
                 default:
                     break;
             }
