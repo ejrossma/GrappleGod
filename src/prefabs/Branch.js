@@ -22,7 +22,7 @@ class Branch extends Phaser.Physics.Matter.Image {
         }
 
         // temporary tinted sprite
-        this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
+        this.tempTintedImage = this.scene.add.image(x, y, 'bigbranchHighlight');
         this.tempTintedImage.setAlpha(0);
     }
 

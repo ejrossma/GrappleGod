@@ -23,9 +23,9 @@ class firstScene extends Phaser.Scene {
 
         // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
+        this.branch1 = new Branch(this, 800, 200, 'bigbranch', 90, 90, 70, false);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80, 70, false);     // spawn branch
+        this.branch2 = new Branch(this, 800, 150, 'bigbranch', 90, 80, 70, false);     // spawn branch
         this.branches.add(this.branch2);
         // variables and settings
         this.MAX_VELOCITY = 5;      // x-velocity
