@@ -2,13 +2,14 @@
 
 //game configuration
 let config = {
+    parent: 'phaser-game',
     type: Phaser.CANVAS,
     width: 600, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
-    zoom: 2,
-    scene: [ firstScene, secondScene, Test,  Play ],
+    zoom: 1,
+    scene: [ Load, firstScene, secondScene, Test, Tilemap ],
     scale: { 
-        autoCenter: Phaser.Scale.CENTER_BOTH
+        //autoCenter: Phaser.Scale.CENTER_BOTH
     },
     physics: {
         default: 'matter',

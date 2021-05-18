@@ -18,29 +18,14 @@ class firstScene extends Phaser.Scene {
         });
     }
 
-    preload() {
-        this.load.image('arrow', './assets/arrowTile.png');
-        this.load.image('blank', './assets/blankTile.png');
-
-        this.load.image('player', './assets/playerArt.png');
-        this.load.image('treePlatform', './assets/treePlatform.png');
-        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
-        this.load.image('smallBranch', './assets/smallBranch.png');
-        this.load.image('bigBranch', './assets/bigBranch.png');
-        this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
-        this.load.image('background', './assets/starterBackground.png');
-        this.load.audio('walking', './assets/Walking.wav');
-        this.load.audio('hooking', './assets/hook.wav');
-    }
-
     create() {
         this.background = this.add.tileSprite(0, 0, 175, 100, 'background').setOrigin(0, 0).setScale(4, 4);
 
         // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
-        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
+        this.branch1 = new Branch(this, 800, 200, 'bigbranch', 90, 90, 70, false);     // spawn branch
         this.branches.add(this.branch1);
-        this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80, 70, false);     // spawn branch
+        this.branch2 = new Branch(this, 800, 150, 'bigbranch', 90, 80, 70, false);     // spawn branch
         this.branches.add(this.branch2);
         // variables and settings
         this.MAX_VELOCITY = 5;      // x-velocity
@@ -51,7 +36,7 @@ class firstScene extends Phaser.Scene {
         // ground level platforms (add platforms to the group)
         for (let i = 0; i < game.config.width * 3; i+= 32)
         {
-            let platformGround = this.matter.add.image(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+            let platformGround = this.matter.add.sprite(i, game.config.height - 16, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
             platformGround.body.immovable = true;
             platformGround.body.allowGravity = false;
             this.platforms.add(platformGround);
@@ -74,9 +59,7 @@ class firstScene extends Phaser.Scene {
         // matter physics world bounds
         this.matter.world.setBounds(0, 0, 700, game.config.height);       // world bounds
 
-        //Set keys 
-        keyLEFT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-        keyRIGHT = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+        //Set grapple
         keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
@@ -84,7 +67,7 @@ class firstScene extends Phaser.Scene {
         this.cameras.main.startFollow(this.player);
 
         //player goes to next stage
-        let next = this.matter.add.image(668, 112, 'player').setOrigin(0.5, 0.5);
+        let next = this.matter.add.sprite(668, 112, 'player').setOrigin(0.5, 0.5);
         this.player.setOnCollideWith(next, pair => {
             this.walk.stop();
             this.scene.start("secondScene");
@@ -92,13 +75,16 @@ class firstScene extends Phaser.Scene {
 
         //sound for walking
         this.walk = this.sound.add('walking', {
-            loop:true
+            loop:true,
+            volume:0.5
         });
         //sound for hooking
-        this.hook = this.sound.add('hooking');
+        this.hook = this.sound.add('hooking', {volume: 0.5});
 
         // temp change scenes screen
         this.changeScene();
+
+        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
     }
 
     update(time, delta) {
@@ -116,11 +102,11 @@ class firstScene extends Phaser.Scene {
         for (var i = 0; i < length; i++) {
             var temp = Math.random();
             if (temp < 0.4) {
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
             else{
-                let platformGround = this.matter.add.image(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
                 this.platforms.add(platformGround);
             }
         }
@@ -138,8 +124,10 @@ class firstScene extends Phaser.Scene {
                     this.scene.start('secondScene');
                     break;
                 case 't':
-                    this.scene.start('testScene')
+                    this.scene.start('testScene');
                     break;
+                case 's':
+                    this.scene.start('tilemapScene');
                 default:
                     break;
             }
