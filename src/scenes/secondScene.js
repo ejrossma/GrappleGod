@@ -16,9 +16,10 @@ class secondScene extends Phaser.Scene {
 
     create() {
         // variables and settings
-        this.MAX_VELOCITY = 5;      // x-velocity
-        this.JUMP_VELOCITY = -8;    // y-velocity
-        cursors = this.input.keyboard.createCursorKeys();   // create cursor keys
+        this.MAX_VELOCITY = 2;      // player horizontal speed
+        this.JUMP_VELOCITY = -4;    // player vertical speed
+        this.jumping = false;
+
 
         this.background = this.add.tileSprite(0, 0, 300, 100, 'background2').setOrigin(0, 0).setScale(4, 4);
         this.platforms = this.add.group();  // platform group
@@ -75,12 +76,28 @@ class secondScene extends Phaser.Scene {
         
         // temp change scenes screen
         this.changeScene();
+        // state machine
+        this.playerFSM = new StateMachine('idle', {
+            idle: new IdleState(),
+            move: new MoveState(),
+            checkGrapple: new CheckGrappleState(),
+            grappled: new GrappledState(),
+            falling: new FallingState(),
+        }, [this, this.player]);
+
+        this.keys = this.input.keyboard.createCursorKeys();
+        this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+        this.updateFps = this.time.addEvent({
+            delay: 500,
+            callback: this.adjustFPS,
+            callbackScope: this,
+            loop: true
+        });
     }
 
     update(time, delta) {
-        let deltaMultiplier = (delta/16.66667);
-        // update the player/branches
-        this.player.update(this.branchChildren, deltaMultiplier);       // main player update function
+        this.playerFSM.step();
     }
 
     addPlatform(x, y, direction, length) {
@@ -122,5 +139,10 @@ class secondScene extends Phaser.Scene {
                     break;
             }
         });
+    }
+
+    adjustFPS()
+    {
+        console.log(game.loop.actualFps);
     }
 }

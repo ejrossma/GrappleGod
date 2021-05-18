@@ -22,11 +22,11 @@ class Branch extends Phaser.Physics.Matter.Image {
         }
 
         // temporary tinted sprite
-        this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
-        this.tempTintedImage.setAlpha(0);
+        // this.tempTintedImage = this.scene.add.image(x, y, 'bigbranchHighlight');
+        // this.tempTintedImage.setAlpha(0);
     }
 
-    update(deltaMultiplier)
+    update()
     {
         if (this.static_constraint_length && this.constraint_size == 'small')
         {
@@ -87,5 +87,52 @@ class Branch extends Phaser.Physics.Matter.Image {
     // unhook the player from branch
     unHookCharacter() {
         this.scene.matter.world.remove(this.rope);    // delete constraint
+    }
+
+    // apply the swining/falling force
+    applyForce(player, branch)
+    {
+        // while grappled
+        if(this.scene.keys.right.isDown && player.canSwing)
+        {
+            this.scene.matter.applyForceFromAngle(player, 0.00015, 0);    // force right
+        }
+        else if(this.scene.keys.left.isDown && player.canSwing)
+        {
+            this.scene.matter.applyForceFromAngle(player, 0.00015, -180); // force left
+        }
+    }
+
+    applyFallingForce(player, branch)
+    {
+        if (player.y <= branch.y + branch.yBound + player.height)
+        {
+            // after letting go of grapple
+            if (player.direction == 'right' && player.canSwing == true)
+            {
+                this.scene.matter.applyForceFromAngle(player, 0.00015, 0);     // force right
+            }
+            else if (player.direction == 'left' && player.canSwing == true)
+            {
+                this.scene.matter.applyForceFromAngle(player, 0.00015, 180);   // force left
+            }
+        }
+    }
+
+    // apply force if grapple is released above canSwing bounds
+    applyForceVertical(player, branch)
+    {
+        if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == false)
+        {
+            player.x += 0.5;  // add a little bit of forward momentum
+            player.y += -0.5;  // add a little bit of vertical momentum
+            this.scene.matter.applyForceFromAngle(player, 0.00015, 0);  // force up
+        }
+        else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
+        {
+            player.x += 0.5; // add a little bit of backward momentum
+            player.y += -0.5;  // add a little bit of verticle momentum
+            this.scene.matter.applyForceFromAngle(player, 0.00015, 180);  // force up
+        }
     }
 }

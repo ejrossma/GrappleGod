@@ -4,23 +4,30 @@ class Test extends Phaser.Scene {
             key: 'testScene',
             physics: {
                 default: 'matter',
+<<<<<<< HEAD
                   matter: {
                       debug: true,
                       gravity: {
                         y: 0.5
                       }
                   }
+=======
+                matter: {
+                    debug: true,
+                    gravity: { y: 0.5 }
+                }
+>>>>>>> 6904ce3ccb45df4e630613403563a23f4207a9ea
             },
         });
     }
 
     create() {
         // variables and settings
-        this.MAX_VELOCITY = 5;      // player horizontal speed
-        this.JUMP_VELOCITY = -8;    // player vertical speed
+        this.MAX_VELOCITY = 2;      // player horizontal speed
+        this.JUMP_VELOCITY = -4;    // player vertical speed
         this.jumping = false;
 
-        cursors = this.input.keyboard.createCursorKeys();
+        // cursors = this.input.keyboard.createCursorKeys();
 
         this.rect = this.add.rectangle(0, 0, game.config.width * 3, game.config.height, 0x6e6e6e).setOrigin(0);
         this.platforms = this.add.group();
@@ -55,8 +62,8 @@ class Test extends Phaser.Scene {
         // create player (must set below the creation of platform/branch children)
         this.player = new Player(this, game.config.width/2, game.config.height/2, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player');   // player using matter physics
 
-        //Set Grapple 
-        keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+        // //Set Grapple 
+        // keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
 
         //camera setup
         this.cameras.main.setBounds(0, 0, game.config.width * 3, game.config.height);
@@ -70,12 +77,38 @@ class Test extends Phaser.Scene {
         this.hook = this.sound.add('hooking', {volume: 0.5});
         // temp change scenes screen
         this.changeScene();
+
+        // state machine
+        this.playerFSM = new StateMachine('idle', {
+            idle: new IdleState(),
+            move: new MoveState(),
+            checkGrapple: new CheckGrappleState(),
+            grappled: new GrappledState(),
+            falling: new FallingState(),
+        }, [this, this.player]);
+
+        this.keys = this.input.keyboard.createCursorKeys();
+        this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+        // display framerate
+        //ui text style
+        let uiConfig = {
+            fontFamily: 'Courier',
+            fontSize: '25px',
+            backgroundColor: '#9e9e9e',
+            color: '#000000',
+            align: 'right',
+            padding: {
+                top: 5,
+                bottom: 5,
+            },
+            fixedWidth: 0
+        }
+
     }
 
     update(time, delta) {
-        let deltaMultiplier = (delta/16.66667);
-        // update the player/branches
-        this.player.update(this.branchChildren, deltaMultiplier);       // main player update function
+        this.playerFSM.step();
     }
 
     addPlatform(x, y, direction, length) {
@@ -117,5 +150,10 @@ class Test extends Phaser.Scene {
                     break;
             }
         });
+    }
+
+    adjustFPS()
+    {
+        console.log(game.loop.actualFps);
     }
 }

@@ -20,10 +20,17 @@ class firstScene extends Phaser.Scene {
 
         // new Branch(scene, x, y, texture, xBound, yBound, MIN_CONSTRAINT_LENGTH, static_constraint_length, static_length)
         this.branches = this.add.group();
+<<<<<<< HEAD
+=======
+        this.branch1 = new Branch(this, 800, 200, 'bigBranch', 90, 90, 70, false);     // spawn branch
+        this.branches.add(this.branch1);
+        this.branch2 = new Branch(this, 800, 150, 'bigBranch', 90, 80, 70, false);     // spawn branch
+        this.branches.add(this.branch2);
+>>>>>>> 6904ce3ccb45df4e630613403563a23f4207a9ea
         // variables and settings
-        this.MAX_VELOCITY = 5;      // x-velocity
-        this.JUMP_VELOCITY = -8;    // y-velocity
-        cursors = this.input.keyboard.createCursorKeys();   // cursor keys
+        this.MAX_VELOCITY = 2;      // player horizontal speed
+        this.JUMP_VELOCITY = -4;    // player vertical speed
+        this.jumping = false;
 
         this.platforms = this.add.group();  // platform group
         // ground level platforms (add platforms to the group)
@@ -78,13 +85,24 @@ class firstScene extends Phaser.Scene {
         this.changeScene();
 
         document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
+        
+        // state machine
+        this.playerFSM = new StateMachine('idle', {
+            idle: new IdleState(),
+            move: new MoveState(),
+            checkGrapple: new CheckGrappleState(),
+            grappled: new GrappledState(),
+            falling: new FallingState(),
+        }, [this, this.player]);
+
+        this.keys = this.input.keyboard.createCursorKeys();
+        this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     }
 
     update(time, delta) {
-        let deltaMultiplier = (delta/16.66667);
-        // update the player/branches
-        this.player.update(this.branchChildren, deltaMultiplier);
+        this.playerFSM.step();
     }
+
 
     addPlatform(x, y, direction, length) {
         //select direction
