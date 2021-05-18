@@ -4,19 +4,10 @@ class Test extends Phaser.Scene {
             key: 'testScene',
             physics: {
                 default: 'matter',
-<<<<<<< HEAD
-                  matter: {
-                      debug: true,
-                      gravity: {
-                        y: 0.5
-                      }
-                  }
-=======
                 matter: {
                     debug: true,
                     gravity: { y: 0.5 }
                 }
->>>>>>> 6904ce3ccb45df4e630613403563a23f4207a9ea
             },
         });
     }
