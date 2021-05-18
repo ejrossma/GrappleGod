@@ -49,7 +49,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // horizontal movement
         if (!this.isGrappling && this.finishedGrappling &&  cursors.right.isDown) 
         {
-            this.setVelocityX(this.MAX_VELOCITY * deltaMultiplier);       // move right
+            this.setVelocityX(this.MAX_VELOCITY);       // move right
             //Play walking sound effect
             if(!this.isWalking && this.isGrounded){
                 this.isWalking = true;
@@ -63,7 +63,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         }
         else if(!this.isGrappling && this.finishedGrappling && cursors.left.isDown)
         {
-            this.setVelocityX(-this.MAX_VELOCITY * deltaMultiplier);      // move left
+            this.setVelocityX(-this.MAX_VELOCITY);      // move left
             //Play walking sound effect
             if(!this.isWalking && this.isGrounded){
                 this.isWalking = true;
@@ -94,7 +94,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // if can jump, then jump based on how long space bar is pressed
         if (!this.isGrappling && this.jumps > 0 && this.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(cursors.space, 150))
         {
-            this.setVelocityY(this.JUMP_VELOCITY * deltaMultiplier);    // jumping
+            this.setVelocityY(this.JUMP_VELOCITY);    // jumping
             this.jumping = true;                                        // currently jumping set to true
             this.isGrounded = false;                                    // set grounded boolean to false
             this.setFrictionAir(0);       
@@ -227,11 +227,11 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // while grappled
         if(player.isGrappling && cursors.right.isDown && player.canSwing)
         {
-            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, 0);    // force right
+            this.scene.matter.applyForceFromAngle(player, 0.00035, 0);    // force right
         }
         else if(player.isGrappling && cursors.left.isDown && player.canSwing)
         {
-            this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -180); // force left
+            this.scene.matter.applyForceFromAngle(player, 0.00035, -180); // force left
         }
 
         if (player.y <= branch.y + branch.yBound + player.height)
@@ -239,11 +239,11 @@ class Player extends Phaser.Physics.Matter.Sprite {
             // after letting go of grapple
             if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'right' && player.canSwing == true)
             {
-                this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 0);     // force right
+                this.scene.matter.applyForceFromAngle(player, 0.0005, 0);     // force right
             }
             else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == true)
             {
-                this.scene.matter.applyForceFromAngle(player, 0.0005 * deltaMultiplier, 180);   // force left
+                this.scene.matter.applyForceFromAngle(player, 0.0005, 180);   // force left
             }
         }
     }
@@ -257,13 +257,13 @@ class Player extends Phaser.Physics.Matter.Sprite {
             {
                 player.x += player.MAX_VELOCITY*deltaMultiplier;  // add a little bit of forward momentum
                 player.y += -3*deltaMultiplier;  // add a little bit of vertical momentum
-                this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
+                this.scene.matter.applyForceFromAngle(player, 0.00035, -90);  // force up
             }
             else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
             {
                 player.x += -player.MAX_VELOCITY*0.5*deltaMultiplier; // add a little bit of backward momentum
                 player.y += -3*deltaMultiplier;  // add a little bit of verticle momentum
-                this.scene.matter.applyForceFromAngle(player, 0.00035 * deltaMultiplier, -90);  // force up
+                this.scene.matter.applyForceFromAngle(player, 0.00035, -90);  // force up
             }
         }
     }
