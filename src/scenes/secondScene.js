@@ -87,13 +87,6 @@ class secondScene extends Phaser.Scene {
 
         this.keys = this.input.keyboard.createCursorKeys();
         this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-
-        this.updateFps = this.time.addEvent({
-            delay: 500,
-            callback: this.adjustFPS,
-            callbackScope: this,
-            loop: true
-        });
     }
 
     update(time, delta) {

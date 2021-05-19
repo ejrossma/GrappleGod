@@ -47,6 +47,7 @@ class IdleState extends State
     {
         player.setVelocityX(0);
         scene.walk.pause();
+        player.isWalking = false;
     }
 
     execute(scene, player)
@@ -104,12 +105,20 @@ class MoveState extends State
         if (left.isDown)
         {
             player.setVelocityX(-player.MAX_VELOCITY);       // move right
-            //scene.walk.play();
+            if (player.isWalking == false)
+            {
+                scene.walk.play();
+                player.isWalking = true;
+            }
         }
         else if (right.isDown)
         {
             player.setVelocityX(player.MAX_VELOCITY);      // move left
-            //scene.walk.play();
+            if (player.isWalking == false)
+            {
+                scene.walk.play();
+                player.isWalking = true;
+            }
         }
 
         // vertical movement
@@ -128,8 +137,8 @@ class MoveState extends State
             player.isGrounded = false;                                    // set grounded boolean to false
             player.setFrictionAir(0);       
             //Stop playing walking sound when in the air
-            // this.scene.walk.pause();
-            // this.isWalking = false;                              // reset air friction
+            scene.walk.pause();
+            player.isWalking = false;                              // reset air friction
         }
 
         // remove a jump upon releasing the space bar
@@ -183,6 +192,8 @@ class CheckGrappleState extends State
         // grappling
         if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
+            scene.hook.play(); //play hooking sound effect
+
             // check each individual branch
             for (var i = 0; i < scene.branchChildren.length; i++)
             {

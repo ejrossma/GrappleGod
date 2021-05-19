@@ -6,7 +6,7 @@ let config = {
     type: Phaser.CANVAS,
     width: 600, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
-    zoom: 1,
+    zoom: 1.5,
     scene: [ Load, firstScene, secondScene, Test, Tilemap ],
     scale: { 
         //autoCenter: Phaser.Scale.CENTER_BOTH
