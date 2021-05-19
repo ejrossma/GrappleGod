@@ -13,7 +13,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.jumps = 1;                     // current amt jumps
         this.MAX_JUMPS = 1;                 // max amt jumps
         this.jumping = false;               // jumping boolean
-        this.isGrounded = true;             // grounded boolean
+        this.isGrounded = false;             // grounded boolean
 
         // other variables
         this.isGrappling = false;           // currently grappling boolean
@@ -86,7 +86,7 @@ class MoveState extends State
 
         //--------------------------------------------------------------------
 
-        if (!left.isDown && !right.isDown && !space.isDown)
+        if (!left.isDown && !right.isDown && !space.isDown && player.isGrounded)
         {
             this.stateMachine.transition('idle');
             return;
@@ -101,7 +101,6 @@ class MoveState extends State
         //--------------------------------------------------------------------
 
         // horizontal movement
-        //player.setVelocity(0);
         if (left.isDown)
         {
             player.setVelocityX(-player.MAX_VELOCITY);       // move right
@@ -119,6 +118,10 @@ class MoveState extends State
                 scene.walk.play();
                 player.isWalking = true;
             }
+        }
+        else
+        {
+            player.setVelocityX(0);
         }
 
         // vertical movement
