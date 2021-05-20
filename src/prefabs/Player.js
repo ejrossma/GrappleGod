@@ -22,6 +22,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.isWalking = false;
         this.walked = false;
         this.grappleAgain = true;
+        this.canKick = true;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
@@ -53,7 +54,7 @@ class IdleState extends State
 
     execute(scene, player)
     {
-        const { left, right, space } = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -69,6 +70,13 @@ class IdleState extends State
             this.stateMachine.transition('checkGrapple');
             return;
         }
+
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
+            return;
+        }
+
         //--------------------------------------------------------------------
 
         if (!player.isGrappling)
@@ -80,6 +88,11 @@ class IdleState extends State
         {
             player.grappleAgain = true;
         }
+
+        if (down.isUp)
+        {
+            player.canKick = true;
+        }
     }
 }
 
@@ -87,7 +100,7 @@ class MoveState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -101,6 +114,12 @@ class MoveState extends State
         if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
+            return;
+        }
+
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
             return;
         }
 
@@ -137,6 +156,12 @@ class MoveState extends State
             player.jumps = player.MAX_JUMPS;
             player.jumping = false;
         }
+        else
+        {
+            //Stop playing walking sound when in the air
+            scene.walk.pause();
+            player.isWalking = false;                              // reset air friction
+        }
 
         // if can jump, then jump based on how long space bar is pressed
         if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.space, 150))
@@ -145,9 +170,6 @@ class MoveState extends State
             player.jumping = true;                                        // currently jumping set to true
             player.isGrounded = false;                                    // set grounded boolean to false
             player.setFrictionAir(0);       
-            //Stop playing walking sound when in the air
-            scene.walk.pause();
-            player.isWalking = false;                              // reset air friction
         }
 
         // remove a jump upon releasing the space bar
@@ -166,6 +188,11 @@ class MoveState extends State
         {
             player.grappleAgain = true;
         }
+
+        if (down.isUp)
+        {
+            player.canKick = true;
+        }
     }
 }
 
@@ -173,7 +200,7 @@ class CheckGrappleState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -242,7 +269,7 @@ class GrappledState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -291,7 +318,7 @@ class FallingState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -305,6 +332,12 @@ class FallingState extends State
         if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
+            return;
+        }
+
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
             return;
         }
 
@@ -327,6 +360,29 @@ class FallingState extends State
             player.currentHook.applyForceVertical(player, player.currentHook);
             player.setFrictionAir(0.015);
         }
+    }
+}
+
+class KickState extends State
+{
+    execute(scene, player)
+    {
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
+
+        //--------------------------------------------------------------------
+
+        if (player.isGrounded)
+        {
+            this.stateMachine.transition('idle');
+            return;
+        }
+
+        //--------------------------------------------------------------------
+
+        player.canKick = false;
+        player.setVelocityX(0);
+        player.setVelocityY(-player.JUMP_VELOCITY);
     }
 }
 
