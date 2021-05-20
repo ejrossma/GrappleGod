@@ -21,6 +21,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.finishedGrappling = true;      // finished landing after grappling boolean
         this.isWalking = false;
         this.walked = false;
+        this.grappleAgain = true;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
@@ -63,7 +64,7 @@ class IdleState extends State
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -73,6 +74,11 @@ class IdleState extends State
         if (!player.isGrappling)
         {
             player.grappleFailed = 2;
+        }
+
+        if (keyQ.isUp)
+        {
+            player.grappleAgain = true;
         }
     }
 }
@@ -92,7 +98,7 @@ class MoveState extends State
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -155,6 +161,11 @@ class MoveState extends State
         {
             player.grappleFailed = 2;
         }
+
+        if (keyQ.isUp)
+        {
+            player.grappleAgain = true;
+        }
     }
 }
 
@@ -188,6 +199,7 @@ class CheckGrappleState extends State
         if (player.grappleFailed == 1 && !player.finishedGrappling)
         {
             this.stateMachine.transition('grappled');
+            return;
         }
 
         //--------------------------------------------------------------------
@@ -213,11 +225,13 @@ class CheckGrappleState extends State
                         player.finishedGrappling = false;    // set finished grappling to false
                         player.isGrappling = true;           // set currently grappling boolean to true
                         player.grappleFailed = 1;
+                        player.grappleAgain = false;
                     }
                 }
             }
             if (!player.isGrappling)
             {
+                player.grappleAgain = false;
                 player.grappleFailed = 0;
             }
         }
@@ -288,7 +302,7 @@ class FallingState extends State
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -296,6 +310,12 @@ class FallingState extends State
 
         //--------------------------------------------------------------------
         
+        if (keyQ.isUp)
+        {
+            player.grappleFailed = 2;
+            player.grappleAgain = true;
+        }
+
         // after letting go of grapple, continue momentum until hitting ground
         if (player.canSwing)
         {
