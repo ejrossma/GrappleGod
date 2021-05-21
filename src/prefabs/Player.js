@@ -234,7 +234,6 @@ class CheckGrappleState extends State
         // grappling
         if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
-            scene.hook.play(); //play hooking sound effect
 
             // check each individual branch
             for (var i = 0; i < scene.branchChildren.length; i++)
@@ -244,6 +243,7 @@ class CheckGrappleState extends State
                 {
                     if (player.y >= scene.branchChildren[i].y && player.y <= scene.branchChildren[i].y + scene.branchChildren[i].yBound)
                     {
+                        scene.hook.play(); //play hooking sound effect
                         player.setVelocityX(0);       // stop x momentum 
                         player.setVelocityY(2.5);     // slow y momentum if necessary
                         scene.branchChildren[i].hookCharacter(player, scene.branchChildren[i]); // hook to branch
