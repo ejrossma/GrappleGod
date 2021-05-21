@@ -54,34 +54,37 @@ class Branch extends Phaser.Physics.Matter.Image {
         // calculate how long the constraint should be
         if (player.x > branch.x)
         {
-            this.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
+            branch.constraintLength = (((player.x - branch.x)^2)+((player.y-branch.y)^2))^0.5;
         }
-        else if (player < branch.x)
+        else if (player.x < branch.x)
         {
-            this.constraintLength = (((branch.x - player.x)^2)+((branch.y-player.y)^2))^0.5;
+            branch.constraintLength = (((branch.x - player.x)^2)+((player.y-branch.y)^2))^0.5;
         }
         else
         {
-            this.constraintLength = player.y - branch.y;
+            branch.constraintLength = player.y - branch.y;
         }
 
-        if (this.constraintLength < this.MIN_CONSTRAINT_LENGTH)
+        if (branch.constraintLength < branch.MIN_CONSTRAINT_LENGTH)
         {
-            this.constraintLength = this.MIN_CONSTRAINT_LENGTH;
+            branch.constraintLength = branch.MIN_CONSTRAINT_LENGTH;
+        }
+        else if (branch.constraintLength > branch.yBound)
+        {
+            branch.constraintLength = branch.yBound;
         }
 
         // if less than minumum set it to the minimum length
-        if (this.constraintLength < this.static_length)
+        if (branch.constraintLength < branch.static_length && branch.static_constraint_length)
         {
-            this.constraint_size = 'small';
+            branch.constraint_size = 'small';
         }
-        else if (this.constraintLength > this.static_length)
+        else if (branch.constraintLength > branch.static_length && branch.static_constraint_length)
         {
-            this.constraint_size = 'large';
+            branch.constraint_size = 'large';
         }
-        this.scene.hook.play(); //play hooking sound effect
         // create constraint
-        this.rope = this.scene.matter.add.constraint(player, branch, this.constraintLength, 0);
+        this.rope = this.scene.matter.add.constraint(player, branch, branch.constraintLength, 0);
     }
 
     // unhook the player from branch

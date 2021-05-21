@@ -13,7 +13,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.jumps = 1;                     // current amt jumps
         this.MAX_JUMPS = 1;                 // max amt jumps
         this.jumping = false;               // jumping boolean
-        this.isGrounded = true;             // grounded boolean
+        this.isGrounded = false;             // grounded boolean
 
         // other variables
         this.isGrappling = false;           // currently grappling boolean
@@ -21,6 +21,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.finishedGrappling = true;      // finished landing after grappling boolean
         this.isWalking = false;
         this.walked = false;
+        this.grappleAgain = true;
+        this.canKick = true;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
@@ -47,11 +49,12 @@ class IdleState extends State
     {
         player.setVelocityX(0);
         scene.walk.pause();
+        player.isWalking = false;
     }
 
     execute(scene, player)
     {
-        const { left, right, space } = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -62,16 +65,33 @@ class IdleState extends State
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
         }
+
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
+            return;
+        }
+
         //--------------------------------------------------------------------
 
         if (!player.isGrappling)
         {
             player.grappleFailed = 2;
+        }
+
+        if (keyQ.isUp)
+        {
+            player.grappleAgain = true;
+        }
+
+        if (down.isUp)
+        {
+            player.canKick = true;
         }
     }
 }
@@ -80,36 +100,53 @@ class MoveState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
-        if (!left.isDown && !right.isDown && !space.isDown)
+        if (!left.isDown && !right.isDown && !space.isDown && player.isGrounded)
         {
             this.stateMachine.transition('idle');
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
+            return;
+        }
+
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
             return;
         }
 
         //--------------------------------------------------------------------
 
         // horizontal movement
-        //player.setVelocity(0);
         if (left.isDown)
         {
             player.setVelocityX(-player.MAX_VELOCITY);       // move right
-            //scene.walk.play();
+            if (player.isWalking == false)
+            {
+                scene.walk.play();
+                player.isWalking = true;
+            }
         }
         else if (right.isDown)
         {
             player.setVelocityX(player.MAX_VELOCITY);      // move left
-            //scene.walk.play();
+            if (player.isWalking == false)
+            {
+                scene.walk.play();
+                player.isWalking = true;
+            }
+        }
+        else
+        {
+            player.setVelocityX(0);
         }
 
         // vertical movement
@@ -119,6 +156,12 @@ class MoveState extends State
             player.jumps = player.MAX_JUMPS;
             player.jumping = false;
         }
+        else
+        {
+            //Stop playing walking sound when in the air
+            scene.walk.pause();
+            player.isWalking = false;                              // reset air friction
+        }
 
         // if can jump, then jump based on how long space bar is pressed
         if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.space, 150))
@@ -127,9 +170,6 @@ class MoveState extends State
             player.jumping = true;                                        // currently jumping set to true
             player.isGrounded = false;                                    // set grounded boolean to false
             player.setFrictionAir(0);       
-            //Stop playing walking sound when in the air
-            // this.scene.walk.pause();
-            // this.isWalking = false;                              // reset air friction
         }
 
         // remove a jump upon releasing the space bar
@@ -143,6 +183,16 @@ class MoveState extends State
         {
             player.grappleFailed = 2;
         }
+
+        if (keyQ.isUp)
+        {
+            player.grappleAgain = true;
+        }
+
+        if (down.isUp)
+        {
+            player.canKick = true;
+        }
     }
 }
 
@@ -150,7 +200,7 @@ class CheckGrappleState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -176,6 +226,7 @@ class CheckGrappleState extends State
         if (player.grappleFailed == 1 && !player.finishedGrappling)
         {
             this.stateMachine.transition('grappled');
+            return;
         }
 
         //--------------------------------------------------------------------
@@ -183,6 +234,8 @@ class CheckGrappleState extends State
         // grappling
         if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
+            scene.hook.play(); //play hooking sound effect
+
             // check each individual branch
             for (var i = 0; i < scene.branchChildren.length; i++)
             {
@@ -199,11 +252,13 @@ class CheckGrappleState extends State
                         player.finishedGrappling = false;    // set finished grappling to false
                         player.isGrappling = true;           // set currently grappling boolean to true
                         player.grappleFailed = 1;
+                        player.grappleAgain = false;
                     }
                 }
             }
             if (!player.isGrappling)
             {
+                player.grappleAgain = false;
                 player.grappleFailed = 0;
             }
         }
@@ -214,7 +269,7 @@ class GrappledState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -263,7 +318,7 @@ class FallingState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
@@ -274,14 +329,26 @@ class FallingState extends State
             return;
         }
 
-        if (keyQ.isDown)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
         }
 
+        if (down.isDown && !player.isGrounded && player.canKick)
+        {
+            this.stateMachine.transition('kick');
+            return;
+        }
+
         //--------------------------------------------------------------------
         
+        if (keyQ.isUp)
+        {
+            player.grappleFailed = 2;
+            player.grappleAgain = true;
+        }
+
         // after letting go of grapple, continue momentum until hitting ground
         if (player.canSwing)
         {
@@ -293,6 +360,29 @@ class FallingState extends State
             player.currentHook.applyForceVertical(player, player.currentHook);
             player.setFrictionAir(0.015);
         }
+    }
+}
+
+class KickState extends State
+{
+    execute(scene, player)
+    {
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
+
+        //--------------------------------------------------------------------
+
+        if (player.isGrounded)
+        {
+            this.stateMachine.transition('idle');
+            return;
+        }
+
+        //--------------------------------------------------------------------
+
+        player.canKick = false;
+        player.setVelocityX(0);
+        player.setVelocityY(-player.JUMP_VELOCITY);
     }
 }
 

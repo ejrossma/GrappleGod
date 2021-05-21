@@ -76,8 +76,6 @@ class firstScene extends Phaser.Scene {
 
         // temp change scenes screen
         this.changeScene();
-
-        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
         
         // state machine
         this.playerFSM = new StateMachine('idle', {
@@ -86,6 +84,7 @@ class firstScene extends Phaser.Scene {
             checkGrapple: new CheckGrappleState(),
             grappled: new GrappledState(),
             falling: new FallingState(),
+            kick: new KickState(),
         }, [this, this.player]);
 
         this.keys = this.input.keyboard.createCursorKeys();

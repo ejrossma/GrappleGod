@@ -76,26 +76,11 @@ class Test extends Phaser.Scene {
             checkGrapple: new CheckGrappleState(),
             grappled: new GrappledState(),
             falling: new FallingState(),
+            kick: new KickState(),
         }, [this, this.player]);
 
         this.keys = this.input.keyboard.createCursorKeys();
         this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
-
-        // display framerate
-        //ui text style
-        let uiConfig = {
-            fontFamily: 'Courier',
-            fontSize: '25px',
-            backgroundColor: '#9e9e9e',
-            color: '#000000',
-            align: 'right',
-            padding: {
-                top: 5,
-                bottom: 5,
-            },
-            fixedWidth: 0
-        }
-
     }
 
     update(time, delta) {
