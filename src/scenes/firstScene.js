@@ -84,6 +84,7 @@ class firstScene extends Phaser.Scene {
             checkGrapple: new CheckGrappleState(),
             grappled: new GrappledState(),
             falling: new FallingState(),
+            kick: new KickState(),
         }, [this, this.player]);
 
         this.keys = this.input.keyboard.createCursorKeys();
