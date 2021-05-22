@@ -32,12 +32,42 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.grappleFailed = 2;
 
         // collision for jumping (resets upon collision)
-        for (var i = 0; i < this.scene.platformChildren.length; i++)
-        {
-            this.setOnCollideWith(this.scene.platformChildren[i], pair => {
+        // for (var i = 0; i < this.scene.platformChildren.length; i++)
+        // {
+        //     this.setOnCollideWith(this.scene.platformChildren[i], pair => {
+        //         if (this.checkCollide(pair))
+        //         {
+        //             this.isGrounded = true;
+        //             this.finishedGrappling = true;
+        //         }
+        //     });
+        // }
+
+        this.setOnCollide(pair => {
+            console.log(pair.bodyB);
+            if (this.checkCollide(pair.bodyB))
+            {
                 this.isGrounded = true;
                 this.finishedGrappling = true;
-            });
+            }
+        })
+
+        // for tilemap collision
+        // this.setOnCollideWith(this.scene.terrainLayer, pair => {
+        //     this.isGrounded = true;
+        //     this.finishedGrappling = true;
+        // });
+    }
+
+    checkCollide(platform)
+    {
+        if (this.y + this.height*.75 <= platform.position.y)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }
@@ -92,6 +122,12 @@ class IdleState extends State
         if (down.isUp)
         {
             player.canKick = true;
+        }
+
+        if (scene.isGrounded && scene.finishedGrappling)
+        {
+            player.isGrounded = true;
+            player.finishedGrappling = true;
         }
     }
 }
@@ -169,6 +205,7 @@ class MoveState extends State
             player.setVelocityY(player.JUMP_VELOCITY);    // jumping
             player.jumping = true;                                        // currently jumping set to true
             player.isGrounded = false;                                    // set grounded boolean to false
+            scene.isGrounded = false;
             player.setFrictionAir(0);       
         }
 
@@ -192,6 +229,12 @@ class MoveState extends State
         if (down.isUp)
         {
             player.canKick = true;
+        }
+
+        if (scene.isGrounded && scene.finishedGrappling)
+        {
+            player.isGrounded = true;
+            player.finishedGrappling = true;
         }
     }
 }
@@ -250,6 +293,7 @@ class CheckGrappleState extends State
                         player.currentHook = scene.branchChildren[i];        // remember current branch
                         player.setFrictionAir(0);     // reset air friction
                         player.finishedGrappling = false;    // set finished grappling to false
+                        scene.finishedGrappling = false;
                         player.isGrappling = true;           // set currently grappling boolean to true
                         player.grappleFailed = 1;
                         player.grappleAgain = false;

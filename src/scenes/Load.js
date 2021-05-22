@@ -29,6 +29,6 @@ class Load extends Phaser.Scene {
 
     create() {
         document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
-        this.scene.start('testScene');
+        this.scene.start('tilemapScene');
     }
 }
