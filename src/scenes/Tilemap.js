@@ -6,7 +6,6 @@ class Tilemap extends Phaser.Scene {
                 default: 'matter',
                   matter: {
                       debug: false,
-                      fps: 60,
                       gravity: {
                         y: 0.5
                       }

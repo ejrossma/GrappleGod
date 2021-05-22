@@ -44,7 +44,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // }
 
         this.setOnCollide(pair => {
-            console.log(pair.bodyB);
+            // console.log(pair.bodyB);
             if (this.checkCollide(pair.bodyB))
             {
                 this.isGrounded = true;
