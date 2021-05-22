@@ -22,8 +22,8 @@ class Branch extends Phaser.Physics.Matter.Image {
         }
 
         // temporary tinted sprite
-        // this.tempTintedImage = this.scene.add.image(x, y, 'bigbranchHighlight');
-        // this.tempTintedImage.setAlpha(0);
+        this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
+        this.tempTintedImage.setAlpha(0);
     }
 
     update()
@@ -98,11 +98,11 @@ class Branch extends Phaser.Physics.Matter.Image {
         // while grappled
         if(this.scene.keys.right.isDown && player.canSwing)
         {
-            this.scene.matter.applyForceFromAngle(player, 0.00015, 0);    // force right
+            this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, 0);    // force right
         }
         else if(this.scene.keys.left.isDown && player.canSwing)
         {
-            this.scene.matter.applyForceFromAngle(player, 0.00015, -180); // force left
+            this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, -180); // force left
         }
     }
 
@@ -113,11 +113,11 @@ class Branch extends Phaser.Physics.Matter.Image {
             // after letting go of grapple
             if (player.direction == 'right' && player.canSwing == true)
             {
-                this.scene.matter.applyForceFromAngle(player, 0.00015, 0);     // force right
+                this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, 0);     // force right
             }
             else if (player.direction == 'left' && player.canSwing == true)
             {
-                this.scene.matter.applyForceFromAngle(player, 0.00015, 180);   // force left
+                this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, 180);   // force left
             }
         }
     }
@@ -129,13 +129,78 @@ class Branch extends Phaser.Physics.Matter.Image {
         {
             player.x += 0.5;  // add a little bit of forward momentum
             player.y += -0.5;  // add a little bit of vertical momentum
-            this.scene.matter.applyForceFromAngle(player, 0.00015, 0);  // force up
+            this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, 0);  // force up
         }
         else if (!player.isGrappling && !player.isGrounded && !player.finishedGrappling && player.direction == 'left' && player.canSwing == false)
         {
             player.x += 0.5; // add a little bit of backward momentum
             player.y += -0.5;  // add a little bit of verticle momentum
-            this.scene.matter.applyForceFromAngle(player, 0.00015, 180);  // force up
+            this.scene.matter.applyForceFromAngle(player, player.GRAPPLE_FORCE, 180);  // force up
+        }
+    }
+}
+
+class DetectState extends State
+{
+    enter (scene, player, branchChildren)
+    {
+        
+    }
+
+    execute(scene, player, branchChildren)
+    {
+        //--------------------------------------------------------------------
+
+        if (player.isGrappling)
+        {
+            this.stateMachine.transition('highlight');
+            return;
+        }
+
+        //--------------------------------------------------------------------
+
+        for (var i = 0; i < branchChildren.length; i++)
+        {
+            if (player.x < branchChildren[i].x + branchChildren[i].xBound && player.x > branchChildren[i].x - branchChildren[i].xBound)
+            {
+                if (player.y >= branchChildren[i].y && player.y <= branchChildren[i].y + branchChildren[i].yBound)
+                {
+                    branchChildren[i].setAlpha(0);
+                    branchChildren[i].tempTintedImage.setAlpha(1);
+                }
+                else
+                {
+                    branchChildren[i].setAlpha(1);
+                    branchChildren[i].tempTintedImage.setAlpha(0);
+                }
+            }
+            else
+            {
+                branchChildren[i].setAlpha(1);
+                branchChildren[i].tempTintedImage.setAlpha(0);
+            }
+        }
+    }
+}
+
+class HighlightState extends State
+{
+    execute(scene, player, branchChildren)
+    {
+        //--------------------------------------------------------------------
+
+        if (!player.isGrappling)
+        {
+            this.stateMachine.transition('detect');
+            return;
+        }
+
+        //--------------------------------------------------------------------
+        
+        for (var i = 0; i < branchChildren.length; i++)
+        {
+            branchChildren[i].setAlpha(1);
+            branchChildren[i].tempTintedImage.setAlpha(0);
         }
     }
 }

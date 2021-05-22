@@ -2,11 +2,11 @@ class Player extends Phaser.Physics.Matter.Sprite {
     constructor(scene, x, y, velocity, jump_velocity, texture){
         super(scene.matter.world, x, y, texture);
         scene.add.existing(this);
-        //scene.physics.add.existing(this);
 
         // horizontal movement variables
         this.MAX_VELOCITY = velocity;       // max x-velocity
         this.CURRENT_VELOCITY = 0;          // current x-velocity
+        this.GRAPPLE_FORCE = 0.000125;      // grappling force
 
         // jump variables
         this.JUMP_VELOCITY = jump_velocity; // jump velocity
@@ -19,31 +19,20 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.isGrappling = false;           // currently grappling boolean
         this.canSwing = true;               // detect when can swing boolean (false if too high)
         this.finishedGrappling = true;      // finished landing after grappling boolean
-        this.isWalking = false;
-        this.walked = false;
-        this.grappleAgain = true;
-        this.canKick = true;
+        this.isWalking = false;             // bool for walk sound 
+        this.grappleAgain = true;           // bool for allowing to grapple again
+        this.canKick = true;                // bool for checking if player is allowed to kick again
 
         // other things
         this.setFriction(0);                // remove sliding on walls
         this.setFixedRotation(0);           // prevent player sprite from unnecessarily spinning when moving
 
         // for state machine logic
-        this.grappleFailed = 2;
+        this.grappleFailed = 2;             // bool for checking grapples
 
-        // collision for jumping (resets upon collision)
-        // for (var i = 0; i < this.scene.platformChildren.length; i++)
-        // {
-        //     this.setOnCollideWith(this.scene.platformChildren[i], pair => {
-        //         if (this.checkCollide(pair))
-        //         {
-        //             this.isGrounded = true;
-        //             this.finishedGrappling = true;
-        //         }
-        //     });
-        // }
-
-        this.setOnCollide(pair => {
+        // when colliding with the ground, check if can reset the jump
+        this.setOnCollideActive(pair => {
+            // console.log(pair.bodyA);
             // console.log(pair.bodyB);
             if (this.checkCollide(pair.bodyB))
             {
@@ -51,12 +40,6 @@ class Player extends Phaser.Physics.Matter.Sprite {
                 this.finishedGrappling = true;
             }
         })
-
-        // for tilemap collision
-        // this.setOnCollideWith(this.scene.terrainLayer, pair => {
-        //     this.isGrounded = true;
-        //     this.finishedGrappling = true;
-        // });
     }
 
     checkCollide(platform)
@@ -429,50 +412,3 @@ class KickState extends State
         player.setVelocityY(-player.JUMP_VELOCITY);
     }
 }
-
-    // update(branchChildren, deltaMultiplier)
-    // {
-        
-    //     // update while grappling
-    //     if (this.isGrappling)
-    //     {
-    //         this.grapplingUpdate(this.currentHook, deltaMultiplier);
-            
-    //         // update branches when grappling
-    //         for (var i = 0; i < branchChildren.length; i++)
-    //         {
-    //             branchChildren[i].update(deltaMultiplier);
-
-    //             // disable tint
-    //             branchChildren[i].setAlpha(1);
-    //             branchChildren[i].tempTintedImage.setAlpha(0);
-    //         }
-    //     }
-
-    //     // highlight the branch if within range
-    //     if (!this.isGrappling)
-    //     {
-    //         // check each individual branch
-    //         for (var i = 0; i < branchChildren.length; i++)
-    //         {
-    //             if (this.x < branchChildren[i].x + branchChildren[i].xBound && this.x > branchChildren[i].x - branchChildren[i].xBound)
-    //             {
-    //                 if (this.y >= branchChildren[i].y && this.y <= branchChildren[i].y + branchChildren[i].yBound)
-    //                 {
-    //                     branchChildren[i].setAlpha(0);
-    //                     branchChildren[i].tempTintedImage.setAlpha(1);
-    //                 }
-    //                 else
-    //                 {
-    //                     branchChildren[i].setAlpha(1);
-    //                     branchChildren[i].tempTintedImage.setAlpha(0);
-    //                 }
-    //             }
-    //             else
-    //             {
-    //                 branchChildren[i].setAlpha(1);
-    //                 branchChildren[i].tempTintedImage.setAlpha(0);
-    //             }
-    //         }
-    //     }
-    // }
