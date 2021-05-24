@@ -5,17 +5,15 @@ class Load extends Phaser.Scene {
 
     preload() {
         //sprites
-        this.load.image('player', './assets/playerArt.png');
-        this.load.image('pixeldude', './assets/tilemapplayer.png');
-        this.load.image('treePlatform', './assets/treePlatform.png');
-        this.load.image('treePlatformTwo', './assets/treePlatformTwo.png');
+        this.load.image('player', './assets/archive/playerArt.png');
+        this.load.image('pixeldude', './assets/archive/tilemapplayer.png');
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
         this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
 
         //backgrounds
-        this.load.image('background', './assets/starterBackground.png');
-        this.load.image('background2', './assets/starter2Background.png');
+        this.load.image('background', './assets/backgrounds/starterBackground.png');
+        this.load.image('background2', './assets/backgrounds/starter2Background.png');
 
         //tilemap images/jsons
         this.load.image('tileset', './assets/Tilemap.png');
@@ -23,8 +21,11 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON('starterarea_twoJSON', './assets/Tilemaps/starterarea_two.json');
 
         //audio
-        this.load.audio('walking', './assets/Walking.wav');
-        this.load.audio('hooking', './assets/hook.wav');
+        this.load.audio('walking', './assets/sounds/Walking.wav');
+        this.load.audio('hooking', './assets/sounds/hook.wav');
+
+        //atlas
+        this.load.atlas('player_animations', './assets/atlas/player_sprites.png', './assets/atlas/player_sprites.json');
     }
 
     create() {
