@@ -152,6 +152,7 @@ class MoveState extends State
             {
                 scene.walk.play();
                 player.isWalking = true;
+                player.flipX = true;
             }
         }
         else if (right.isDown)
@@ -161,6 +162,7 @@ class MoveState extends State
             {
                 scene.walk.play();
                 player.isWalking = true;
+                player.flipX = false;
             }
         }
         else

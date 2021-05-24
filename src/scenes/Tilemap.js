@@ -1,21 +1,6 @@
 class Tilemap extends Phaser.Scene {
     constructor(config) {
-        super({
-            key: 'tilemapScene',
-            physics: {
-                default: 'matter',
-                  matter: {
-                      debug: false,
-                      gravity: {
-                        y: 0.5
-                      }
-                  },
-                  arcade: {
-                    debug: true,
-                    gravity: { y: 1000 }
-                  }
-            }
-        });
+        super('tilemapScene');
     }
 
 
@@ -37,7 +22,22 @@ class Tilemap extends Phaser.Scene {
         const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
 
         // create player (must set below the creation of platform/branch children)
-        this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'pixeldude');   // player using matter physics
+        this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+
+        //animations
+        this.anims.create({
+            key: 'player_idle',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_idle',
+                start: 1,
+                end: 4,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(1);    // bring player to front
 
         // terrain layer
