@@ -15,7 +15,7 @@ let config = {
         default: 'matter',
         matter: {
             tileBias: 36,
-            debug: false,
+            debug: true,
             gravity: { y: 0.5 }
         }
     },

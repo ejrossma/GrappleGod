@@ -67,18 +67,17 @@ class IdleState extends State
 
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
         
-        if (left.isDown || right.isDown || space.isDown)
+        if (left.isDown || right.isDown || up.isDown)
         {
             this.stateMachine.transition('move');
             return;
         }
 
-        if (keyQ.isDown && player.grappleAgain)
+        if (space.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -97,7 +96,7 @@ class IdleState extends State
             player.grappleFailed = 2;
         }
 
-        if (keyQ.isUp)
+        if (space.isUp)
         {
             player.grappleAgain = true;
         }
@@ -119,18 +118,17 @@ class MoveState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
 
-        if (!left.isDown && !right.isDown && !space.isDown && player.isGrounded)
+        if (!left.isDown && !right.isDown && !up.isDown && player.isGrounded)
         {
             this.stateMachine.transition('idle');
             return;
         }
 
-        if (keyQ.isDown && player.grappleAgain)
+        if (space.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -185,7 +183,7 @@ class MoveState extends State
         }
 
         // if can jump, then jump based on how long space bar is pressed
-        if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.space, 150))
+        if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.up, 150))
         {
             player.setVelocityY(player.JUMP_VELOCITY);    // jumping
             player.jumping = true;                                        // currently jumping set to true
@@ -195,7 +193,7 @@ class MoveState extends State
         }
 
         // remove a jump upon releasing the space bar
-        if (!player.isGrappling && player.jumping && player.finishedGrappling && Phaser.Input.Keyboard.UpDuration(scene.keys.space)) 
+        if (!player.isGrappling && player.jumping && player.finishedGrappling && Phaser.Input.Keyboard.UpDuration(scene.keys.up)) 
         {
             player.jumps--;                                               // subtract a jump from current jumps
             player.jumping = false;                                       // set boolean to false to prevent another jump
@@ -206,7 +204,7 @@ class MoveState extends State
             player.grappleFailed = 2;
         }
 
-        if (keyQ.isUp)
+        if (space.isUp)
         {
             player.grappleAgain = true;
         }
@@ -228,8 +226,7 @@ class CheckGrappleState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
 
@@ -260,7 +257,7 @@ class CheckGrappleState extends State
         //--------------------------------------------------------------------
 
         // grappling
-        if (Phaser.Input.Keyboard.JustDown(keyQ))
+        if (Phaser.Input.Keyboard.JustDown(space))
         {
 
             // check each individual branch
@@ -298,8 +295,7 @@ class GrappledState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
 
@@ -312,7 +308,7 @@ class GrappledState extends State
         //--------------------------------------------------------------------
 
         //if currently grappling, Q to release
-        if (Phaser.Input.Keyboard.JustDown(keyQ))
+        if (Phaser.Input.Keyboard.JustDown(space))
         {
             player.currentHook.unHookCharacter();   // unhook the character
             player.isGrappling = false;             // set currently grappling bool to false
@@ -347,8 +343,7 @@ class FallingState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
 
@@ -372,7 +367,7 @@ class FallingState extends State
 
         //--------------------------------------------------------------------
         
-        if (keyQ.isUp)
+        if (space.isUp)
         {
             player.grappleFailed = 2;
             player.grappleAgain = true;
@@ -396,8 +391,7 @@ class KickState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, down }  = scene.keys;
-        const keyQ = scene.keys.keyQ;
+        const { left, right, space, up, down }  = scene.keys;
 
         //--------------------------------------------------------------------
 
