@@ -85,24 +85,24 @@ class firstScene extends Phaser.Scene {
     }
 
 
-    // addPlatform(x, y, direction, length) {
-    //     //select direction
-    //     let dir = 1;
-    //     if (direction == 'l')
-    //         dir *= -1;
-    //     //loop through to place
-    //     for (var i = 0; i < length; i++) {
-    //         var temp = Math.random();
-    //         if (temp < 0.4) {
-    //             let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
-    //             this.platforms.add(platformGround);
-    //         }
-    //         else{
-    //             let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
-    //             this.platforms.add(platformGround);
-    //         }
-    //     }
-    // }
+    addPlatform(x, y, direction, length) {
+        //select direction
+        let dir = 1;
+        if (direction == 'l')
+            dir *= -1;
+        //loop through to place
+        for (var i = 0; i < length; i++) {
+            var temp = Math.random();
+            if (temp < 0.4) {
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatformTwo', null, { isStatic: true }).setOrigin(0.5);
+                this.platforms.add(platformGround);
+            }
+            else{
+                let platformGround = this.matter.add.sprite(x + dir * (32 * i), y, 'treePlatform', null, { isStatic: true }).setOrigin(0.5);
+                this.platforms.add(platformGround);
+            }
+        }
+    }
 
     changeScene()
     {

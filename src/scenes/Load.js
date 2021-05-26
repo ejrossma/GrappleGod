@@ -10,6 +10,8 @@ class Load extends Phaser.Scene {
         this.load.image('smallBranch', './assets/smallBranch.png');
         this.load.image('bigBranch', './assets/bigBranch.png');
         this.load.image('bigBranchHighlight', './assets/bigBranchHighlight.png');
+        this.load.image('treePlatform', './assets/archive/treePlatform.png');
+        this.load.image('treePlatformTwo', './assets/archive/treePlatformTwo.png');
 
         //backgrounds
         this.load.image('background', './assets/backgrounds/starterBackground.png');

@@ -14,8 +14,8 @@ let config = {
     physics: {
         default: 'matter',
         matter: {
-            tileBias: 36,
-            debug: false,
+            tileBias: 64,
+            debug: true,
             gravity: { y: 0.5 }
         }
     },
