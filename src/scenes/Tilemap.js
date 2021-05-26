@@ -22,7 +22,7 @@ class Tilemap extends Phaser.Scene {
         const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
 
         // create player (must set below the creation of platform/branch children)
-        this.player = new Player(this, 66, 128, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+        this.player = new Player(this, 66, 108, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
 
         //animations
         this.anims.create({
