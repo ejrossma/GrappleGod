@@ -12,7 +12,7 @@
         {
          "draworder":"topdown",
          "id":4,
-         "name":"Object Layer 1",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
@@ -36,12 +36,24 @@
                  "width":41.3333333333333,
                  "x":774,
                  "y":-2.33333333333333
+                }, 
+                {
+                 "gid":73,
+                 "height":514.666666666667,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":770.333333333333,
+                 "x":47,
+                 "y":510.333333333333
                 }],
          "offsetx":-48,
          "offsety":2.33333333333333,
          "opacity":1,
          "type":"objectgroup",
-         "visible":true,
+         "visible":false,
          "x":0,
          "y":0
         }, 
@@ -70,7 +82,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":6,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -80,12 +92,12 @@
          "columns":6,
          "firstgid":1,
          "image":"..\/Tilemap.png",
-         "imageheight":160,
+         "imageheight":192,
          "imagewidth":96,
          "margin":0,
          "name":"Tilemap",
          "spacing":0,
-         "tilecount":60,
+         "tilecount":72,
          "tileheight":16,
          "tiles":[
                 {
@@ -259,8 +271,8 @@
         }, 
         {
          "columns":1,
-         "firstgid":61,
-         "image":"..\/starterBackground.png",
+         "firstgid":73,
+         "image":"..\/backgrounds\/starterBackground.png",
          "imageheight":100,
          "imagewidth":175,
          "margin":0,

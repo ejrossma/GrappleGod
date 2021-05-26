@@ -5,7 +5,7 @@
         {
          "draworder":"topdown",
          "id":3,
-         "name":"Object Layer 1",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
@@ -29,6 +29,105 @@
                  "width":41.6899391335481,
                  "x":597.164339419979,
                  "y":-0.58718224131758
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":5,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":256.333333333333,
+                 "y":288.333333333333
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":7,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":416,
+                 "y":256.333333333333
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":8,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":480,
+                 "y":176
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":9,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16.9999999999999,
+                 "x":415,
+                 "y":160
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":10,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":224,
+                 "y":127.666666666667
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":12,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":336.333333333333,
+                 "y":47.3333333333333
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":13,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":416,
+                 "y":64.6666666666666
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":11,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":256.333333333333,
+                 "y":64.3333333333333
+                }, 
+                {
+                 "height":15.6666666666667,
+                 "id":6,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.6666666666666,
+                 "x":336,
+                 "y":272.333333333333
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -61,7 +160,7 @@
          "y":0
         }],
  "nextlayerid":4,
- "nextobjectid":4,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -71,12 +170,12 @@
          "columns":6,
          "firstgid":1,
          "image":"..\/Tilemap.png",
-         "imageheight":160,
+         "imageheight":192,
          "imagewidth":96,
          "margin":0,
          "name":"Tilemap",
          "spacing":0,
-         "tilecount":60,
+         "tilecount":72,
          "tileheight":16,
          "tiles":[
                 {

@@ -82,6 +82,9 @@ class Tilemap extends Phaser.Scene {
             highlight: new HighlightState(),
         }, [this, this.player, this.branchChildren]);
 
+        //Create the next scene zone
+        this.nextSceneSpawn(map);
+        
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
     }
@@ -135,6 +138,15 @@ class Tilemap extends Phaser.Scene {
                 default:
                     break;
             }
+        });
+    }
+    //Sends the player to the next scene once they collide with the next zone marker
+    nextSceneSpawn(map){
+        const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
+        this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
+        this.player.setOnCollideWith(this.transfer, pair => {
+            this.walk.stop();
+            this.scene.start("tilemapScene");
         });
     }
 }
