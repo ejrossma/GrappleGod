@@ -22,8 +22,8 @@ class Branch extends Phaser.Physics.Matter.Image {
         }
 
         // temporary tinted sprite
-        this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
-        this.tempTintedImage.setAlpha(0);
+        // this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
+        // this.tempTintedImage.setAlpha(0);
     }
 
     update()
@@ -161,24 +161,24 @@ class DetectState extends State
 
         for (var i = 0; i < branchChildren.length; i++)
         {
-            if (player.x < branchChildren[i].x + branchChildren[i].xBound && player.x > branchChildren[i].x - branchChildren[i].xBound)
-            {
-                if (player.y >= branchChildren[i].y && player.y <= branchChildren[i].y + branchChildren[i].yBound)
-                {
-                    branchChildren[i].setAlpha(0);
-                    branchChildren[i].tempTintedImage.setAlpha(1);
-                }
-                else
-                {
-                    branchChildren[i].setAlpha(1);
-                    branchChildren[i].tempTintedImage.setAlpha(0);
-                }
-            }
-            else
-            {
-                branchChildren[i].setAlpha(1);
-                branchChildren[i].tempTintedImage.setAlpha(0);
-            }
+            // if (player.x < branchChildren[i].x + branchChildren[i].xBound && player.x > branchChildren[i].x - branchChildren[i].xBound)
+            // {
+            //     if (player.y >= branchChildren[i].y && player.y <= branchChildren[i].y + branchChildren[i].yBound)
+            //     {
+            //         branchChildren[i].setAlpha(0);
+            //         branchChildren[i].tempTintedImage.setAlpha(1);
+            //     }
+            //     else
+            //     {
+            //         branchChildren[i].setAlpha(1);
+            //         branchChildren[i].tempTintedImage.setAlpha(0);
+            //     }
+            // }
+            // else
+            // {
+            //     branchChildren[i].setAlpha(1);
+            //     branchChildren[i].tempTintedImage.setAlpha(0);
+            // }
         }
     }
 }
@@ -197,10 +197,10 @@ class HighlightState extends State
 
         //--------------------------------------------------------------------
         
-        for (var i = 0; i < branchChildren.length; i++)
-        {
-            branchChildren[i].setAlpha(1);
-            branchChildren[i].tempTintedImage.setAlpha(0);
-        }
+        // for (var i = 0; i < branchChildren.length; i++)
+        // {
+        //     branchChildren[i].setAlpha(1);
+        //     branchChildren[i].tempTintedImage.setAlpha(0);
+        // }
     }
 }

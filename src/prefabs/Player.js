@@ -270,7 +270,7 @@ class CheckGrappleState extends State
                     {
                         scene.hook.play(); //play hooking sound effect
                         player.setVelocityX(0);       // stop x momentum 
-                        player.setVelocityY(2.5);     // slow y momentum if necessary
+                        player.setVelocityY(1);     // slow y momentum if necessary
                         scene.branchChildren[i].hookCharacter(player, scene.branchChildren[i]); // hook to branch
                         player.currentHook = scene.branchChildren[i];        // remember current branch
                         player.setFrictionAir(0);     // reset air friction
@@ -353,7 +353,7 @@ class FallingState extends State
             return;
         }
 
-        if (keyQ.isDown && player.grappleAgain)
+        if (space.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
