@@ -11,10 +11,6 @@ class Tilemap extends Phaser.Scene {
         this.jumping = false;
         this.isGrounded = false;
         this.finishedGrappling = false;
-        this.branches = this.add.group();
-        this.branch1 = new Branch(this, 0, 150, 'bigBranch', 90, 90, 70, false);
-        this.branches.add(this.branch1);
-        this.branchChildren = this.branches.getChildren();  // branches as an array for checking
         this.frameTime = 0;         // initialized variable
 
         //add tilemap data & attach image to it
@@ -22,7 +18,11 @@ class Tilemap extends Phaser.Scene {
         const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
 
         // create player (must set below the creation of platform/branch children)
-        this.player = new Player(this, 66, 108, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+        let playerObject = map.filterObjects("Objects", obj => obj.name === 'player');
+        let playerList = playerObject;
+        playerList.map((element) => {
+            this.player = new Player(this, element.x, element.y, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+        });
 
         //animations
         this.anims.create({
@@ -75,6 +75,17 @@ class Tilemap extends Phaser.Scene {
             falling: new FallingState(),
             kick: new KickState(),
         }, [this, this.player]);
+
+        // branches
+        //console.log(map);
+        let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
+        let branchList = branchObject;
+        this.branches = this.add.group();
+        branchList.map((element) => {
+            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+            this.branches.add(branch);
+        });
+        this.branchChildren = this.branches.getChildren();  // branches as an array for checking
 
         // branch state machine
         this.branchFSM = new StateMachine('detect', {
