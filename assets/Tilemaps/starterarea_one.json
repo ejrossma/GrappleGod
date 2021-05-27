@@ -48,12 +48,23 @@
                  "width":770.333333333333,
                  "x":47,
                  "y":510.333333333333
+                }, 
+                {
+                 "height":15.5,
+                 "id":7,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.5,
+                 "x":544.5,
+                 "y":111.666666666667
                 }],
          "offsetx":-48,
          "offsety":2.33333333333333,
          "opacity":1,
          "type":"objectgroup",
-         "visible":false,
+         "visible":true,
          "x":0,
          "y":0
         }, 
@@ -82,7 +93,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":7,
+ "nextobjectid":8,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
