@@ -239,7 +239,7 @@ class Tilemap extends Phaser.Scene {
         this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         this.player.setOnCollideWith(this.transfer, pair => {
             this.walk.stop();
-            tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
+            //this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         });
     }
     //Respawns the player to the start of the map
