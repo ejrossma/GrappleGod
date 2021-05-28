@@ -3,8 +3,8 @@
  <editorsettings>
   <export format="json"/>
  </editorsettings>
- <tileset firstgid="1" name="Tilemap" tilewidth="16" tileheight="16" tilecount="60" columns="6">
-  <image source="../Tilemap.png" width="96" height="160"/>
+ <tileset firstgid="1" name="Tilemap" tilewidth="16" tileheight="16" tilecount="72" columns="6">
+  <image source="../Tilemap.png" width="96" height="192"/>
   <tile id="0">
    <properties>
     <property name="collision" type="bool" value="true"/>
@@ -81,14 +81,14 @@
    </properties>
   </tile>
  </tileset>
- <tileset firstgid="61" name="starterBackground" tilewidth="175" tileheight="100" tilecount="1" columns="1">
+ <tileset firstgid="73" name="starterBackground" tilewidth="175" tileheight="100" tilecount="1" columns="1">
   <image source="../starterBackground.png" width="175" height="100"/>
  </tileset>
- <objectgroup id="4" name="Object Layer 1" offsetx="-48" offsety="2.33333">
-  <object id="3" name="player" x="573.333" y="454.333">
+ <objectgroup id="4" name="Zones">
+  <object id="3" name="playerSpawn" x="573.333" y="454.333">
    <point/>
   </object>
-  <object id="5" name="nextLevel" x="774" y="-2.33333" width="41.3333" height="198.667"/>
+  <object id="5" name="nextLevel" x="702" y="113.667" width="65.3333" height="80.667"/>
  </objectgroup>
  <layer id="1" name="Terrain" width="48" height="32">
   <data encoding="csv">

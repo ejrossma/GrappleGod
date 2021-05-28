@@ -22,6 +22,10 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON('tilemapJSON', './assets/Test.json');
         this.load.tilemapTiledJSON('starterarea_twoJSON', './assets/Tilemaps/starterarea_two.json');
 
+        this.load.tilemapTiledJSON('starterarea_oneJSON', './assets/Tilemaps/starterarea_one.json');
+        this.load.tilemapTiledJSON('starterarea_threeJSON', './assets/Tilemaps/starterarea_three.json');
+        this.load.tilemapTiledJSON('starterarea_sixJSON', './assets/Tilemaps/starterarea_six.json');
+
         //audio
         this.load.audio('walking', './assets/sounds/Walking.wav');
         this.load.audio('hooking', './assets/sounds/hook.wav');
@@ -31,7 +35,7 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
+        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Up Arrow: Jump<br>Space: Connect to Grapple & Release Grapple';
         this.scene.start('tilemapScene');
     }
 }
