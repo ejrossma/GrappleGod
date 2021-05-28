@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="75" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="5">
+<map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="75" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="7">
  <tileset firstgid="1" name="starter2Background" tilewidth="300" tileheight="100" tilecount="1" columns="1">
   <image source="../starter2Background.png" width="300" height="100"/>
  </tileset>
- <tileset firstgid="2" name="Tilemap" tilewidth="16" tileheight="16" tilecount="60" columns="6">
-  <image source="../Tilemap.png" width="96" height="160"/>
+ <tileset firstgid="2" name="Tilemap" tilewidth="16" tileheight="16" tilecount="72" columns="6">
+  <image source="../Tilemap.png" width="96" height="192"/>
   <tile id="0">
    <properties>
     <property name="collision" type="bool" value="true"/>
@@ -82,13 +82,14 @@
    </properties>
   </tile>
  </tileset>
- <objectgroup id="2" name="Object Layer 1" offsetx="-1.33333" offsety="9.33333">
+ <objectgroup id="2" name="Zones" offsetx="-1.33333" offsety="9.33333">
   <object id="3" name="Player" x="26" y="146" visible="0">
    <point/>
   </object>
-  <object id="4" name="player" x="29.3333" y="134.667">
+  <object id="4" name="playerSpawn" x="29.3333" y="134.667">
    <point/>
   </object>
+  <object id="5" name="nextLevel" x="1144.83" y="73.6667" width="55.5" height="76.5"/>
  </objectgroup>
  <layer id="1" name="Terrain" width="75" height="30">
   <data encoding="csv">
