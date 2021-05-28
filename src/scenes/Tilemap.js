@@ -18,7 +18,11 @@ class Tilemap extends Phaser.Scene {
         this.frameTime = 0;         // initialized variable
 
         // create player (must set below the creation of platform/branch children)
-        this.player = new Player(this, 66, 108, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+        let playerObject = map.filterObjects("Objects", obj => obj.name === 'player');
+        let playerList = playerObject;
+        playerList.map((element) => {
+            this.player = new Player(this, element.x, element.y, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+        });
 
         //animations
         this.anims.create({
@@ -88,12 +92,26 @@ class Tilemap extends Phaser.Scene {
             kick: new KickState(),
         }, [this, this.player]);
 
+        // branches
+        //console.log(map);
+        let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
+        let branchList = branchObject;
+        this.branches = this.add.group();
+        branchList.map((element) => {
+            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+            this.branches.add(branch);
+        });
+        this.branchChildren = this.branches.getChildren();  // branches as an array for checking
+
         // branch state machine
         this.branchFSM = new StateMachine('detect', {
             detect: new DetectState(),
             highlight: new HighlightState(),
         }, [this, this.player, this.branchChildren]);
 
+        //Create the next scene zone
+        this.nextSceneSpawn(map);
+        
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
     }
@@ -210,6 +228,14 @@ class Tilemap extends Phaser.Scene {
                     break;
             }
         })
+    //Sends the player to the next scene once they collide with the next zone marker
+    nextSceneSpawn(map){
+        const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
+        this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
+        this.player.setOnCollideWith(this.transfer, pair => {
+            this.walk.stop();
+            this.scene.start("tilemapScene");
+        });
     }
 }
 

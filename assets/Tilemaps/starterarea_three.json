@@ -13,7 +13,7 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Zones",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
@@ -46,12 +46,79 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":55.5,
-                 "x":1144.83333,
-                 "y":73.66667
+                 "width":41.3333333333333,
+                 "x":1160.66666666667,
+                 "y":-10
+                }, 
+                {
+                 "height":32,
+                 "id":6,
+                 "name":"deadZone",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":1200.66666666667,
+                 "x":1.33333333333334,
+                 "y":437.333333333333
+                }, 
+                {
+                 "gid":1,
+                 "height":480.666666666667,
+                 "id":7,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":1203.33333333333,
+                 "x":-2,
+                 "y":480.666666666667
+                }, 
+                {
+                 "height":16,
+                 "id":8,
+                 "name":"branc",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":255.833333333333,
+                 "y":127.166666666667
+                }, 
+                {
+                 "height":16,
+                 "id":11,
+                 "name":"branc",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":383.333333333333,
+                 "y":159.166666666667
+                }, 
+                {
+                 "height":16,
+                 "id":12,
+                 "name":"branc",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":784.333333333333,
+                 "y":144.166666666667
+                }, 
+                {
+                 "height":16,
+                 "id":13,
+                 "name":"branc",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":912.333333333333,
+                 "y":159.666666666667
                 }],
-         "offsetx":-1.33333,
-         "offsety":9.33333,
+         "offsetx":-1.33333333333334,
+         "offsety":-0.666666666666661,
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -83,7 +150,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":7,
+ "nextobjectid":14,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -92,7 +159,7 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"..\/starter2Background.png",
+         "image":"..\/backgrounds\/starter2Background.png",
          "imageheight":100,
          "imagewidth":300,
          "margin":0,

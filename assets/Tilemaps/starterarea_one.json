@@ -12,7 +12,7 @@
         {
          "draworder":"topdown",
          "id":4,
-         "name":"Zones",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
@@ -33,9 +33,32 @@
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":65.3333,
-                 "x":702,
-                 "y":113.66667
+                 "width":41.3333333333333,
+                 "x":774,
+                 "y":-2.33333333333333
+                }, 
+                {
+                 "gid":73,
+                 "height":514.666666666667,
+                 "id":6,
+                 "name":"",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":770.333333333333,
+                 "x":47,
+                 "y":510.333333333333
+                }, 
+                {
+                 "height":15.5,
+                 "id":7,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":15.5,
+                 "x":544.5,
+                 "y":111.666666666667
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -68,7 +91,7 @@
          "y":0
         }],
  "nextlayerid":7,
- "nextobjectid":6,
+ "nextobjectid":8,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -226,7 +249,7 @@
         {
          "columns":1,
          "firstgid":73,
-         "image":"..\/starterBackground.png",
+         "image":"..\/backgrounds\/starterBackground.png",
          "imageheight":100,
          "imagewidth":175,
          "margin":0,

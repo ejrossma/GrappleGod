@@ -29,7 +29,7 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"Objects",
          "objects":[
                 {
                  "height":0,
@@ -53,6 +53,39 @@
                  "width":41.8188327962764,
                  "x":597.493734335839,
                  "y":-2.03938417472254
+                }, 
+                {
+                 "height":16.3333333333334,
+                 "id":4,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":176,
+                 "y":335.666666666667
+                }, 
+                {
+                 "height":16.3333333333334,
+                 "id":5,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":208,
+                 "y":160
+                }, 
+                {
+                 "height":16.3333333333334,
+                 "id":6,
+                 "name":"branch",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":16,
+                 "x":176.333333333333,
+                 "y":63.6666666666666
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -61,7 +94,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":4,
+ "nextobjectid":7,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -71,12 +104,12 @@
          "columns":6,
          "firstgid":1,
          "image":"..\/Tilemap.png",
-         "imageheight":160,
+         "imageheight":192,
          "imagewidth":96,
          "margin":0,
          "name":"GrassyTileSet",
          "spacing":0,
-         "tilecount":60,
+         "tilecount":72,
          "tileheight":16,
          "tiles":[
                 {
