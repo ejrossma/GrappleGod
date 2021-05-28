@@ -62,13 +62,13 @@
                  "type":"",
                  "visible":true,
                  "width":1203.33333333333,
-                 "x":-2,
-                 "y":480.666666666667
+                 "x":-1.00000000000011,
+                 "y":480.333333333334
                 }, 
                 {
                  "height":16,
                  "id":8,
-                 "name":"branc",
+                 "name":"branch",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -79,7 +79,7 @@
                 {
                  "height":16,
                  "id":11,
-                 "name":"branc",
+                 "name":"branch",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -90,7 +90,7 @@
                 {
                  "height":16,
                  "id":12,
-                 "name":"branc",
+                 "name":"branch",
                  "rotation":0,
                  "type":"",
                  "visible":true,
@@ -101,7 +101,7 @@
                 {
                  "height":16,
                  "id":13,
-                 "name":"branc",
+                 "name":"branch",
                  "rotation":0,
                  "type":"",
                  "visible":true,
