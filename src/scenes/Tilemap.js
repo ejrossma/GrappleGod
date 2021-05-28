@@ -227,7 +227,8 @@ class Tilemap extends Phaser.Scene {
                     this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                     break;
             }
-        })
+        });
+    }
     //Sends the player to the next scene once they collide with the next zone marker
     nextSceneSpawn(map){
         const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
@@ -238,4 +239,3 @@ class Tilemap extends Phaser.Scene {
         });
     }
 }
-
