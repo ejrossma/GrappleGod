@@ -17,6 +17,13 @@ class Tilemap extends Phaser.Scene {
         this.branchChildren = this.branches.getChildren();  // branches as an array for checking
         this.frameTime = 0;         // initialized variable
 
+        //add tilemap data & attach image to it
+        const map = this.add.tilemap('starterarea_twoJSON');
+        const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
+        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
+        const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
+        terrainLayer.setCollisionByProperty({ collision: true });
+
         // create player (must set below the creation of platform/branch children)
         let playerObject = map.filterObjects("Objects", obj => obj.name === 'player');
         let playerList = playerObject;
@@ -40,13 +47,7 @@ class Tilemap extends Phaser.Scene {
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(1);    // bring player to front
 
-        //add tilemap data & attach image to it
-        const map = this.add.tilemap('starterarea_twoJSON');
-        const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
-        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
-        const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
-        terrainLayer.setCollisionByProperty({ collision: true });
-        //this.matter.world.convertTilemapLayer(terrainLayer);
+        
 
         // const map2 = this.add.tilemap('starterarea_oneJSON');
         // const terrainLayer2 = map2.createLayer('Terrain', tileset, 0, 0);
