@@ -119,6 +119,25 @@ class Tilemap extends Phaser.Scene {
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
         this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
+
+        // health
+        this.healthGroup = this.add.group();
+        let health1 = this.matter.add.sprite(16, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        health1.setCollisionCategory(0);
+        this.healthGroup.add(health1);
+        let health2 = this.matter.add.sprite(40, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        health2.setCollisionCategory(0);
+        this.healthGroup.add(health2);
+        let health3 = this.matter.add.sprite(64, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        health3.setCollisionCategory(0);
+        this.healthGroup.add(health3);  
+        this.healthChildren = this.healthGroup.getChildren();
+        this.healthChildren.forEach(function(child)
+        {
+            child.setScrollFactor(0);
+        });
+        this.currentHeart = 2;
+        this.updateHealth(this.healthChildren);
     }
 
     update(time, delta)
@@ -246,5 +265,49 @@ class Tilemap extends Phaser.Scene {
     //Respawns the player to the start of the map
     playerRespawn(map){
         
+    }
+
+    updateHealth(health)
+    {
+        this.input.keyboard.on('keydown', (event) => {
+            switch(event.key) {
+                case 'f':
+                    if (this.currentHeart == 2)
+                    {
+                        health[2].setTexture('heartEmpty');
+                        this.currentHeart--;
+                    }
+                    else if (this.currentHeart == 1)
+                    {
+                        health[1].setTexture('heartEmpty');
+                        this.currentHeart--;
+                    }
+                    else if (this.currentHeart == 0)
+                    {
+                        health[0].setTexture('heartEmpty');
+                        this.currentHeart--;
+                    }
+                    break;
+                case 'g':
+                    if (this.currentHeart == 1)
+                    {
+                        health[2].setTexture('heartFull');
+                        this.currentHeart++;
+                    }
+                    else if (this.currentHeart == 0)
+                    {
+                        health[1].setTexture('heartFull');
+                        this.currentHeart++;
+                    }
+                    else if (this.currentHeart == -1)
+                    {
+                        health[0].setTexture('heartFull');
+                        this.currentHeart++;
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
     }
 }
