@@ -67,17 +67,18 @@ class IdleState extends State
 
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
         
-        if (left.isDown || right.isDown || up.isDown)
+        if (left.isDown || right.isDown || space.isDown)
         {
             this.stateMachine.transition('move');
             return;
         }
 
-        if (space.isDown && player.grappleAgain)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -96,7 +97,7 @@ class IdleState extends State
             player.grappleFailed = 2;
         }
 
-        if (space.isUp)
+        if (keyQ.isUp)
         {
             player.grappleAgain = true;
         }
@@ -118,17 +119,18 @@ class MoveState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
-        if (!left.isDown && !right.isDown && !up.isDown && player.isGrounded)
+        if (!left.isDown && !right.isDown && !space.isDown && player.isGrounded)
         {
             this.stateMachine.transition('idle');
             return;
         }
 
-        if (space.isDown && player.grappleAgain)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -150,8 +152,8 @@ class MoveState extends State
             {
                 scene.walk.play();
                 player.isWalking = true;
-                player.flipX = true;
             }
+            player.flipX = true;
         }
         else if (right.isDown)
         {
@@ -160,8 +162,8 @@ class MoveState extends State
             {
                 scene.walk.play();
                 player.isWalking = true;
-                player.flipX = false;
             }
+            player.flipX = false;
         }
         else
         {
@@ -183,7 +185,7 @@ class MoveState extends State
         }
 
         // if can jump, then jump based on how long space bar is pressed
-        if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.up, 150))
+        if (!player.isGrappling && player.jumps > 0 && player.finishedGrappling &&  Phaser.Input.Keyboard.DownDuration(scene.keys.space, 150))
         {
             player.setVelocityY(player.JUMP_VELOCITY);    // jumping
             player.jumping = true;                                        // currently jumping set to true
@@ -193,7 +195,7 @@ class MoveState extends State
         }
 
         // remove a jump upon releasing the space bar
-        if (!player.isGrappling && player.jumping && player.finishedGrappling && Phaser.Input.Keyboard.UpDuration(scene.keys.up)) 
+        if (!player.isGrappling && player.jumping && player.finishedGrappling && Phaser.Input.Keyboard.UpDuration(scene.keys.space)) 
         {
             player.jumps--;                                               // subtract a jump from current jumps
             player.jumping = false;                                       // set boolean to false to prevent another jump
@@ -204,7 +206,7 @@ class MoveState extends State
             player.grappleFailed = 2;
         }
 
-        if (space.isUp)
+        if (keyQ.isUp)
         {
             player.grappleAgain = true;
         }
@@ -226,7 +228,8 @@ class CheckGrappleState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
@@ -257,7 +260,7 @@ class CheckGrappleState extends State
         //--------------------------------------------------------------------
 
         // grappling
-        if (Phaser.Input.Keyboard.JustDown(space))
+        if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
 
             // check each individual branch
@@ -295,7 +298,8 @@ class GrappledState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
@@ -308,7 +312,7 @@ class GrappledState extends State
         //--------------------------------------------------------------------
 
         //if currently grappling, Q to release
-        if (Phaser.Input.Keyboard.JustDown(space))
+        if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
             player.currentHook.unHookCharacter();   // unhook the character
             player.isGrappling = false;             // set currently grappling bool to false
@@ -343,7 +347,8 @@ class FallingState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
@@ -367,7 +372,7 @@ class FallingState extends State
 
         //--------------------------------------------------------------------
         
-        if (space.isUp)
+        if (keyQ.isUp)
         {
             player.grappleFailed = 2;
             player.grappleAgain = true;
@@ -391,7 +396,8 @@ class KickState extends State
 {
     execute(scene, player)
     {
-        const { left, right, space, up, down }  = scene.keys;
+        const { left, right, space, down }  = scene.keys;
+        const keyQ = scene.keys.keyQ;
 
         //--------------------------------------------------------------------
 
