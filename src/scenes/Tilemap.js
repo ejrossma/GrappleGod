@@ -109,8 +109,11 @@ class Tilemap extends Phaser.Scene {
             highlight: new HighlightState(),
         }, [this, this.player, this.branchChildren]);
 
+        //Signify what map is next in the array.
+        this.mapScene = 0;
+
         //Create the next scene zone
-        this.nextSceneSpawn(map);
+        this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
@@ -230,14 +233,15 @@ class Tilemap extends Phaser.Scene {
         });
     }
     //Sends the player to the next scene once they collide with the next zone marker
-    nextSceneSpawn(map){
+    nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
         const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         this.player.setOnCollideWith(this.transfer, pair => {
             this.walk.stop();
-            //this.scene.start("tilemapScene");
+            tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         });
     }
+    //Respawns the player to the start of the map
     playerRespawn(map){
         
     }
