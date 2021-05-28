@@ -118,6 +118,7 @@ class Tilemap extends Phaser.Scene {
         
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
+        this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
     }
 
     update(time, delta)
