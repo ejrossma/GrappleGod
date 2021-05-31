@@ -29,6 +29,8 @@ class Tilemap extends Phaser.Scene {
         let playerList = playerObject;
         playerList.map((element) => {
             this.player = new Player(this, element.x, element.y, this.MAX_VELOCITY, this.JUMP_VELOCITY, 'player_animations', 'player_idle0001');   // player using matter physics
+            this.respawnX = element.x;
+            this.respawnY = element.y;
         });
 
         //animations
@@ -115,6 +117,9 @@ class Tilemap extends Phaser.Scene {
 
         //Create the next scene zone
         this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
+
+        //Create the hitbox regions for the spiked areas
+        this.spikeReset(this.respawnX, this.respawnY);
         
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
@@ -256,15 +261,21 @@ class Tilemap extends Phaser.Scene {
     //Sends the player to the next scene once they collide with the next zone marker
     nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
         const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
-        this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
+        this.transfer = this.matter.add.rectangle(nextLevel.x, nextLevel.y, nextLevel.width, nextLevel.height);
         this.player.setOnCollideWith(this.transfer, pair => {
             this.walk.stop();
-            //this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
+            this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         });
     }
+
+    //Creates the hitzones for the spiked areas
+    spikeReset(x, y, map){
+
+    }
     //Respawns the player to the start of the map
-    playerRespawn(map){
-        
+    playerRespawn(x, y){
+        this.player.x = x;
+        this.player.y = y;
     }
 
     updateHealth(health)
