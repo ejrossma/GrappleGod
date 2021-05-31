@@ -66,6 +66,28 @@ class Player extends Phaser.Physics.Matter.Sprite {
             this.applyForce(this);   // apply swinging force
             return false;
         }
+        else if (platform.gameObject.tile.faceLeft && platform.gameObject.tile.faceTop)
+        {
+            if (this.y + this.height*.8 <= platform.position.y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else if (platform.gameObject.tile.faceRight && platform.gameObject.tile.faceTop)
+        {
+            if (this.y + this.height*.8 <= platform.position.y)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         else
         {
             return false;
@@ -78,10 +100,16 @@ class Player extends Phaser.Physics.Matter.Sprite {
         if(this.direction == 'left')
         {
             this.setVelocityX(-0.75);
+            this.scene.clock = this.scene.time.delayedCall(50, () => {
+                this.setVelocityX(0);
+            }, null, this);
         }
         else if(this.direction == 'right')
         {
             this.setVelocityX(0.75);
+            this.scene.clock = this.scene.time.delayedCall(50, () => {
+                this.setVelocityX(0);
+            }, null, this);
         }
     }
 }
