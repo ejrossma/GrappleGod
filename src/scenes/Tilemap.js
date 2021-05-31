@@ -274,8 +274,7 @@ class Tilemap extends Phaser.Scene {
     }
     //Respawns the player to the start of the map
     playerRespawn(x, y){
-        this.player.x = x;
-        this.player.y = y;
+
     }
 
     updateHealth(health)
