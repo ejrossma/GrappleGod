@@ -5,7 +5,7 @@
         {
          "draworder":"topdown",
          "id":2,
-         "name":"Object Layer 1",
+         "name":"Objects",
          "objects":[
                 {
                  "gid":1,
@@ -16,31 +16,31 @@
                  "type":"",
                  "visible":true,
                  "width":600,
-                 "x":-6.66666666666663,
+                 "x":-3.66666666666663,
                  "y":400.666666666667
                 }, 
                 {
                  "height":398.187332738626,
                  "id":4,
-                 "name":"",
+                 "name":"invisibleWall",
                  "rotation":0,
                  "type":"",
                  "visible":true,
                  "width":255.600356824264,
                  "x":335.871543264942,
                  "y":-0.528099910793912
+                }, 
+                {
+                 "height":145,
+                 "id":8,
+                 "name":"revealArea",
+                 "rotation":0,
+                 "type":"",
+                 "visible":true,
+                 "width":209,
+                 "x":126,
+                 "y":206
                 }],
-         "opacity":1,
-         "type":"objectgroup",
-         "visible":true,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "draworder":"topdown",
-         "id":3,
-         "name":"Object Layer 2",
-         "objects":[],
          "opacity":1,
          "type":"objectgroup",
          "visible":true,
@@ -72,7 +72,7 @@
          "y":0
         }],
  "nextlayerid":5,
- "nextobjectid":8,
+ "nextobjectid":10,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.6.0",
@@ -95,12 +95,12 @@
          "columns":6,
          "firstgid":2,
          "image":"..\/Tilemap.png",
-         "imageheight":160,
+         "imageheight":192,
          "imagewidth":96,
          "margin":0,
          "name":"Tilemap",
          "spacing":0,
-         "tilecount":60,
+         "tilecount":72,
          "tileheight":16,
          "tilewidth":16
         }],

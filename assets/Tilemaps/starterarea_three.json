@@ -30,7 +30,7 @@
                 {
                  "height":0,
                  "id":4,
-                 "name":"playerSpawn",
+                 "name":"player",
                  "point":true,
                  "rotation":0,
                  "type":"",
@@ -40,15 +40,15 @@
                  "y":134.667
                 }, 
                 {
-                 "height":76.5,
+                 "height":157.5,
                  "id":5,
                  "name":"nextLevel",
                  "rotation":0,
                  "type":"",
                  "visible":true,
-                 "width":41.3333333333333,
-                 "x":1160.66666666667,
-                 "y":-10
+                 "width":49.3333333333333,
+                 "x":1151.66666666667,
+                 "y":0
                 }, 
                 {
                  "height":32,
@@ -71,7 +71,7 @@
                  "visible":true,
                  "width":1203.33333333333,
                  "x":-1.00000000000011,
-                 "y":480.333333333334
+                 "y":479.333333333334
                 }, 
                 {
                  "height":16,
@@ -159,7 +159,7 @@
         {
          "columns":1,
          "firstgid":1,
-         "image":"..\/backgrounds\/starter2Background.png",
+         "image":"..\/starter2Background.png",
          "imageheight":100,
          "imagewidth":300,
          "margin":0,
