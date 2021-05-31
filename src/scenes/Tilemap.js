@@ -5,21 +5,21 @@ class Tilemap extends Phaser.Scene {
 
 
     create() {
+        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
+        this.currentLevel = 1;
+
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
 
+        this.playerControl = true;
         this.jumping = false;
         this.isGrounded = false;
         this.finishedGrappling = false;
-        this.branches = this.add.group();
-        //this.branch1 = new Branch(this, 0, 150, 'bigBranch', 90, 90, 70, false);
-        //this.branches.add(this.branch1);
-        this.branchChildren = this.branches.getChildren();  // branches as an array for checking
         this.frameTime = 0;         // initialized variable
 
         //add tilemap data & attach image to it
-        const map = this.add.tilemap('starterarea_twoJSON');
-        const tileset = map.addTilesetImage('GrassyTileSet', 'tileset');
+        const map = this.add.tilemap(this.levels[this.currentLevel]);
+        const tileset = map.addTilesetImage('Tilemap', 'tileset');
         const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
         terrainLayer.setCollisionByProperty({ collision: true });
@@ -49,21 +49,15 @@ class Tilemap extends Phaser.Scene {
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(1);    // bring player to front
 
-        
-
-        // const map2 = this.add.tilemap('starterarea_oneJSON');
-        // const terrainLayer2 = map2.createLayer('Terrain', tileset, 0, 0);
-        // const decoration2 = map2.createLayer('Decoration', tileset, 0, 0);
-        // terrainLayer2.setCollisionByProperty({ collision: true });
-        // this.matter.world.convertTilemapLayer(terrainLayer2);
-
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
         const matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
         this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         
-        console.log(map.layers);
+        //add next level collisionbox
+        this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
+        this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
 
         //set world bounds
         this.matter.world.setBounds(0, -50, map.widthInPixels, map.heightInPixels + 50);
@@ -105,6 +99,7 @@ class Tilemap extends Phaser.Scene {
             this.branches.add(branch);
         });
         this.branchChildren = this.branches.getChildren();  // branches as an array for checking
+        console.log(this.branchChildren);
 
         // branch state machine
         this.branchFSM = new StateMachine('detect', {
@@ -227,9 +222,8 @@ class Tilemap extends Phaser.Scene {
                     console.log(map.layers);
                     //add new visuals
                     map = this.add.tilemap('starterarea_threeJSON');
-                    var tilesett = map.addTilesetImage('Tilemap', 'tileset');
                     terrainLayer = map.createLayer('Terrain', tilesett, 0, 0);
-                    map.createLayer('Decoration', tilesett, 0, 0);
+                    map.createLayer('Decoration', tileset, 0, 0);
                     terrainLayer.setCollisionByProperty({ collision: true });
                     //give collision
                     var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
@@ -245,7 +239,7 @@ class Tilemap extends Phaser.Scene {
                     console.log(map.layers);
                     //add new visuals
                     map = this.add.tilemap('starterarea_sixJSON');
-                    map.createLayer('Decorations', tileset, 0, 0);
+                    map.createLayer('Decoration', tileset, 0, 0);
                     terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
                     terrainLayer.setCollisionByProperty({ collision: true });
                     //give collision
@@ -260,11 +254,53 @@ class Tilemap extends Phaser.Scene {
     }
     //Sends the player to the next scene once they collide with the next zone marker
     nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
-        const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
-        this.transfer = this.matter.add.rectangle(nextLevel.x, nextLevel.y, nextLevel.width, nextLevel.height);
+        // const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
+        // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         this.player.setOnCollideWith(this.transfer, pair => {
+            //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
+            this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
+            this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.walk.stop();
-            this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                this.matter.world.remove(this.transfer);
+                map.removeAllLayers(); //remove visuals
+                matterTiles.forEach(tile => tile.destroy()); //remove collisions
+                map = this.add.tilemap(this.levels[++this.currentLevel]); //change map
+                terrainLayer = map.createLayer('Terrain', tileset, 0, 0); //add new terrain visuals
+                map.createLayer('Decoration', tileset, 0, 0); //add new decor visuals
+                terrainLayer.setCollisionByProperty({collision: true }); //set collision
+                var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true }); //find all colliding tiles
+                matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
+                this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
+                this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
+                this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+                this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+                var playerLoc = map.filterObjects('Objects', obj => obj.name === 'playerSpawn');
+                console.log(map);
+                playerLoc.map((element) => {
+                    this.player.x = element.x;
+                    this.player.y = element.y;
+                });
+                //destroy the branches
+                for (var i = this.branchChildren.length - 1; i > -1; i--) {
+                    this.branchChildren[i].destroy();
+                }
+                //replace the branches
+                let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
+                let branchList = branchObject;
+                branchList.map((element) => {
+                    let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+                    this.branches.add(branch);
+                }); 
+                this.branchChildren = this.branches.getChildren();  // branches as an array for checking
+                console.log(this.branchChildren);
+                this.cameras.main.fadeIn(1000, 0, 0, 0);
+            });
+
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                this.playerControl = true;
+                this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
+            });
         });
     }
 

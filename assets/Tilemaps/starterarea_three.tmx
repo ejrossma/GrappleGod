@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <map version="1.5" tiledversion="1.6.0" orientation="orthogonal" renderorder="right-down" width="75" height="30" tilewidth="16" tileheight="16" infinite="0" nextlayerid="5" nextobjectid="7">
+ <editorsettings>
+  <export target="starterarea_three.json" format="json"/>
+ </editorsettings>
  <tileset firstgid="1" name="starter2Background" tilewidth="300" tileheight="100" tilecount="1" columns="1">
   <image source="../starter2Background.png" width="300" height="100"/>
  </tileset>
@@ -82,7 +85,7 @@
    </properties>
   </tile>
  </tileset>
- <objectgroup id="2" name="Zones" offsetx="-1.33333" offsety="9.33333">
+ <objectgroup id="2" name="Objects">
   <object id="3" name="Player" x="26" y="146" visible="0">
    <point/>
   </object>
