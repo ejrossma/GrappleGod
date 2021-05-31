@@ -22,8 +22,8 @@ class Branch extends Phaser.Physics.Matter.Image {
         }
 
         // temporary tinted sprite
-        // this.tempTintedImage = this.scene.add.image(x, y, 'bigBranchHighlight');
-        // this.tempTintedImage.setAlpha(0);
+        this.tempTintedImage = this.scene.add.image(x, y, 'smallBranchHighlight');
+        this.tempTintedImage.setAlpha(0);
     }
 
     update()
@@ -46,6 +46,25 @@ class Branch extends Phaser.Physics.Matter.Image {
         else if (this.static_constraint_length && this.static_length > this.constraintLength && this.constraint_size == 'large')
         {
             this.constraint_size = 'good';
+        }
+
+        // show constraint
+        if (this.removeConstraint == false)
+        {
+            if (!this.scene.graphics) {
+                this.scene.graphics = this.scene.add.graphics();
+            }
+            this.scene.graphics.clear();
+            this.scene.graphics.setDepth(1);
+            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x228B22, 1, 2, 0, null, 0);
+        }
+        else if (this.removeConstraint == true)
+        {
+            if (!this.scene.graphics) {
+                this.scene.graphics = this.scene.add.graphics();
+            }
+            this.scene.graphics.clear();
+            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x228B22, 0, 2, 0, null, 0);
         }
     }
 
@@ -84,11 +103,14 @@ class Branch extends Phaser.Physics.Matter.Image {
             branch.constraint_size = 'large';
         }
         // create constraint
+        this.removeConstraint = false;
         this.rope = this.scene.matter.add.constraint(player, branch, branch.constraintLength, 0);
     }
 
     // unhook the player from branch
     unHookCharacter() {
+        this.removeConstraint = true;
+        this.update();
         this.scene.matter.world.remove(this.rope);    // delete constraint
     }
 
@@ -161,24 +183,24 @@ class DetectState extends State
 
         for (var i = 0; i < branchChildren.length; i++)
         {
-            // if (player.x < branchChildren[i].x + branchChildren[i].xBound && player.x > branchChildren[i].x - branchChildren[i].xBound)
-            // {
-            //     if (player.y >= branchChildren[i].y && player.y <= branchChildren[i].y + branchChildren[i].yBound)
-            //     {
-            //         branchChildren[i].setAlpha(0);
-            //         branchChildren[i].tempTintedImage.setAlpha(1);
-            //     }
-            //     else
-            //     {
-            //         branchChildren[i].setAlpha(1);
-            //         branchChildren[i].tempTintedImage.setAlpha(0);
-            //     }
-            // }
-            // else
-            // {
-            //     branchChildren[i].setAlpha(1);
-            //     branchChildren[i].tempTintedImage.setAlpha(0);
-            // }
+            if (player.x < branchChildren[i].x + branchChildren[i].xBound && player.x > branchChildren[i].x - branchChildren[i].xBound)
+            {
+                if (player.y >= branchChildren[i].y && player.y <= branchChildren[i].y + branchChildren[i].yBound)
+                {
+                    branchChildren[i].setAlpha(0);
+                    branchChildren[i].tempTintedImage.setAlpha(1);
+                }
+                else
+                {
+                    branchChildren[i].setAlpha(1);
+                    branchChildren[i].tempTintedImage.setAlpha(0);
+                }
+            }
+            else
+            {
+                branchChildren[i].setAlpha(1);
+                branchChildren[i].tempTintedImage.setAlpha(0);
+            }
         }
     }
 }
@@ -197,10 +219,10 @@ class HighlightState extends State
 
         //--------------------------------------------------------------------
         
-        // for (var i = 0; i < branchChildren.length; i++)
-        // {
-        //     branchChildren[i].setAlpha(1);
-        //     branchChildren[i].tempTintedImage.setAlpha(0);
-        // }
+        for (var i = 0; i < branchChildren.length; i++)
+        {
+            branchChildren[i].setAlpha(1);
+            branchChildren[i].tempTintedImage.setAlpha(0);
+        }
     }
 }

@@ -44,7 +44,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
 
     checkCollide(platform)
     {
-        if (this.y + this.height*.75 <= platform.position.y)
+        if (this.y + this.height*.5 <= platform.position.y)
         {
             return true;
         }
@@ -273,7 +273,7 @@ class CheckGrappleState extends State
                     {
                         scene.hook.play(); //play hooking sound effect
                         player.setVelocityX(0);       // stop x momentum 
-                        player.setVelocityY(1);     // slow y momentum if necessary
+                        player.setVelocityY(0.5);     // slow y momentum if necessary
                         scene.branchChildren[i].hookCharacter(player, scene.branchChildren[i]); // hook to branch
                         player.currentHook = scene.branchChildren[i];        // remember current branch
                         player.setFrictionAir(0);     // reset air friction
@@ -332,10 +332,12 @@ class GrappledState extends State
         if (player.x > player.currentHook.x)
         {
             player.direction = 'right';       // detect which way the moment is carrying
+            player.flipX = false;
         }
         else if (player.x < player.currentHook.x)
         {
             player.direction = 'left';        // detect which way the moment is carrying
+            player.flipX = true;
         }
 
         // updated current hook
