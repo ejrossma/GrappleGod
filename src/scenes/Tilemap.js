@@ -55,7 +55,7 @@ class Tilemap extends Phaser.Scene {
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
         const matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-        
+        console.log(map);
         //add next level collisionbox
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
@@ -150,7 +150,6 @@ class Tilemap extends Phaser.Scene {
         this.frameTime += delta;
         if (this.frameTime > 16.5)
         {
-            //console.log(deltaMultiplier);
             this.frameTime = 0;
             game.gameTick++;
             if (this.playerControl)
@@ -171,9 +170,9 @@ class Tilemap extends Phaser.Scene {
         }
         else
         {
-            player.MAX_VELOCITY = 1.5;          // x-velocity
-            player.JUMP_VELOCITY = -3.5;        // y-velocity
-            player.GRAPPLE_FORCE = 0.000125;    // grappling force
+            player.MAX_VELOCITY = 1.25;          // x-velocity
+            player.JUMP_VELOCITY = -3.25;        // y-velocity
+            player.GRAPPLE_FORCE = 0.0001;    // grappling force
         }
     }
 

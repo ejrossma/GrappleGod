@@ -22,6 +22,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.isWalking = false;             // bool for walk sound 
         this.grappleAgain = true;           // bool for allowing to grapple again
         this.canKick = true;                // bool for checking if player is allowed to kick again
+        this.applyForceCounter = 0;
+        this.currentHook = null;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
@@ -32,25 +34,54 @@ class Player extends Phaser.Physics.Matter.Sprite {
 
         // when colliding with the ground, check if can reset the jump
         this.setOnCollideActive(pair => {
-            // console.log(pair.bodyA);
-            // console.log(pair.bodyB);
-            if (this.checkCollide(pair.bodyB))
+            //console.log(pair.bodyA);
+            //console.log(pair.bodyB);
+            if (pair.bodyB.gameObject != null)
             {
-                this.isGrounded = true;
-                this.finishedGrappling = true;
+                if (this.checkCollide(pair.bodyB))
+                {
+                    this.isGrounded = true;
+                    this.finishedGrappling = true;
+                }
             }
-        })
+        });
     }
 
     checkCollide(platform)
     {
-        if (this.y + this.height*.5 <= platform.position.y)
+        //console.log(platform.faceTop);
+        if (platform.gameObject.tile.faceTop && !platform.gameObject.tile.faceLeft && !platform.gameObject.tile.faceRight)
         {
             return true;
+        }
+        else if (platform.gameObject.tile.faceLeft && !platform.gameObject.tile.faceTop)
+        {
+            this.direction = 'left';
+            this.applyForce(this);   // apply swinging force
+            return false;
+        }
+        else if (platform.gameObject.tile.faceRight && !platform.gameObject.tile.faceTop)
+        { 
+            this.direction = 'right';
+            this.applyForce(this);   // apply swinging force
+            return false;
         }
         else
         {
             return false;
+        }
+    }
+
+    applyForce(player)
+    {
+        // while grappled
+        if(this.direction == 'left')
+        {
+            this.setVelocityX(-0.75);
+        }
+        else if(this.direction == 'right')
+        {
+            this.setVelocityX(0.75);
         }
     }
 }
@@ -272,6 +303,7 @@ class CheckGrappleState extends State
                     if (player.y >= scene.branchChildren[i].y && player.y <= scene.branchChildren[i].y + scene.branchChildren[i].yBound)
                     {
                         scene.hook.play(); //play hooking sound effect
+                        player.applyForceCounter = 0;
                         player.setVelocityX(0);       // stop x momentum 
                         player.setVelocityY(0.5);     // slow y momentum if necessary
                         scene.branchChildren[i].hookCharacter(player, scene.branchChildren[i]); // hook to branch
@@ -360,7 +392,7 @@ class FallingState extends State
             return;
         }
 
-        if (space.isDown && player.grappleAgain)
+        if (keyQ.isDown && player.grappleAgain)
         {
             this.stateMachine.transition('checkGrapple');
             return;
@@ -381,15 +413,17 @@ class FallingState extends State
         }
 
         // after letting go of grapple, continue momentum until hitting ground
-        if (player.canSwing)
+        if (player.canSwing && player.applyForceCounter < 5)
         {
             player.currentHook.applyFallingForce(player, player.currentHook);
             player.setFrictionAir(0.015);
+            player.applyForceCounter++;
         }
-        if (!player.canSwing)
+        if (!player.canSwing && player.applyForceCounter < 5)
         {
             player.currentHook.applyForceVertical(player, player.currentHook);
             player.setFrictionAir(0.015);
+            player.applyForceCounter++;
         }
     }
 }
