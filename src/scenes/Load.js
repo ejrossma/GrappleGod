@@ -22,10 +22,13 @@ class Load extends Phaser.Scene {
         //tilemap images/jsons
         this.load.image('tileset', './assets/Tilemap.png');
         this.load.tilemapTiledJSON('tilemapJSON', './assets/Test.json');
-        this.load.tilemapTiledJSON('starterarea_twoJSON', './assets/Tilemaps/starterarea_two.json');
+        
 
         this.load.tilemapTiledJSON('starterarea_oneJSON', './assets/Tilemaps/starterarea_one.json');
+        this.load.tilemapTiledJSON('starterarea_twoJSON', './assets/Tilemaps/starterarea_two.json');
         this.load.tilemapTiledJSON('starterarea_threeJSON', './assets/Tilemaps/starterarea_three.json');
+        this.load.tilemapTiledJSON('starterarea_fourJSON', './assets/Tilemaps/starterarea_four.json');
+        this.load.tilemapTiledJSON('starterarea_fiveJSON', './assets/Tilemaps/starterarea_five.json');        
         this.load.tilemapTiledJSON('starterarea_sixJSON', './assets/Tilemaps/starterarea_six.json');
 
         //audio

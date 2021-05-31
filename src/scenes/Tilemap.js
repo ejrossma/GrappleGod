@@ -53,7 +53,6 @@ class Tilemap extends Phaser.Scene {
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
         const matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-        this.tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody);
         
         //add next level collisionbox
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
@@ -65,7 +64,7 @@ class Tilemap extends Phaser.Scene {
         //camera stuff
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        //this.cameras.main.setZoom(2);
+        this.cameras.main.setZoom(1.5);
 
         //sound for walking
         this.walk = this.sound.add('walking', {
@@ -124,12 +123,15 @@ class Tilemap extends Phaser.Scene {
         this.healthGroup = this.add.group();
         let health1 = this.matter.add.sprite(16, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health1.setCollisionCategory(0);
+        health1.setDepth(1);
         this.healthGroup.add(health1);
         let health2 = this.matter.add.sprite(40, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health2.setCollisionCategory(0);
+        health2.setDepth(1);
         this.healthGroup.add(health2);
         let health3 = this.matter.add.sprite(64, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health3.setCollisionCategory(0);
+        health3.setDepth(1);
         this.healthGroup.add(health3);  
         this.healthChildren = this.healthGroup.getChildren();
         this.healthChildren.forEach(function(child)
@@ -148,7 +150,8 @@ class Tilemap extends Phaser.Scene {
             //console.log(deltaMultiplier);
             this.frameTime = 0;
             game.gameTick++;
-            this.playerFSM.step();
+            if (this.playerControl)
+                this.playerFSM.step();
             this.branchFSM.step();
             this.checkFps(this.player); // check fps and change variables depending on fps
         }
@@ -192,66 +195,6 @@ class Tilemap extends Phaser.Scene {
         });
     }
 
-    tilemapHandler(map, matterTiles, tileset, terrainLayer, MatterTileBody) 
-    {
-        this.input.keyboard.on('keydown', (event) => {
-            switch(event.key) {
-                //one
-                case '8':
-                    //remove collision & visuals
-                    console.log(map.layers);
-                    map.removeAllLayers();
-                    matterTiles.forEach(tile => tile.destroy());
-                    console.log(map.layers);
-                    //add new visuals
-                    map = this.add.tilemap('starterarea_oneJSON');
-                    terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
-                    map.createLayer('Decoration', tileset, 0, 0);
-                    terrainLayer.setCollisionByProperty({ collision: true });
-                    //give collision
-                    var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
-                    matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-                    console.log(map.layers);
-                    this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    break;
-                //three    
-                case '9':
-                    map.removeAllLayers();
-                    matterTiles.forEach(tile => tile.destroy());
-                    console.log(map.layers);
-                    //add new visuals
-                    map = this.add.tilemap('starterarea_threeJSON');
-                    terrainLayer = map.createLayer('Terrain', tilesett, 0, 0);
-                    map.createLayer('Decoration', tileset, 0, 0);
-                    terrainLayer.setCollisionByProperty({ collision: true });
-                    //give collision
-                    var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
-                    matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-                    console.log(map.layers);
-                    this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    break;
-                //six
-                case '0':
-                    map.removeAllLayers();
-                    matterTiles.forEach(tile => tile.destroy());
-                    console.log(map.layers);
-                    //add new visuals
-                    map = this.add.tilemap('starterarea_sixJSON');
-                    map.createLayer('Decoration', tileset, 0, 0);
-                    terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
-                    terrainLayer.setCollisionByProperty({ collision: true });
-                    //give collision
-                    var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
-                    matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-                    console.log(map.layers);
-                    this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                    break;
-            }
-        });
-    }
     //Sends the player to the next scene once they collide with the next zone marker
     nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
         // const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
@@ -266,8 +209,10 @@ class Tilemap extends Phaser.Scene {
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
                 map = this.add.tilemap(this.levels[++this.currentLevel]); //change map
-                terrainLayer = map.createLayer('Terrain', tileset, 0, 0); //add new terrain visuals
-                map.createLayer('Decoration', tileset, 0, 0); //add new decor visuals
+                console.log(map);
+                var tilesett = map.addTilesetImage('Tilemap', 'tileset');
+                terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
+                map.createLayer('Decoration', tilesett, 0, 0); //add new decor visuals
                 terrainLayer.setCollisionByProperty({collision: true }); //set collision
                 var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true }); //find all colliding tiles
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
@@ -275,7 +220,7 @@ class Tilemap extends Phaser.Scene {
                 this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
                 this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-                var playerLoc = map.filterObjects('Objects', obj => obj.name === 'playerSpawn');
+                var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
                 console.log(map);
                 playerLoc.map((element) => {
                     this.player.x = element.x;
