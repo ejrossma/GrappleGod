@@ -9,7 +9,7 @@ let config = {
     zoom: 2,
     scene: [ Load, firstScene, secondScene, Test, Tilemap ],
     scale: { 
-        //autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: '#caa368',
     physics: {
