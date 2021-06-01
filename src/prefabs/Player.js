@@ -99,16 +99,16 @@ class Player extends Phaser.Physics.Matter.Sprite {
         // while grappled
         if(this.direction == 'left')
         {
-            this.setVelocityX(-0.75);
+            player.setVelocityX(-0.75);
             this.scene.clock = this.scene.time.delayedCall(50, () => {
-                this.setVelocityX(0);
+                player.setVelocityX(0);
             }, null, this);
         }
         else if(this.direction == 'right')
         {
-            this.setVelocityX(0.75);
+            player.setVelocityX(0.75);
             this.scene.clock = this.scene.time.delayedCall(50, () => {
-                this.setVelocityX(0);
+                player.setVelocityX(0);
             }, null, this);
         }
     }
@@ -392,12 +392,10 @@ class GrappledState extends State
         if (player.x > player.currentHook.x)
         {
             player.direction = 'right';       // detect which way the moment is carrying
-            player.flipX = false;
         }
         else if (player.x < player.currentHook.x)
         {
             player.direction = 'left';        // detect which way the moment is carrying
-            player.flipX = true;
         }
 
         // updated current hook
@@ -446,12 +444,28 @@ class FallingState extends State
             player.currentHook.applyFallingForce(player, player.currentHook);
             player.setFrictionAir(0.015);
             player.applyForceCounter++;
+            if (player.direction == 'right')
+            {
+                player.flipX = false;
+            }
+            else if (player.direction == 'left')
+            {
+                player.flipX = true;
+            }
         }
         if (!player.canSwing && player.applyForceCounter < 5)
         {
             player.currentHook.applyForceVertical(player, player.currentHook);
             player.setFrictionAir(0.015);
             player.applyForceCounter++;
+            if (player.direction == 'right')
+            {
+                player.flipX = false;
+            }
+            else if (player.direction == 'left')
+            {
+                player.flipX = true;
+            }
         }
     }
 }

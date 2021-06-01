@@ -206,6 +206,8 @@ class Tilemap extends Phaser.Scene {
             this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.walk.stop();
+            this.player.setVelocityX(0);
+            this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
                 map.removeAllLayers(); //remove visuals
@@ -236,7 +238,7 @@ class Tilemap extends Phaser.Scene {
                 let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
                 let branchList = branchObject;
                 branchList.map((element) => {
-                    let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+                    let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 80, 80, 50, true, 80);
                     this.branches.add(branch);
                 }); 
                 this.branchChildren = this.branches.getChildren();  // branches as an array for checking
