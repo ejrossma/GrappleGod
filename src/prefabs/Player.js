@@ -14,6 +14,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.MAX_JUMPS = 1;                 // max amt jumps
         this.jumping = false;               // jumping boolean
         this.isGrounded = false;             // grounded boolean
+        this.JUMP_AIR_FRICTION = 0;
+        this.FALL_AIR_FRICTION = 0.015;
 
         // other variables
         this.isGrappling = false;           // currently grappling boolean
@@ -266,7 +268,7 @@ class MoveState extends State
             player.jumping = true;                                        // currently jumping set to true
             player.isGrounded = false;                                    // set grounded boolean to false
             scene.isGrounded = false;
-            player.setFrictionAir(0);       
+            player.setFrictionAir(player.JUMP_AIR_FRICTION);       
         }
 
         // remove a jump upon releasing the space bar
@@ -458,7 +460,7 @@ class FallingState extends State
         if (player.canSwing && player.applyForceCounter < 5)
         {
             player.currentHook.applyFallingForce(player, player.currentHook);
-            player.setFrictionAir(0.015);
+            player.setFrictionAir(player.FALL_AIR_FRICTION);
             player.applyForceCounter++;
             if (player.direction == 'right')
             {
@@ -472,7 +474,7 @@ class FallingState extends State
         if (!player.canSwing && player.applyForceCounter < 5)
         {
             player.currentHook.applyForceVertical(player, player.currentHook);
-            player.setFrictionAir(0.015);
+            player.setFrictionAir(player.FALL_AIR_FRICTION);
             player.applyForceCounter++;
             if (player.direction == 'right')
             {

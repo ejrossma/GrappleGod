@@ -167,12 +167,16 @@ class Tilemap extends Phaser.Scene {
             player.MAX_VELOCITY = 1.82;      // x-velocity
             player.JUMP_VELOCITY = -4.25;    // y-velocity
             player.GRAPPLE_FORCE = 0.00005;  // grappling force
+            player.JUMP_AIR_FRICTION = 0;
+            player.FALL_AIR_FRICTION = 0.015;
         }
         else
         {
             player.MAX_VELOCITY = 1.25;          // x-velocity
-            player.JUMP_VELOCITY = -3.25;        // y-velocity
+            player.JUMP_VELOCITY = -4;        // y-velocity
             player.GRAPPLE_FORCE = 0.0001;    // grappling force
+            player.JUMP_AIR_FRICTION = 0.03;
+            player.FALL_AIR_FRICTION = 0.015;
         }
     }
 
