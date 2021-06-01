@@ -5,6 +5,7 @@ class Tilemap extends Phaser.Scene {
 
 
     create() {
+        this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
         this.currentLevel = 1;
 
@@ -16,6 +17,7 @@ class Tilemap extends Phaser.Scene {
         this.isGrounded = false;
         this.finishedGrappling = false;
         this.frameTime = 0;         // initialized variable
+        this.graphics = this.add.graphics();    // for constraint
 
         //add tilemap data & attach image to it
         const map = this.add.tilemap(this.levels[this.currentLevel]);
@@ -59,13 +61,13 @@ class Tilemap extends Phaser.Scene {
             repeat: -1
         });
         this.player.anims.play('player_idle'); //start idle animation
-        this.player.setDepth(1);    // bring player to front
+        this.player.setDepth(2);    // bring player to front
 
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
         const matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-        
+        console.log(map);
         //add next level collisionbox
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
@@ -106,11 +108,12 @@ class Tilemap extends Phaser.Scene {
         let branchList = branchObject;
         this.branches = this.add.group();
         branchList.map((element) => {
-            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 60, 20, true, 50);
+            branch.setDepth(1);
             this.branches.add(branch);
         });
         this.branchChildren = this.branches.getChildren();  // branches as an array for checking
-        console.log(this.branchChildren);
+        //console.log(this.branchChildren);
 
         // branch state machine
         this.branchFSM = new StateMachine('detect', {
@@ -133,15 +136,15 @@ class Tilemap extends Phaser.Scene {
 
         // health
         this.healthGroup = this.add.group();
-        let health1 = this.matter.add.sprite(16, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health1 = this.matter.add.sprite(92, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health1.setCollisionCategory(0);
         health1.setDepth(1);
         this.healthGroup.add(health1);
-        let health2 = this.matter.add.sprite(40, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health2 = this.matter.add.sprite(116, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health2.setCollisionCategory(0);
         health2.setDepth(1);
         this.healthGroup.add(health2);
-        let health3 = this.matter.add.sprite(64, 16, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health3 = this.matter.add.sprite(140, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health3.setCollisionCategory(0);
         health3.setDepth(1);
         this.healthGroup.add(health3);  
@@ -159,7 +162,6 @@ class Tilemap extends Phaser.Scene {
         this.frameTime += delta;
         if (this.frameTime > 16.5)
         {
-            //console.log(deltaMultiplier);
             this.frameTime = 0;
             game.gameTick++;
             if (this.playerControl)
@@ -177,12 +179,16 @@ class Tilemap extends Phaser.Scene {
             player.MAX_VELOCITY = 1.82;      // x-velocity
             player.JUMP_VELOCITY = -4.25;    // y-velocity
             player.GRAPPLE_FORCE = 0.00005;  // grappling force
+            player.JUMP_AIR_FRICTION = 0;
+            player.FALL_AIR_FRICTION = 0.015;
         }
         else
         {
-            player.MAX_VELOCITY = 1.5;          // x-velocity
-            player.JUMP_VELOCITY = -3.5;        // y-velocity
-            player.GRAPPLE_FORCE = 0.000125;    // grappling force
+            player.MAX_VELOCITY = 1.25;          // x-velocity
+            player.JUMP_VELOCITY = -4;        // y-velocity
+            player.GRAPPLE_FORCE = 0.0001;    // grappling force
+            player.JUMP_AIR_FRICTION = 0.03;
+            player.FALL_AIR_FRICTION = 0.015;
         }
     }
 
@@ -216,12 +222,14 @@ class Tilemap extends Phaser.Scene {
             this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.walk.stop();
+            this.player.setVelocityX(0);
+            this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
                 map = this.add.tilemap(this.levels[++this.currentLevel]); //change map
-                console.log(map);
+                //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
                 terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
                 map.createLayer('Decoration', tilesett, 0, 0); //add new decor visuals
@@ -233,7 +241,7 @@ class Tilemap extends Phaser.Scene {
                 this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
-                console.log(map);
+                //console.log(map);
                 playerLoc.map((element) => {
                     this.player.x = element.x;
                     this.player.y = element.y;
@@ -246,11 +254,11 @@ class Tilemap extends Phaser.Scene {
                 let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
                 let branchList = branchObject;
                 branchList.map((element) => {
-                    let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 50, 50, false);
+                    let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 80, 80, 50, true, 80);
                     this.branches.add(branch);
                 }); 
                 this.branchChildren = this.branches.getChildren();  // branches as an array for checking
-                console.log(this.branchChildren);
+                //console.log(this.branchChildren);
                 this.cameras.main.fadeIn(1000, 0, 0, 0);
             });
 
@@ -267,7 +275,8 @@ class Tilemap extends Phaser.Scene {
     }
     //Respawns the player to the start of the map
     playerRespawn(x, y){
-
+        this.player.setX(x);
+        this.player.setY(y);
     }
 
     updateHealth(health)
