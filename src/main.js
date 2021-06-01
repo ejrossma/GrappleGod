@@ -11,6 +11,7 @@ let config = {
     scale: { 
         //autoCenter: Phaser.Scale.CENTER_BOTH
     },
+    backgroundColor: '#caa368',
     physics: {
         default: 'matter',
         matter: {
