@@ -74,6 +74,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
             }
             else
             {
+                this.direction = 'left';
+                this.applyForce(this);   // apply swinging force
                 return false;
             }
         }
@@ -85,6 +87,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
             }
             else
             {
+                this.direction = 'right';
+                this.applyForce(this);   // apply swinging force
                 return false;
             }
         }
@@ -97,14 +101,14 @@ class Player extends Phaser.Physics.Matter.Sprite {
     applyForce(player)
     {
         // while grappled
-        if(this.direction == 'left')
+        if(player.direction == 'left')
         {
             player.setVelocityX(-0.75);
             this.scene.clock = this.scene.time.delayedCall(50, () => {
                 player.setVelocityX(0);
             }, null, this);
         }
-        else if(this.direction == 'right')
+        else if(player.direction == 'right')
         {
             player.setVelocityX(0.75);
             this.scene.clock = this.scene.time.delayedCall(50, () => {
