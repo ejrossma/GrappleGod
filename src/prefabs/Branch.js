@@ -56,7 +56,7 @@ class Branch extends Phaser.Physics.Matter.Image {
             }
             this.scene.graphics.clear();
             this.scene.graphics.setDepth(1);
-            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x228B22, 1, 2, 0, null, 0);
+            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x91652f, 1, 2, 0, null, 0);
         }
         else if (this.removeConstraint == true)
         {
@@ -64,7 +64,7 @@ class Branch extends Phaser.Physics.Matter.Image {
                 this.scene.graphics = this.scene.add.graphics();
             }
             this.scene.graphics.clear();
-            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x228B22, 0, 2, 0, null, 0);
+            this.visualConstraint = this.scene.matter.world.renderConstraint(this.rope, this.scene.graphics, 0x91652f, 0, 2, 0, null, 0);
         }
     }
 
