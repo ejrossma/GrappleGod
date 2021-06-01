@@ -62,6 +62,7 @@ class IdleState extends State
     {
         player.setVelocityX(0);
         scene.walk.pause();
+        scene.player.anims.play('player_idle');
         player.isWalking = false;
     }
 
@@ -151,6 +152,7 @@ class MoveState extends State
             if (player.isWalking == false)
             {
                 scene.walk.play();
+                scene.player.anims.play('player_run');
                 player.isWalking = true;
             }
             player.flipX = true;
@@ -161,6 +163,7 @@ class MoveState extends State
             if (player.isWalking == false)
             {
                 scene.walk.play();
+                scene.player.anims.play('player_run');
                 player.isWalking = true;
             }
             player.flipX = false;
