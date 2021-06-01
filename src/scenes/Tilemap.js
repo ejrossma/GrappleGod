@@ -48,6 +48,18 @@ class Tilemap extends Phaser.Scene {
             frameRate: 4,
             repeat: -1
         });
+        this.anims.create({
+            key: 'player_run',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_run',
+                start: 1,
+                end: 8,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 8,
+            repeat: -1
+        });
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(2);    // bring player to front
 
@@ -66,7 +78,7 @@ class Tilemap extends Phaser.Scene {
         //camera stuff
         this.cameras.main.startFollow(this.player);
         this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
-        this.cameras.main.setZoom(1.5);
+        this.cameras.main.setZoom(2);
 
         //sound for walking
         this.walk = this.sound.add('walking', {
@@ -167,12 +179,16 @@ class Tilemap extends Phaser.Scene {
             player.MAX_VELOCITY = 1.82;      // x-velocity
             player.JUMP_VELOCITY = -4.25;    // y-velocity
             player.GRAPPLE_FORCE = 0.00005;  // grappling force
+            player.JUMP_AIR_FRICTION = 0;
+            player.FALL_AIR_FRICTION = 0.015;
         }
         else
         {
             player.MAX_VELOCITY = 1.25;          // x-velocity
-            player.JUMP_VELOCITY = -3.25;        // y-velocity
+            player.JUMP_VELOCITY = -4;        // y-velocity
             player.GRAPPLE_FORCE = 0.0001;    // grappling force
+            player.JUMP_AIR_FRICTION = 0.03;
+            player.FALL_AIR_FRICTION = 0.015;
         }
     }
 
