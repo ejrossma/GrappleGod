@@ -136,15 +136,15 @@ class Tilemap extends Phaser.Scene {
 
         // health
         this.healthGroup = this.add.group();
-        let health1 = this.matter.add.sprite(92, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health1 = this.matter.add.sprite(127.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health1.setCollisionCategory(0);
         health1.setDepth(1);
         this.healthGroup.add(health1);
-        let health2 = this.matter.add.sprite(116, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health2 = this.matter.add.sprite(137.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health2.setCollisionCategory(0);
         health2.setDepth(1);
         this.healthGroup.add(health2);
-        let health3 = this.matter.add.sprite(140, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health3 = this.matter.add.sprite(147.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health3.setCollisionCategory(0);
         health3.setDepth(1);
         this.healthGroup.add(health3);  
