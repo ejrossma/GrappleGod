@@ -19,6 +19,7 @@ class Load extends Phaser.Scene {
         //backgrounds
         this.load.image('background', './assets/starterBackground.png');
         this.load.image('background2', './assets/starter2Background.png');
+        this.load.image('menuBackground', './assets/treeIntro.png');
 
         //tilemap images/jsons
         this.load.image('tileset', './assets/Tilemap.png');
@@ -41,6 +42,6 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        this.scene.start('tilemapScene');
+        this.scene.start('menuScene');
     }
 }
