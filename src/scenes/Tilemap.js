@@ -7,7 +7,8 @@ class Tilemap extends Phaser.Scene {
     create() {
         this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
-        this.currentLevel = 1;
+        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6'];
+        this.currentLevel = 0;
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -18,6 +19,9 @@ class Tilemap extends Phaser.Scene {
         this.finishedGrappling = false;
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
+
+        //Add background for current level
+        this.background = this.add.image(0, 0, this.backgrounds[this.currentLevel]).setOrigin(0,0);
 
         //add tilemap data & attach image to it
         const map = this.add.tilemap(this.levels[this.currentLevel]);
@@ -258,6 +262,9 @@ class Tilemap extends Phaser.Scene {
                     this.branches.add(branch);
                 }); 
                 this.branchChildren = this.branches.getChildren();  // branches as an array for checking
+                //Change the background to the new background
+                this.background.setTexture(this.backgrounds[this.currentLevel]);
+                this.background.setPosition(0, 0);
                 //console.log(this.branchChildren);
                 this.cameras.main.fadeIn(1000, 0, 0, 0);
             });

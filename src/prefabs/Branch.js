@@ -13,7 +13,7 @@ class Branch extends Phaser.Physics.Matter.Image {
         this.yBound = yBound;
 
         // visual bounds (comment out to remove)
-        this.scene.add.rectangle(x - xBound, y, xBound*2, yBound, 0xff0000, 0.2).setOrigin(0);
+        //this.scene.add.rectangle(x - xBound, y, xBound*2, yBound, 0xff0000, 0.2).setOrigin(0);
 
         // check if there is a set constraint length
         if (this.static_constraint_length == true)
