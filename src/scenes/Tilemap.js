@@ -7,7 +7,6 @@ class Tilemap extends Phaser.Scene {
     create() {
         this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
-        this.currentLevel = 1;
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -20,7 +19,7 @@ class Tilemap extends Phaser.Scene {
         this.graphics = this.add.graphics();    // for constraint
 
         //add tilemap data & attach image to it
-        const map = this.add.tilemap(this.levels[this.currentLevel]);
+        const map = this.add.tilemap(this.levels[currentLevel]);
         const tileset = map.addTilesetImage('Tilemap', 'tileset');
         const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
@@ -58,6 +57,30 @@ class Tilemap extends Phaser.Scene {
                 zeroPad: 4
             }),
             frameRate: 8,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'player_grapple',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_grapple',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'player_fall',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_run',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
             repeat: -1
         });
         this.player.anims.play('player_idle'); //start idle animation
@@ -228,7 +251,7 @@ class Tilemap extends Phaser.Scene {
                 this.matter.world.remove(this.transfer);
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
-                map = this.add.tilemap(this.levels[++this.currentLevel]); //change map
+                map = this.add.tilemap(this.levels[++currentLevel]); //change map
                 //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
                 terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
@@ -238,7 +261,7 @@ class Tilemap extends Phaser.Scene {
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
                 this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
-                this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+                this.matter.world.setBounds(0, -20, map.widthInPixels, map.heightInPixels);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
                 //console.log(map);
