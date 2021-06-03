@@ -53,7 +53,7 @@ class Menu extends Phaser.Scene {
         this.newGame.on('pointerdown', () => {
             currentLevel = 0;
             hearts = 3;
-            this.scene.start('tilemapScene');
+            this.scene.start('introScene');
         });
 
         this.credits = this.add.text(game.config.width/2, game.config.height/1.7, 'Credits', buttonConfig).setOrigin(0.5, 0.5);

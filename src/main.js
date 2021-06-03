@@ -7,7 +7,7 @@ let config = {
     width: 560, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
     height: 400,
     zoom: 2,
-    scene: [ Load, Menu, Credits, Tilemap ],
+    scene: [ Load, Menu, Intro, Credits, Tilemap],
     scale: { 
         autoCenter: Phaser.Scale.CENTER_BOTH
     },
@@ -32,3 +32,7 @@ let keyQ, keySpace, keyLEFT, keyRIGHT, keyDOWN;
 //current level index
 let currentLevel = 0;
 let hearts = 3;
+let playerName = 'Tony';
+let playerAdjective = 'funny';
+let catName = 'Fluff';
+let catAdjective = 'heroic';
