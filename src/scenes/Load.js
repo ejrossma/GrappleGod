@@ -23,6 +23,7 @@ class Load extends Phaser.Scene {
         this.load.image('background4', './assets/starter4Background.png');
         this.load.image('background5', './assets/empty.png');
         this.load.image('background6', './assets/empty.png');
+        this.load.image('menuBackground', './assets/treeIntro.png');
 
         //tilemap images/jsons
         this.load.image('tileset', './assets/Tilemap.png');
@@ -45,7 +46,6 @@ class Load extends Phaser.Scene {
     }
 
     create() {
-        document.getElementById('description').innerHTML = '<br>1: First Scene<br>2: Second Scene<br>T: Test Scene<br>Left Arrow + Right Arrow: Move<br>Space: Jump<br>Q: Connect to Grapple & Release Grapple';
-        this.scene.start('tilemapScene');
+        this.scene.start('menuScene');
     }
 }

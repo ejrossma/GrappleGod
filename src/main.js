@@ -4,12 +4,12 @@
 let config = {
     parent: 'phaser-game',
     type: Phaser.CANVAS,
-    width: 480, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
-    height: 320,
+    width: 560, //going to change to 480 x 320 to fit 16 x 16 sprites perfectly
+    height: 400,
     zoom: 2,
-    scene: [ Load, firstScene, secondScene, Test, Tilemap ],
+    scene: [ Load, Menu, Credits, Tilemap ],
     scale: { 
-        //autoCenter: Phaser.Scale.CENTER_BOTH
+        autoCenter: Phaser.Scale.CENTER_BOTH
     },
     backgroundColor: '#caa368',
     physics: {
@@ -29,3 +29,6 @@ let game = new Phaser.Game(config);
 let cursors;
 //reserve keyboard bindings
 let keyQ, keySpace, keyLEFT, keyRIGHT, keyDOWN;
+//current level index
+let currentLevel = 0;
+let hearts = 3;

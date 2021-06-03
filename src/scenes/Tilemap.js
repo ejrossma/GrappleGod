@@ -24,7 +24,7 @@ class Tilemap extends Phaser.Scene {
         this.background = this.add.image(0, 0, this.backgrounds[this.currentLevel]).setOrigin(0,0);
 
         //add tilemap data & attach image to it
-        const map = this.add.tilemap(this.levels[this.currentLevel]);
+        const map = this.add.tilemap(this.levels[currentLevel]);
         const tileset = map.addTilesetImage('Tilemap', 'tileset');
         const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
@@ -62,6 +62,30 @@ class Tilemap extends Phaser.Scene {
                 zeroPad: 4
             }),
             frameRate: 8,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'player_grapple',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_grapple',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'player_fall',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_run',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
             repeat: -1
         });
         this.player.anims.play('player_idle'); //start idle animation
@@ -140,15 +164,15 @@ class Tilemap extends Phaser.Scene {
 
         // health
         this.healthGroup = this.add.group();
-        let health1 = this.matter.add.sprite(92, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health1 = this.matter.add.sprite(127.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health1.setCollisionCategory(0);
         health1.setDepth(1);
         this.healthGroup.add(health1);
-        let health2 = this.matter.add.sprite(116, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health2 = this.matter.add.sprite(137.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health2.setCollisionCategory(0);
         health2.setDepth(1);
         this.healthGroup.add(health2);
-        let health3 = this.matter.add.sprite(140, 64, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
+        let health3 = this.matter.add.sprite(147.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health3.setCollisionCategory(0);
         health3.setDepth(1);
         this.healthGroup.add(health3);  
@@ -232,7 +256,7 @@ class Tilemap extends Phaser.Scene {
                 this.matter.world.remove(this.transfer);
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
-                map = this.add.tilemap(this.levels[++this.currentLevel]); //change map
+                map = this.add.tilemap(this.levels[++currentLevel]); //change map
                 //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
                 terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
@@ -242,7 +266,7 @@ class Tilemap extends Phaser.Scene {
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
                 this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
-                this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+                this.matter.world.setBounds(0, -20, map.widthInPixels, map.heightInPixels);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
                 //console.log(map);

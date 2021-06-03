@@ -44,6 +44,12 @@ class Player extends Phaser.Physics.Matter.Sprite {
                 {
                     this.isGrounded = true;
                     this.finishedGrappling = true;
+                    if (this.stopPlayer)
+                    {
+                        this.scene.clock = this.scene.time.delayedCall(50, () => {
+                            player.setVelocityX(0);
+                        }, null, this);
+                    }
                 }
             }
         });
@@ -51,6 +57,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
 
     checkCollide(platform)
     {
+        this.stopPlayer = false;
         //console.log(platform.faceTop);
         if (platform.gameObject.tile.faceTop && !platform.gameObject.tile.faceLeft && !platform.gameObject.tile.faceRight)
         {
@@ -59,12 +66,14 @@ class Player extends Phaser.Physics.Matter.Sprite {
         else if (platform.gameObject.tile.faceLeft && !platform.gameObject.tile.faceTop)
         {
             this.direction = 'left';
+            this.delayedTime = true;
             this.applyForce(this);   // apply swinging force
             return false;
         }
         else if (platform.gameObject.tile.faceRight && !platform.gameObject.tile.faceTop)
         { 
             this.direction = 'right';
+            this.delayedTime = true;
             this.applyForce(this);   // apply swinging force
             return false;
         }
@@ -77,6 +86,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             else
             {
                 this.direction = 'left';
+                this.delayedTime = true;
                 this.applyForce(this);   // apply swinging force
                 return false;
             }
@@ -90,6 +100,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             else
             {
                 this.direction = 'right';
+                this.delayedTime = true;
                 this.applyForce(this);   // apply swinging force
                 return false;
             }
@@ -97,12 +108,14 @@ class Player extends Phaser.Physics.Matter.Sprite {
         else if (platform.gameObject.tile.faceLeft && platform.gameObject.tile.faceTop && platform.gameObject.tile.faceDown)
         {
             this.direction = 'left';
+            this.delayedTime = true;
             this.applyForce(this);   // apply swinging force
             return false;
         }
-        else if (platform.gameObject.tile.faceRight && platform.gameObject.tile.faceTop)
+        else if (platform.gameObject.tile.faceRight && platform.gameObject.tile.faceTop && platform.gameObject.tile.faceDown)
         {
             this.direction = 'right';
+            this.delayedTime = true;
             this.applyForce(this);   // apply swinging force
             return false;
         }
@@ -118,16 +131,12 @@ class Player extends Phaser.Physics.Matter.Sprite {
         if(player.direction == 'left')
         {
             player.setVelocityX(-0.75);
-            this.scene.clock = this.scene.time.delayedCall(50, () => {
-                player.setVelocityX(0);
-            }, null, this);
+            player.stopPlayer = true;
         }
         else if(player.direction == 'right')
         {
             player.setVelocityX(0.75);
-            this.scene.clock = this.scene.time.delayedCall(50, () => {
-                player.setVelocityX(0);
-            }, null, this);
+            player.stopPlayer = true;
         }
     }
 }
@@ -271,7 +280,8 @@ class MoveState extends State
             player.jumping = true;                                        // currently jumping set to true
             player.isGrounded = false;                                    // set grounded boolean to false
             scene.isGrounded = false;
-            player.setFrictionAir(player.JUMP_AIR_FRICTION);       
+            player.setFrictionAir(player.JUMP_AIR_FRICTION);
+            scene.player.anims.play('player_fall');       
         }
 
         // remove a jump upon releasing the space bar
@@ -342,7 +352,6 @@ class CheckGrappleState extends State
         // grappling
         if (Phaser.Input.Keyboard.JustDown(keyQ))
         {
-
             // check each individual branch
             for (var i = 0; i < scene.branchChildren.length; i++)
             {
@@ -351,6 +360,7 @@ class CheckGrappleState extends State
                 {
                     if (player.y >= scene.branchChildren[i].y && player.y <= scene.branchChildren[i].y + scene.branchChildren[i].yBound)
                     {
+                        scene.player.anims.play('player_grapple');
                         scene.hook.play(); //play hooking sound effect
                         player.applyForceCounter = 0;
                         player.setVelocityX(0);       // stop x momentum 
@@ -430,6 +440,7 @@ class FallingState extends State
     {
         const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
+        scene.player.anims.play('player_fall');
 
         //--------------------------------------------------------------------
 
