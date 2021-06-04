@@ -10,6 +10,8 @@ class Load extends Phaser.Scene {
         this.load.image('smallBranchHighlight', './assets/smallBranchHighlight.png');
         this.load.image('heartFull', './assets/heartFull.png');
         this.load.image('heartEmpty', './assets/heartEmpty.png');
+        this.load.image('campfire', './assets/introCampfire.png');
+        this.load.image('cat', './assets/cat.png');
 
         //backgrounds
         this.load.image('background', './assets/starterBackground.png');
@@ -38,6 +40,7 @@ class Load extends Phaser.Scene {
 
         //atlas
         this.load.atlas('player_animations', './assets/atlas/player_sprites.png', './assets/atlas/player_sprites.json');
+        this.load.atlas('cat_animations', './assets/atlas/cat_sprites.png', './assets/atlas/cat_sprites.json');
     }
 
     create() {

@@ -5,6 +5,7 @@ class Tilemap extends Phaser.Scene {
 
 
     create() {
+        this.cameras.main.fadeIn(750, 0, 0, 0);
         this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
         this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6'];

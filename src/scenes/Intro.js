@@ -4,8 +4,8 @@ class Intro extends Phaser.Scene {
     }
 
     create() {
-        //tracks which screen of intro (out of the 7 screens) 0-6
-        this.introIndex = 0;
+        //tracks which screen of intro (out of the 8 screens) 0-7
+        this.introIndex = 5;
         //booleans to help button know when it can be clicked
         this.screenFinished = false;
         this.fieldsFilled = false;
@@ -50,15 +50,30 @@ class Intro extends Phaser.Scene {
                 catAdjective = this.adjectiveField.value;
                 this.nameField.value = '';
                 this.adjectiveField.value = '';
-            } else if (this.introIndex == 6) {
-                this.scene.start('tilemapScene');
+            } else if (this.introIndex == 7) {
+                this.cameras.main.fadeOut(750, 0, 0, 0);
+                this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                    this.scene.start('tilemapScene');
+                });
+                
             }
-            this.screenHandler(++this.introIndex);
+            this.nameField.style = "display: none;";
+            this.adjectiveField.style = "display: none;";
+            this.cameras.main.fadeOut(750, 0, 0, 0);
+            this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                this.screenHandler(++this.introIndex);
+                this.cameras.main.fadeIn(750, 0, 0, 0);
+            });
         });
         //all assets needed for intro (infinitely running player -> cat -> campfire + tent)
-        this.player = this.add.sprite(game.config.width/2, game.config.height/2 - 50, 'player').setOrigin(0.5, 0.5).setScale(6);
+        this.campfire = this.add.image(game.config.width/2, game.config.height/2 - 60, 'campfire').setOrigin(0.5, 0.5).setAlpha(0);
 
-        //animations
+        this.player = this.add.sprite(game.config.width/2, game.config.height/2 - 50, 'player').setOrigin(0.5, 0.5).setScale(2);
+        this.stillPlayer = this.add.image(game.config.width/2 - 50, game.config.height/2 - 10, 'player').setOrigin(0.5, 0.5).setScale(2).setAlpha(0);
+
+        this.cat = this.add.sprite(game.config.width/2, game.config.height/2 - 25, 'cat').setOrigin(0.5, 0.5).setAlpha(0).setScale(5);
+        
+        //animations for player
         this.anims.create({
             key: 'player_idle',
             frames: this.anims.generateFrameNames('player_animations', {
@@ -80,22 +95,43 @@ class Intro extends Phaser.Scene {
                 suffix: '',
                 zeroPad: 4
             }),
-            frameRate: 8,
+            frameRate: 12,
             repeat: -1
         });
-        this.player.play('player_idle');
 
+        //animations for cat
+        this.anims.create({
+            key: 'cat_idle',
+            frames: this.anims.generateFrameNames('cat_animations', {
+                prefix: 'cat_idle',
+                start: 1,
+                end: 4,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 4,
+            repeat: -1
+        });
+        this.anims.create({
+            key: 'cat_run',
+            frames: this.anims.generateFrameNames('cat_animations', {
+                prefix: 'cat_run',
+                start: 1,
+                end: 4,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
 
         //start the intro
-        this.playerSetup();
+        this.screenHandler(this.introIndex);
     }
 
     update() {
         //check what screen the player is on & if they need the text fields
-        if (this.introIndex != 0 && this.introIndex != 3) {
-            this.nameField.style = "display: none;";
-            this.adjectiveField.style = "display: none;";
-        } else {
+        if (this.introIndex == 0 || this.introIndex == 3) {
             if (this.nameField.value != '' && this.adjectiveField.value != '')
                 this.fieldsFilled = true;
             else
@@ -113,6 +149,9 @@ class Intro extends Phaser.Scene {
 
     screenHandler(index) {
         switch(index) {
+            case 0:
+                this.playerSetup();
+                break;
             case 1:
                 this.playerLore();
                 break;
@@ -131,6 +170,9 @@ class Intro extends Phaser.Scene {
             case 6:
                 this.storyTwo();
                 break;
+            case 7:
+                this.storyThree();
+                break;
             default:
                 break;
         } 
@@ -144,16 +186,20 @@ class Intro extends Phaser.Scene {
 
     playerLore() {
         this.next.setAlpha(0);
-        this.player.play('player_run');
+        this.player.setScale(6);
+        this.player.play('player_idle');
         this.typeText(`Here you are! ${playerName} the ${playerAdjective} Adventurer`);
     }
 
     playerLoreTwo() {
         this.next.setAlpha(0);
+        this.player.play('player_run');
         this.typeText('Many great adventures built your past & many more await you in the future');
     }
     catSetup() {
         this.next.setAlpha(0);
+        this.player.setAlpha(0);
+        this.cat.setAlpha(1);
         this.typeText('Enter your companions name & an adjective to describe them');
         this.nameField.style = "display: ; position: absolute; top: 500px; left: 650px; height: 50px; font-size: 14pt;";
         this.adjectiveField.style = "display: ; position: absolute; top: 500px; left: 1050px; height: 50px; font-size: 14pt;";
@@ -161,17 +207,34 @@ class Intro extends Phaser.Scene {
 
     catLore() {
         this.next.setAlpha(0);
+        this.cat.play('cat_idle');
         this.typeText(`On your adventures you gained a ${catAdjective} companion whom you named ${catName}`);
     }
 
     story() {
         this.next.setAlpha(0);
-        this.typeText(`One day your ${catAdjective} companion, ${catName}, ran off in pursuit of a rodent with no hint of stopping until it reaped its rewards`);
+        this.cat.play('cat_run');
+        this.next.text = 'Chase';
+        this.typeText(`One day your ${catAdjective} companion, ${catName}, ran off in pursuit of a rodent with no hint of stopping until it reaped its rewards.`);
     }
 
     storyTwo() {
         this.next.setAlpha(0);
-        this.typeText(`You chased & chased ${catName} until your legs gave out and you needed to take a rest.. This is the farthest you had ever traveled into the forest before`);
+        this.campfire.setAlpha(1);
+        this.stillPlayer.setAlpha(1);
+        this.cat.setAlpha(0);
+        this.next.text = 'Rest';
+        this.typeText(`You chased & chased ${catName} until your legs gave out and you needed to take a rest.. This is the farthest you had ever traveled into the forest before.`);
+    }
+
+    storyThree() {
+        this.next.setAlpha(0);
+        this.stillPlayer.setScale(0.6);
+        this.stillPlayer.x += 100;
+        this.stillPlayer.y += 35;
+        this.stillPlayer.flipX = true;
+        this.next.text = 'Play';
+        this.typeText(`You awake & feel the campfire still burning outside. Once you open your eyes you notice that the tent you slept in looks massive! A peek outside informs you that the campfire looks many times larger than normal as well. You must\'ve shrunk!? But ${catName} is still out there so there is no time to linger on it.`);
     }
 
     typeText(string) {
