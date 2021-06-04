@@ -17,10 +17,10 @@ class Load extends Phaser.Scene {
 
         //backgrounds
         this.load.image('background', './assets/starterBackground.png');
-        this.load.image('background2', './assets/empty.png');
-        this.load.image('background3', './assets/starter2Background.png');
+        this.load.image('background2', './assets/starter2Background.png');
+        this.load.image('background3', './assets/starter3Background.png');
         this.load.image('background4', './assets/starter4Background.png');
-        this.load.image('background5', './assets/empty.png');
+        this.load.image('background5', './assets/starter5Background.png');
         this.load.image('background6', './assets/empty.png');
         this.load.image('menuBackground', './assets/treeIntro.png');
 
