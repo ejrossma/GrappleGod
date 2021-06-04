@@ -224,7 +224,7 @@ class Intro extends Phaser.Scene {
         this.stillPlayer.setAlpha(1);
         this.cat.setAlpha(0);
         this.next.text = 'Rest';
-        this.typeText(`You chased & chased ${catName} until your legs gave out and you needed to take a rest.. This is the farthest you had ever traveled into the forest before.`);
+        this.typeText(`You chased & chased ${catName} until your legs gave out and you needed to take a rest.. This is the farthest you have ever traveled into the forest before.`);
     }
 
     storyThree() {
