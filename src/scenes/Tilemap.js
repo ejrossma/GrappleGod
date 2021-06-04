@@ -317,6 +317,10 @@ class Tilemap extends Phaser.Scene {
             this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
+                if (this.deadzone != null)
+                {
+                    this.matter.world.remove(this.hitDeadZone)
+                }
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
                 map = this.add.tilemap(this.levels[++currentLevel]); //change map
