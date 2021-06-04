@@ -374,7 +374,6 @@ class Tilemap extends Phaser.Scene {
                 //Change the background to the new background
                 this.background.setTexture(this.backgrounds[currentLevel]);
                 this.background.setPosition(0, 0);
-                //console.log(this.branchChildren);
                 this.cameras.main.fadeIn(1000, 0, 0, 0);
             });
 
