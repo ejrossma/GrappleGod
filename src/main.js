@@ -30,6 +30,7 @@ let cursors;
 //reserve keyboard bindings
 let keyQ, keySpace, keyLEFT, keyRIGHT, keyDOWN;
 //current level index
+let mapScene = 0;
 let currentLevel = 0;
 let hearts = 3;
 let playerName = 'Tony';

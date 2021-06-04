@@ -8,11 +8,11 @@ class Tilemap extends Phaser.Scene {
         this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
         this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6'];
-        this.currentLevel = 0;
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
 
+        this.gameOver = false;
         this.playerControl = true;
         this.jumping = false;
         this.isGrounded = false;
@@ -21,7 +21,7 @@ class Tilemap extends Phaser.Scene {
         this.graphics = this.add.graphics();    // for constraint
 
         //Add background for current level
-        this.background = this.add.image(0, 0, this.backgrounds[this.currentLevel]).setOrigin(0,0);
+        this.background = this.add.image(0, 0, this.backgrounds[currentLevel]).setOrigin(0,0);
 
         //add tilemap data & attach image to it
         const map = this.add.tilemap(this.levels[currentLevel]);
@@ -100,6 +100,14 @@ class Tilemap extends Phaser.Scene {
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
 
+        // add deadzone
+        this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
+        if (this.deadzone != null)
+        {
+            this.hitDeadZone = this.matter.add.rectangle(this.deadzone.x + this.deadzone.width/2, this.deadzone.y, this.deadzone.width, this.deadzone.height);
+        }
+        
+
         //set world bounds
         this.matter.world.setBounds(0, -50, map.widthInPixels, map.heightInPixels + 50);
 
@@ -136,10 +144,9 @@ class Tilemap extends Phaser.Scene {
         let branchList = branchObject;
         this.branches = this.add.group();
         branchList.map((element) => {
-            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 50, 60, 20, true, 50);
-            branch.setDepth(1);
+            let branch = new Branch(this, element.x + 8, element.y + 3, 'smallBranch', 80, 80, 50, true, 80);
             this.branches.add(branch);
-        });
+        }); 
         this.branchChildren = this.branches.getChildren();  // branches as an array for checking
         //console.log(this.branchChildren);
 
@@ -149,14 +156,8 @@ class Tilemap extends Phaser.Scene {
             highlight: new HighlightState(),
         }, [this, this.player, this.branchChildren]);
 
-        //Signify what map is next in the array.
-        this.mapScene = 0;
-
         //Create the next scene zone
         this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
-
-        //Create the hitbox regions for the spiked areas
-        this.spikeReset(this.respawnX, this.respawnY);
         
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
@@ -164,15 +165,15 @@ class Tilemap extends Phaser.Scene {
 
         // health
         this.healthGroup = this.add.group();
-        let health1 = this.matter.add.sprite(127.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
+        let health1 = this.matter.add.sprite(152.5, 110, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health1.setCollisionCategory(0);
         health1.setDepth(1);
         this.healthGroup.add(health1);
-        let health2 = this.matter.add.sprite(137.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
+        let health2 = this.matter.add.sprite(165, 110, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health2.setCollisionCategory(0);
         health2.setDepth(1);
         this.healthGroup.add(health2);
-        let health3 = this.matter.add.sprite(147.5, 87.5, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
+        let health3 = this.matter.add.sprite(177.5, 110, 'heartFull', null, { isStatic: true }).setOrigin(0.5).setScale(.5);
         health3.setCollisionCategory(0);
         health3.setDepth(1);
         this.healthGroup.add(health3);  
@@ -182,20 +183,82 @@ class Tilemap extends Phaser.Scene {
             child.setScrollFactor(0);
         });
         this.currentHeart = 2;
-        this.updateHealth(this.healthChildren);
+        this.lowerHealth(this.healthChildren);
+
+        // game over screen
+        let buttonConfig = {
+            fontFamily: 'Georgia',
+            fontSize: '64px',
+            color: '#FFFFFF',
+            align: 'left'
+        }
+
+        let gameOverConfig = {
+            fontFamily: 'Georgia',
+            fontSize: '64px',
+            color: '#000000',
+            align: 'left'
+        }
+
+        this.gameOverBG = this.add.image(207.5, 120, 'gameover').setOrigin(0, 0).setScale(0.75);
+        this.gameOverBG.setDepth(3);
+        this.gameOverBG.setScrollFactor(0);
+        this.gameOverBG.alpha = 0;
+
+        this.gameOverText = this.add.text(280, 150, 'GAME OVER!', gameOverConfig).setOrigin(0.5, 0.5).setScale(0.25);
+        this.gameOverText.setScrollFactor(0);
+        this.gameOverText.setDepth(3);
+        this.gameOverText.alpha = 0;
+
+        this.continue = this.add.text(277.5, 185, 'Continue', buttonConfig).setOrigin(0.5, 0.5).setScale(0.25);
+        this.continue.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.continue.width, this.continue.height), Phaser.Geom.Rectangle.Contains);
+        this.continue.setScrollFactor(0);
+        this.continue.setDepth(3);
+        this.continue.alpha = 0;
+        this.continue.on('pointerover', () => {
+            this.continue.setColor('#808080');
+        });
+        this.continue.on('pointerout', () => {
+            this.continue.setColor('#FFFFFF');
+        });
+        this.continue.on('pointerdown', () => {
+            this.anims.resumeAll();
+            this.scene.start('tilemapScene');
+        });
+
+        this.menu = this.add.text(278.75, 220, 'Menu', buttonConfig).setOrigin(0.5, 0.5).setScale(0.25);
+        this.menu.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.menu.width, this.menu.height), Phaser.Geom.Rectangle.Contains);
+        this.menu.setScrollFactor(0);
+        this.menu.setDepth(3);
+        this.menu.alpha = 0;
+        this.menu.on('pointerover', () => {
+            this.menu.setColor('#808080');
+        });
+        this.menu.on('pointerout', () => {
+            this.menu.setColor('#FFFFFF');
+        });
+        this.menu.on('pointerdown', () => {
+            this.scene.start('menuScene');
+            this.anims.resumeAll();
+        });
     }
 
     update(time, delta)
     {
-        this.frameTime += delta;
-        if (this.frameTime > 16.5)
+        if (!this.gameOver)
         {
-            this.frameTime = 0;
-            game.gameTick++;
-            if (this.playerControl)
-                this.playerFSM.step();
-            this.branchFSM.step();
-            this.checkFps(this.player); // check fps and change variables depending on fps
+            this.frameTime += delta;
+            if (this.frameTime > 16.5)
+            {
+                this.frameTime = 0;
+                game.gameTick++;
+                if (this.playerControl)
+                {
+                    this.playerFSM.step();
+                    this.branchFSM.step();
+                    this.checkFps(this.player); // check fps and change variables depending on fps
+                }
+            }
         }
     }
 
@@ -266,13 +329,21 @@ class Tilemap extends Phaser.Scene {
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
                 this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
-                this.matter.world.setBounds(0, -20, map.widthInPixels, map.heightInPixels);
+                this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
+                if (this.deadzone != null)
+                {
+                    this.hitDeadZone = this.matter.add.rectangle(this.deadzone.x + this.deadzone.width/2, this.deadzone.y, this.deadzone.width, this.deadzone.height);
+                }
+                this.lowerHealth(this.healthChildren);
+                this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
                 //console.log(map);
                 playerLoc.map((element) => {
                     this.player.x = element.x;
+                    this.respawnX = element.x;
                     this.player.y = element.y;
+                    this.respawnY = element.y;
                 });
                 //destroy the branches
                 for (var i = this.branchChildren.length - 1; i > -1; i--) {
@@ -300,12 +371,8 @@ class Tilemap extends Phaser.Scene {
         });
     }
 
-    //Creates the hitzones for the spiked areas
-    spikeReset(x, y, map){
-
-    }
-    //Respawns the player to the start of the map
-    playerRespawn(x, y){
+    // reset player
+    resetPlayer(x, y){
         this.player.setX(x);
         this.player.setY(y);
     }
@@ -329,6 +396,8 @@ class Tilemap extends Phaser.Scene {
                     {
                         health[0].setTexture('heartEmpty');
                         this.currentHeart--;
+                        this.gameOver = true;
+                        this.gameOverScreen();
                     }
                     break;
                 case 'g':
@@ -352,5 +421,43 @@ class Tilemap extends Phaser.Scene {
                     break;
             }
         });
+    }
+
+    lowerHealth(health)
+    {
+        // when hitting deadzone
+        if (this.deadzone != null)
+        {
+            this.player.setOnCollideWith(this.hitDeadZone, pair => {
+                if (this.currentHeart == 2)
+                {
+                    this.resetPlayer(this.respawnX, this.respawnY);
+                    health[2].setTexture('heartEmpty');
+                    this.currentHeart--;
+                }
+                else if (this.currentHeart == 1)
+                {
+                    this.resetPlayer(this.respawnX, this.respawnY);
+                    health[1].setTexture('heartEmpty');
+                    this.currentHeart--;
+                }
+                else if (this.currentHeart == 0)
+                {
+                    health[0].setTexture('heartEmpty');
+                    this.currentHeart--;
+                    this.gameOver = true;
+                    this.gameOverScreen();
+                }
+            });
+        }
+    }
+
+    gameOverScreen()
+    {
+        this.player.pause();
+        this.gameOverBG.alpha = 1;
+        this.gameOverText.alpha = 1;
+        this.continue.alpha = 1;
+        this.menu.alpha = 1;
     }
 }

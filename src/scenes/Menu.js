@@ -52,6 +52,7 @@ class Menu extends Phaser.Scene {
         });
         this.newGame.on('pointerdown', () => {
             currentLevel = 0;
+            mapScene = 0;
             hearts = 3;
             this.scene.start('introScene');
         });
@@ -85,7 +86,8 @@ class Menu extends Phaser.Scene {
         if (currentLevel != 0) {
             this.continue.alpha = 1;
             this.newGame.y = game.config.height/1.7;
-            this.credits.y = game.config.height/1.48;
+            this.controls.y = game.config.height/1.48;
+            this.credits.y = game.config.height/1.32;
         }
     }
 }

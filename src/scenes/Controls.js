@@ -8,13 +8,13 @@ class Controls extends Phaser.Scene {
         
         let controlConfig = {
             fontFamily: 'Georgia',
-            fontSize: '18px',
+            fontSize: '64px',
             color: '#FFFFFF'
         }
-        this.credits = this.add.text(game.config.width/2, game.config.height/25, 'Controls', controlConfig).setFontSize('16px').setOrigin(0.5, 0.5);
+        this.credits = this.add.text(game.config.width/2, game.config.height/25, 'Controls', controlConfig).setOrigin(0.5, 0.5).setScale(0.4);
 
 
-        this.back = this.add.text(game.config.width/2, game.config.height/1.05, 'Back to Menu', controlConfig).setOrigin(0.5, 0.5).setFontSize('16px');
+        this.back = this.add.text(game.config.width/2, game.config.height/1.05, 'Back to Menu', controlConfig).setOrigin(0.5, 0.5).setScale(0.4);
         this.back.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.back.width, this.back.height), Phaser.Geom.Rectangle.Contains);
         this.back.on('pointerover', () => {
             this.back.setColor('#808080');
