@@ -139,6 +139,20 @@ class Player extends Phaser.Physics.Matter.Sprite {
             player.stopPlayer = true;
         }
     }
+
+    pause()
+    {
+        this.setVelocityX(0);
+        this.setVelocityY(0);
+        this.setIgnoreGravity(true);
+        this.scene.walk.pause();
+        this.scene.anims.pauseAll();
+    }
+
+    resume()
+    {
+        this.setIgnoreGravity(false);
+    }
 }
 
 // state classes

@@ -12,6 +12,8 @@ class Load extends Phaser.Scene {
         this.load.image('heartEmpty', './assets/heartEmpty.png');
         this.load.image('campfire', './assets/introCampfire.png');
         this.load.image('cat', './assets/cat.png');
+        this.load.image('controls', './assets/controls.png');
+        this.load.image('gameover', './assets/gameOver.png');
 
         //backgrounds
         this.load.image('background', './assets/starterBackground.png');
