@@ -5,7 +5,7 @@ class Intro extends Phaser.Scene {
 
     create() {
         //tracks which screen of intro (out of the 8 screens) 0-7
-        this.introIndex = 5;
+        this.introIndex = 0;
         //booleans to help button know when it can be clicked
         this.screenFinished = false;
         this.fieldsFilled = false;
