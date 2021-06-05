@@ -27,8 +27,8 @@ class Tilemap extends Phaser.Scene {
         //add tilemap data & attach image to it
         const map = this.add.tilemap(this.levels[currentLevel]);
         const tileset = map.addTilesetImage('Tilemap', 'tileset');
-        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
+        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         terrainLayer.setCollisionByProperty({ collision: true });
 
         // create player (must set below the creation of platform/branch children)
@@ -70,7 +70,7 @@ class Tilemap extends Phaser.Scene {
                 suffix: '',
                 zeroPad: 4
             }),
-            frameRate: 8,
+            frameRate: 12,
             repeat: -1
         });
         this.anims.create({
@@ -97,6 +97,19 @@ class Tilemap extends Phaser.Scene {
             frameRate: 1,
             repeat: -1
         });
+        this.anims.create({
+            key: 'player_kick',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_kick',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(2);    // bring player to front
 
@@ -108,6 +121,36 @@ class Tilemap extends Phaser.Scene {
         //add next level collisionbox
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
+        this.cat = new Cat(this, this.nextLevel.x + this.nextLevel.width*.25, this.nextLevel.y + 5, this.MAX_VELOCITY, this.nextLevel.width*2, this.nextLevel.height, 'cat_animations', 'cat_idle0001');
+
+        // cat animation
+        this.anims.create({
+            key: 'cat_idle',
+            frames: this.anims.generateFrameNames('cat_animations', {
+                prefix: 'cat_idle',
+                start: 1,
+                end: 2,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+        
+        this.anims.create({
+            key: 'cat_run',
+            frames: this.anims.generateFrameNames('cat_animations', {
+                prefix: 'cat_run',
+                start: 1,
+                end: 4,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
+
+        this.cat.anims.play('cat_idle');
 
         // add deadzone
         this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
@@ -164,6 +207,12 @@ class Tilemap extends Phaser.Scene {
             detect: new DetectState(),
             highlight: new HighlightState(),
         }, [this, this.player, this.branchChildren]);
+
+        // cat state machine
+        this.catFSM = new StateMachine('idle', {
+            idle: new CatIdleState(),
+            run: new CatRunState(),
+        }, [this, this.player, this.cat]);
 
         //Create the next scene zone
         this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
@@ -259,6 +308,14 @@ class Tilemap extends Phaser.Scene {
             this.scene.start('menuScene');
             this.anims.resumeAll();
         });
+
+        //in game tutorials so the player can learn gradually
+        this.move = this.add.text(this.player.x - 100, this.player.y - 75, 'Move : ← & →', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.jump = this.add.text(this.player.x - 250, this.player.y - 100, 'Jump : Space', nameConfig).setDepth(1).setOrigin(0, 0);
+
+        this.grapple = this.add.text(this.player.x - 200, this.player.y - 312, 'Grapple : Jump → Q', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.grappleHelp = this.add.text(this.player.x - 15, this.player.y - 325, 'Swing : ← & →', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.grappleHelpTwo = this.add.text(this.player.x - 15, this.player.y - 300, 'Release : Q', nameConfig).setDepth(1).setOrigin(0, 0);
     }
 
     update(time, delta)
@@ -273,15 +330,23 @@ class Tilemap extends Phaser.Scene {
                 if (this.playerControl)
                 {
                     this.playerFSM.step();
-                    this.branchFSM.step();
-                    this.checkFps(this.player); // check fps and change variables depending on fps
                 }
+                this.branchFSM.step();
+                this.catFSM.step();
+                this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
+        }
+        if (currentLevel != 0) {
+            this.move.alpha = 0;
+            this.jump.alpha = 0;
+            this.grapple.alpha = 0;
+            this.grappleHelpTwo.alpha = 0;
+            this.grappleHelp.alpha = 0;
         }
     }
 
     // check the players fps and adjust variables accordingly
-    checkFps(player)
+    checkFps(player, cat)
     {
         if (game.loop.actualFps <= 65)
         {
@@ -290,6 +355,7 @@ class Tilemap extends Phaser.Scene {
             player.GRAPPLE_FORCE = 0.00005;  // grappling force
             player.JUMP_AIR_FRICTION = 0;
             player.FALL_AIR_FRICTION = 0.015;
+            cat.MAX_VELOCITY = 1.82;
         }
         else
         {
@@ -298,6 +364,7 @@ class Tilemap extends Phaser.Scene {
             player.GRAPPLE_FORCE = 0.0001;    // grappling force
             player.JUMP_AIR_FRICTION = 0.03;
             player.FALL_AIR_FRICTION = 0.015;
+            cat.MAX_VELOCITY = 1.25;
         }
     }
 
@@ -335,6 +402,8 @@ class Tilemap extends Phaser.Scene {
             this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
+                this.cat.destroy();
+                this.matter.world.remove(this.cat);
                 if (this.deadzone != null)
                 {
                     this.matter.world.remove(this.hitDeadZone)
@@ -344,13 +413,19 @@ class Tilemap extends Phaser.Scene {
                 map = this.add.tilemap(this.levels[++currentLevel]); //change map
                 //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
-                terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
                 map.createLayer('Decoration', tilesett, 0, 0); //add new decor visuals
+                terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
                 terrainLayer.setCollisionByProperty({collision: true }); //set collision
                 var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true }); //find all colliding tiles
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
                 this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
+                this.cat = new Cat(this, this.nextLevel.x + this.nextLevel.width*.25, this.nextLevel.y + 5, this.MAX_VELOCITY, this.nextLevel.width*2, this.nextLevel.height, 'cat_animations', 'cat_idle0001');
+                this.cat.anims.play('cat_idle');
+                this.catFSM = new StateMachine('idle', {
+                    idle: new CatIdleState(),
+                    run: new CatRunState(),
+                }, [this, this.player, this.cat]);
                 this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
                 if (this.deadzone != null)
                 {
@@ -396,52 +471,6 @@ class Tilemap extends Phaser.Scene {
     resetPlayer(x, y){
         this.player.setX(x);
         this.player.setY(y);
-    }
-
-    updateHealth(health)
-    {
-        this.input.keyboard.on('keydown', (event) => {
-            switch(event.key) {
-                case 'f':
-                    if (this.currentHeart == 2)
-                    {
-                        health[2].setTexture('heartEmpty');
-                        this.currentHeart--;
-                    }
-                    else if (this.currentHeart == 1)
-                    {
-                        health[1].setTexture('heartEmpty');
-                        this.currentHeart--;
-                    }
-                    else if (this.currentHeart == 0)
-                    {
-                        health[0].setTexture('heartEmpty');
-                        this.currentHeart--;
-                        this.gameOver = true;
-                        this.gameOverScreen();
-                    }
-                    break;
-                case 'g':
-                    if (this.currentHeart == 1)
-                    {
-                        health[2].setTexture('heartFull');
-                        this.currentHeart++;
-                    }
-                    else if (this.currentHeart == 0)
-                    {
-                        health[1].setTexture('heartFull');
-                        this.currentHeart++;
-                    }
-                    else if (this.currentHeart == -1)
-                    {
-                        health[0].setTexture('heartFull');
-                        this.currentHeart++;
-                    }
-                    break;
-                default:
-                    break;
-            }
-        });
     }
 
     lowerHealth(health)
