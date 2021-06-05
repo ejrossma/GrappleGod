@@ -57,7 +57,7 @@ class Menu extends Phaser.Scene {
             this.scene.start('introScene');
         });
 
-        this.controls = this.add.text(game.config.width/2, game.config.height/1.7, 'Controls', buttonConfig).setOrigin(0.5, 0.5);
+        this.controls = this.add.text(game.config.width/2, game.config.height/1.72, 'Controls', buttonConfig).setOrigin(0.5, 0.5);
         this.controls.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.controls.width, this.controls.height), Phaser.Geom.Rectangle.Contains);
         this.controls.on('pointerover', () => {
             this.controls.setColor('#808080');
@@ -69,7 +69,7 @@ class Menu extends Phaser.Scene {
             this.scene.start('controlScene');
         });
 
-        this.credits = this.add.text(game.config.width/2, game.config.height/1.45, 'Credits', buttonConfig).setOrigin(0.5, 0.5);
+        this.credits = this.add.text(game.config.width/2, game.config.height/1.5, 'Credits', buttonConfig).setOrigin(0.5, 0.5);
         this.credits.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.credits.width, this.credits.height), Phaser.Geom.Rectangle.Contains);
         this.credits.on('pointerover', () => {
             this.credits.setColor('#808080');
@@ -85,9 +85,9 @@ class Menu extends Phaser.Scene {
     update() {
         if (currentLevel != 0) {
             this.continue.alpha = 1;
-            this.newGame.y = game.config.height/1.7;
-            this.controls.y = game.config.height/1.48;
-            this.credits.y = game.config.height/1.32;
+            this.newGame.y = game.config.height/1.72;
+            this.controls.y = game.config.height/1.52;
+            this.credits.y = game.config.height/1.35;
         }
     }
 }

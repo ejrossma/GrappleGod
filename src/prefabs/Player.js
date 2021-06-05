@@ -534,6 +534,7 @@ class KickState extends State
         //--------------------------------------------------------------------
 
         player.canKick = false;
+        scene.player.anims.play('player_kick');
         player.setVelocityX(0);
         player.setVelocityY(-player.JUMP_VELOCITY);
     }

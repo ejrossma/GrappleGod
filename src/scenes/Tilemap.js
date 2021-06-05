@@ -27,8 +27,8 @@ class Tilemap extends Phaser.Scene {
         //add tilemap data & attach image to it
         const map = this.add.tilemap(this.levels[currentLevel]);
         const tileset = map.addTilesetImage('Tilemap', 'tileset');
-        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         const decorationLayer = map.createLayer('Decoration', tileset, 0, 0);
+        const terrainLayer = map.createLayer('Terrain', tileset, 0, 0);
         terrainLayer.setCollisionByProperty({ collision: true });
 
         // create player (must set below the creation of platform/branch children)
@@ -62,7 +62,7 @@ class Tilemap extends Phaser.Scene {
                 suffix: '',
                 zeroPad: 4
             }),
-            frameRate: 8,
+            frameRate: 12,
             repeat: -1
         });
         this.anims.create({
@@ -89,6 +89,19 @@ class Tilemap extends Phaser.Scene {
             frameRate: 1,
             repeat: -1
         });
+        this.anims.create({
+            key: 'player_kick',
+            frames: this.anims.generateFrameNames('player_animations', {
+                prefix: 'player_kick',
+                start: 1,
+                end: 1,
+                suffix: '',
+                zeroPad: 4
+            }),
+            frameRate: 1,
+            repeat: -1
+        });
+
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(2);    // bring player to front
 
@@ -251,6 +264,14 @@ class Tilemap extends Phaser.Scene {
             this.scene.start('menuScene');
             this.anims.resumeAll();
         });
+
+        //in game tutorials so the player can learn gradually
+        this.move = this.add.text(this.player.x - 100, this.player.y - 75, 'Move : ← & →', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.jump = this.add.text(this.player.x - 250, this.player.y - 100, 'Jump : Space', nameConfig).setDepth(1).setOrigin(0, 0);
+
+        this.grapple = this.add.text(this.player.x - 200, this.player.y - 312, 'Grapple : Jump → Q', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.grappleHelp = this.add.text(this.player.x - 15, this.player.y - 325, 'Swing : ← & →', nameConfig).setDepth(1).setOrigin(0, 0);
+        this.grappleHelpTwo = this.add.text(this.player.x - 15, this.player.y - 300, 'Release : Q', nameConfig).setDepth(1).setOrigin(0, 0);
     }
 
     update(time, delta)
@@ -269,6 +290,13 @@ class Tilemap extends Phaser.Scene {
                     this.checkFps(this.player); // check fps and change variables depending on fps
                 }
             }
+        }
+        if (currentLevel != 0) {
+            this.move.alpha = 0;
+            this.jump.alpha = 0;
+            this.grapple.alpha = 0;
+            this.grappleHelpTwo.alpha = 0;
+            this.grappleHelp.alpha = 0;
         }
     }
 
@@ -336,8 +364,8 @@ class Tilemap extends Phaser.Scene {
                 map = this.add.tilemap(this.levels[++currentLevel]); //change map
                 //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
-                terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
                 map.createLayer('Decoration', tilesett, 0, 0); //add new decor visuals
+                terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
                 terrainLayer.setCollisionByProperty({collision: true }); //set collision
                 var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true }); //find all colliding tiles
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
