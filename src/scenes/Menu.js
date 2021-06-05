@@ -4,6 +4,17 @@ class Menu extends Phaser.Scene {
     }
 
     create() {
+
+        if(musicPlaying == false){
+            this.menuMusic = this.sound.add('titleMusic', {
+                loop:true,
+                volume: 0.3
+            });
+            this.menuMusic.play();
+            musicPlaying = true;     
+        }
+        
+
         this.background = this.add.image(0, 0, 'menuBackground').setOrigin(0, 0);
         this.creatorsBackground = this.add.rectangle(0, game.config.height, game.config.width * 2, 80, 0x5C4033).setOrigin(0.5, 0.5);
         this.creators = this.add.text(50, game.config.height - 27, 'Game Created By Elijah Rossman, Kevin Lewis, & Kristopher Yu', 
@@ -39,6 +50,9 @@ class Menu extends Phaser.Scene {
             this.continue.setColor('#FFFFFF');
         });
         this.continue.on('pointerdown', () => {
+            //stop the music
+            this.menuMusic.stop();
+            musicPlaying = false;  
             this.scene.start('tilemapScene');
         });
 
@@ -51,6 +65,9 @@ class Menu extends Phaser.Scene {
             this.newGame.setColor('#FFFFFF');
         });
         this.newGame.on('pointerdown', () => {
+            //stop the music
+            this.menuMusic.stop();
+            musicPlaying = false;
             currentLevel = 0;
             mapScene = 0;
             hearts = 3;

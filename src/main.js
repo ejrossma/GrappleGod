@@ -37,3 +37,4 @@ let playerName = 'Alexander';
 let playerAdjective = 'Kindhearted';
 let catName = 'Fluff';
 let catAdjective = 'heroic';
+let musicPlaying = false;

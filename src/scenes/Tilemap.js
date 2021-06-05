@@ -39,7 +39,15 @@ class Tilemap extends Phaser.Scene {
             this.respawnX = element.x;
             this.respawnY = element.y;
         });
-
+        //play overworld music
+        if(musicPlaying == false){
+            this.music = this.sound.add('outsideMusic', {
+                loop:true,
+                volume: 0.3
+            });
+            this.music.play();
+            musicPlaying = true;     
+        }
         //animations
         this.anims.create({
             key: 'player_idle',
