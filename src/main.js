@@ -31,7 +31,7 @@ let cursors;
 let keyQ, keySpace, keyLEFT, keyRIGHT, keyDOWN;
 //current level index
 let mapScene = 0;
-let currentLevel = 0;
+let currentLevel = 5;
 let hearts = 3;
 let playerName = 'Alexander';
 let playerAdjective = 'Kindhearted';

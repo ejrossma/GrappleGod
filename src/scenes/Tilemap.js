@@ -7,8 +7,8 @@ class Tilemap extends Phaser.Scene {
     create() {
         this.cameras.main.fadeIn(750, 0, 0, 0);
         this.matter.world.update30Hz();
-        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON'];
-        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6'];
+        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_bossJSON'];
+        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6', 'background'];
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -20,6 +20,9 @@ class Tilemap extends Phaser.Scene {
         this.finishedGrappling = false;
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
+
+        //groups
+        this.rocksGroup = this.add.group();
 
         //Add background for current level
         this.background = this.add.image(0, 0, this.backgrounds[currentLevel]).setOrigin(0,0);
@@ -206,8 +209,8 @@ class Tilemap extends Phaser.Scene {
             wordWrap: {width: 250, useAdvancedWrap: true},
             align: 'center'
         }
-        let playerTitle = this.add.text(142, 101, `${playerName} the ${playerAdjective}`, nameConfig).setOrigin(0);
-        playerTitle.setDepth(1).setScrollFactor(0).setScale(0.5);
+        this.playerTitle = this.add.text(142, 101, `${playerName} the ${playerAdjective}`, nameConfig).setOrigin(0);
+        this.playerTitle.setDepth(1).setScrollFactor(0).setScale(0.5);
         // game over screen
         let buttonConfig = {
             fontFamily: 'Georgia',
@@ -290,6 +293,22 @@ class Tilemap extends Phaser.Scene {
                     this.checkFps(this.player); // check fps and change variables depending on fps
                 }
             }
+            //on the boss level if the rock hits the ground destroy it
+            if (currentLevel == 6) {
+                this.rockChildren.forEach( function(rock) {
+                    rock.setOnCollideActive(pair => {
+                        console.log(pair.bodyB);
+                        // if (pair.bodyB == this.player.body) {
+                        //     //player loses 1 health
+                        // } else if (pair.bodyB == this.boss.body) {
+                        //     //boss shell gets cracked
+                        // }
+                        rock.destroy();
+                    });               
+                });
+                this.wallPadOne.update();
+                // this.wallPadTwo.update();
+            }
         }
         if (currentLevel != 0) {
             this.move.alpha = 0;
@@ -370,14 +389,13 @@ class Tilemap extends Phaser.Scene {
                 var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true }); //find all colliding tiles
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
-                this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
+                if (this.nextLevel != null)
+                    this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
                 this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
                 if (this.deadzone != null)
-                {
                     this.hitDeadZone = this.matter.add.rectangle(this.deadzone.x + this.deadzone.width/2, this.deadzone.y, this.deadzone.width, this.deadzone.height);
-                }
                 this.lowerHealth(this.healthChildren);
-                this.matter.world.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
+                this.matter.world.setBounds(0, -50, map.widthInPixels, map.heightInPixels + 50);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
                 //console.log(map);
@@ -402,11 +420,68 @@ class Tilemap extends Phaser.Scene {
                 //Change the background to the new background
                 this.background.setTexture(this.backgrounds[currentLevel]);
                 this.background.setPosition(0, 0);
+
+                //if its the boss level
+                    //zoom out & adjust UI Size
+                    //setup WallPad, GateOne, GateTwo, RockGates, & Rock Object
+                if (currentLevel == 6) {
+                    //hide UI & change UI positions
+                    this.playerTitle.x -= 135;
+                    this.playerTitle.y -= 100;
+                    this.playerTitle.setScale(1).setAlpha(0);
+                    var temp = 0;
+                    this.healthChildren.forEach( function(child) {
+                        temp += 20;
+                        child.x -= 145 - temp;
+                        child.y -= 80;
+                        child.setScale(2).setAlpha(0);
+                    });
+                    //zoom out the camera so the player has a better chance in the boss fight
+                    this.cameras.main.zoomTo(1, 2000);
+                    //once the zoom is finished then give the player control again
+                    this.cameras.main.once(Phaser.Cameras.Scene2D.Events.ZOOM_COMPLETE, (cam, effect) => {
+                        this.playerTitle.alpha = 1;
+                        this.healthChildren.forEach( function(child) {
+                            child.alpha = 1;
+                        });
+                    });
+                    console.log(map);
+                    //setup gateOne & gateTwo
+                    let gateOnePos = map.filterObjects('Objects', obj => obj.name === 'rockGateOne');
+                    gateOnePos.map((element) => {
+                        this.gateOne = this.matter.add.image(element.x, element.y, 'gateFive', { isStatic: true});
+                    });
+                    
+                    
+                    // let gateTwoPos = map.filterObjects('Objects', obj => obj.name === 'rockGateTwo');
+                    // let gateTwo = this.add.matter.image(gateTwoPos.x, gateTwoPos.y, 'gateFive', { isStatic: true});
+                    
+                    //setup rock above both
+                    let rocks = map.filterObjects('Objects', obj => obj.name === 'rock');
+                    rocks.map((element) => {
+                        let rock = this.matter.add.image(element.x, element.y, 'rock');
+                        this.rocksGroup.add(rock);
+                    });
+                    this.rockChildren = this.rocksGroup.getChildren();
+                    //setup wallPadOne & wallPadTwo
+                    let wallPadOnePos = map.filterObjects('Objects', obj => obj.name === 'wallPadOne');
+                    wallPadOnePos.map((element) => {
+                        this.wallPadOne = new WallPad(this, element.x, element.y, 'wallPad', 5, this.gateOne);
+                    });
+                    // let wallPadTwoPos = map.filterObjects('Objects', obj => obj.name === 'wallPadTwo');
+                    // this.wallPadTwo = new wallPad(this, wallPadTwoPos.x, wallPadTwoPos.y, 'wallPad', 5, gateTwo);
+
+                    this.playerControl = true;
+                }
+                    
+
+                //fade back in after changing the map
                 this.cameras.main.fadeIn(1000, 0, 0, 0);
             });
 
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                this.playerControl = true;
+                if (currentLevel != 6)
+                    this.playerControl = true;
                 this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
             });
         });
