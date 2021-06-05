@@ -39,6 +39,10 @@ class Load extends Phaser.Scene {
         //audio
         this.load.audio('walking', './assets/sounds/Walking.wav');
         this.load.audio('hooking', './assets/sounds/hook.wav');
+        this.load.audio('outsideMusic', './assets/sounds/outsideMusic.wav');
+        this.load.audio('titleMusic', './assets/sounds/titleMusic.wav');
+        this.load.audio('treeMusic', './assets/sounds/treeMusic.wav');
+        this.load.audio('bossMusic', './assets/sounds/BossMusic.wav');
 
         //atlas
         this.load.atlas('player_animations', './assets/atlas/player_sprites.png', './assets/atlas/player_sprites.json');
