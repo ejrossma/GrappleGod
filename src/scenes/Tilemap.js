@@ -44,10 +44,18 @@ class Tilemap extends Phaser.Scene {
         });
         //play overworld music
         if(musicPlaying == false){
-            this.music = this.sound.add('outsideMusic', {
-                loop:true,
-                volume: 0.3
-            });
+            if(currentLevel >= 6){
+                this.music = this.sound.add('treeMusic', {
+                    loop:true,
+                    volume: 0.3
+                });
+            }
+            else{
+                this.music = this.sound.add('outsideMusic', {
+                    loop:true,
+                    volume: 0.3
+                });
+            }
             this.music.play();
             musicPlaying = true;     
         }
@@ -409,6 +417,15 @@ class Tilemap extends Phaser.Scene {
     nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
         // const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
+        //Check to see if you need to change the soundtrack
+        if(currentLevel == 6){
+            this.music.stop();
+            this.treeMusic = this.sound.add('treeMusic', {
+                loop:true,
+                volume: 0.3
+            });
+            this.treeMusic.play();
+        }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
             this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
