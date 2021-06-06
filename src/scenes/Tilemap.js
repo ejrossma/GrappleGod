@@ -307,6 +307,10 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
+            if (currentLevel == 6)
+            {
+                currentLevel = 5;
+            }
             this.scene.start('tilemapScene');
         });
 

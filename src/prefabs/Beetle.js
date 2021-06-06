@@ -17,6 +17,7 @@ class Beetle extends Phaser.Physics.Matter.Sprite {
         this.kickStunned = false;
         this.health = 3;
         this.spikesFalling = false;
+        this.hitOnce = false;
 
         this.setFriction(0);                // remove sliding on walls
         this.setFixedRotation(0);           // prevent player sprite from unnecessarily spinning when moving
@@ -316,25 +317,33 @@ class StunnedState extends State
         if (!beetle.isStunned)
         {
             beetle.shakeCount = 0;
-            this.stateMachine.transition('groundpound');
+            beetle.hitOnce = false;
+            this.stateMachine.transition('search');
             return;
         }
 
         //--------------------------------------------------------------------
 
-        beetle.setVelocityX(0);
-        beetle.timesHit++;
-        if (beetle.timesHit >= 2)
+        if (beetle.hitOnce == false)
         {
-            beetle.shellCracked = true;
+            beetle.hitOnce = true;
+            beetle.setVelocityX(0);
+            beetle.timesHit++;
+            if (beetle.timesHit >= 2)
+            {
+                beetle.shellCracked = true;
+            }
+            if (beetle.shellCracked && beetle.kickStunned)
+            {
+                beetle.health--;
+            }
+            console.log('Shell Cracked:' + beetle.shellCracked);
+            console.log('Times Hit:' + beetle.timesHit);
+            console.log('Beetle Health' + beetle.health);
+            scene.clock = scene.time.delayedCall(2000, () => {
+                beetle.isStunned = false;
+                beetle.kickStunned = false;
+            }, null, this);
         }
-        if (beetle.shellCracked)
-        {
-            beetle.health--;
-        }
-        scene.clock = scene.time.delayedCall(2000, () => {
-            beetle.isStunned = false;
-            beetle.kickStunned = false;
-        }, null, this);
     }
 }
