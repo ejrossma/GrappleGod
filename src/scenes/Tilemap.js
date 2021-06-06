@@ -256,7 +256,6 @@ class Tilemap extends Phaser.Scene {
         this.healthChildren.forEach(function(child)
         {
             child.setScrollFactor(0);
-            child.setAlpha(0.75);
         });
         this.currentHeart = 2;
         this.lowerHealth(this.healthChildren, this.player);
@@ -324,8 +323,6 @@ class Tilemap extends Phaser.Scene {
         });
         this.menu.on('pointerdown', () => {
             this.scene.start('menuScene');
-            this.music.stop();                  //stop music
-            musicPlaying = false;
             this.anims.resumeAll();
         });
 
@@ -425,11 +422,11 @@ class Tilemap extends Phaser.Scene {
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
             this.music.stop();
-            this.music = this.sound.add('bossMusic', {
+            this.treeMusic = this.sound.add('treeMusic', {
                 loop:true,
                 volume: 0.3
             });
-            this.music.play();
+            this.treeMusic.play();
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
@@ -517,10 +514,8 @@ class Tilemap extends Phaser.Scene {
                     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.ZOOM_COMPLETE, (cam, effect) => {
                         this.playerTitle.alpha = 1;
                         this.healthChildren.forEach( function(child) {
-                            child.alpha = 0.75;
+                            child.alpha = 1;
                         });
-                        this.playerControl = true;
-                        this.entrance.alpha = 1;
                     });
                     //setup gateOne & gateTwo
                     let gateOnePos = map.filterObjects('Objects', obj => obj.name === 'rockGateOne');
@@ -533,6 +528,7 @@ class Tilemap extends Phaser.Scene {
                     gateTwoPos.map((element) => {
                         this.gateTwo = this.matter.add.image(element.x + 40, element.y, 'gateFive', { isStatic: true}).setIgnoreGravity(true);
                     });
+                    console.log(this.gameTwo);
                     
                     //setup rock above both
                     let rockOnePos = map.filterObjects('Objects', obj => obj.name === 'rockOne');
@@ -557,15 +553,7 @@ class Tilemap extends Phaser.Scene {
                         this.wallPadTwo.flipX = true;
                     });
 
-                    let exitGate = map.filterObjects('Objects', obj => obj.name === 'gateTwo');
-                    exitGate.map((element) => {
-                        this.exit = this.matter.add.image(element.x + 8, element.y + 8, 'gateThree');
-                    });
-                    
-                    let entranceGate = map.filterObjects('Objects', obj => obj.name === 'gateOne');
-                    entranceGate.map((element) => {
-                        this.entrance = this.matter.add.image(element.x + 8, element.y + 8, 'gateThree').setAlpha(0);
-                    });
+                    this.playerControl = true;
 
                     let beetleObject = map.filterObjects("Objects", obj => obj.name === 'beetle');
                     beetleObject.map((element) => {
@@ -578,7 +566,6 @@ class Tilemap extends Phaser.Scene {
                         stunned: new StunnedState(),
                     }, [this, this.player, this.beetle]);
                 }
-                    
 
                 //fade back in after changing the map
                 this.cameras.main.fadeIn(1000, 0, 0, 0);

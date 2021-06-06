@@ -28,10 +28,12 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.currentHook = null;
         this.shortImmunity = false;
         this.immunityLeft = 0;
+        this.isKicking = false;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
         this.setFixedRotation(0);           // prevent player sprite from unnecessarily spinning when moving
+        this.setCollisionGroup(4);
 
         // for state machine logic
         this.grappleFailed = 2;             // bool for checking grapples
@@ -45,28 +47,75 @@ class Player extends Phaser.Physics.Matter.Sprite {
                 if (pair.bodyB.collisionFilter.group == 2)
                 {
                     // boss collision
-                    if (this.shortImmunity == false)
+                    if (scene.beetle.shellCracked == false)
                     {
-                        this.shortImmunity = true;
-                        this.lowerHealth(this, scene);
+                        if (this.shortImmunity == false)
+                        {
+                            this.shortImmunity = true;
+                            this.lowerHealth(this, scene);
+                        }
+                        else if (this.shortImmunity == true)
+                        {
+                            if (scene.beetle.direction == 1)
+                            {
+                                this.setVelocityX(-this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
+                            else if (scene.beetle.direction == 2)
+                            {
+                            
+                                this.setVelocityX(this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
+                        }
                     }
-                    else if (this.shortImmunity == true)
+                    else if (scene.beetle.shellCracked == true && !this.isKicking && scene.beetle.kickStunned == false)
                     {
+                        if (this.shortImmunity == false)
+                        {
+                            this.shortImmunity = true;
+                            this.lowerHealth(this, scene);
+                        }
+                        else if (this.shortImmunity == true)
+                        {
+                            if (scene.beetle.direction == 1)
+                            {
+                                this.setVelocityX(-this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
+                            else if (scene.beetle.direction == 2)
+                            {
+                                this.setVelocityX(this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
+                        }
+                    }
+                    else if (scene.beetle.shellCracked == true && this.isKicking)
+                    {
+                        scene.beetle.isStunned = true;
+                        scene.beetle.kickStunned = true;
+                        this.isGrounded = true;
                         if (scene.beetle.direction == 1)
-                        {
-                            this.setVelocityX(-this.MAX_VELOCITY*3);
-                            this.setVelocityY(this.JUMP_VELOCITY*2);
-                        }
-                        else if (scene.beetle.direction == 2)
-                        {
-                            this.setVelocityX(this.MAX_VELOCITY*3);
-                            this.setVelocityY(this.JUMP_VELOCITY*2);
-                        }
+                            {
+                                this.setVelocityX(-this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
+                            else if (scene.beetle.direction == 2)
+                            {
+                                this.setVelocityX(this.MAX_VELOCITY*2);
+                                this.setVelocityY(this.JUMP_VELOCITY);
+                            }
                     }
                 }
                 else if (pair.bodyB.collisionFilter.group == 3)
                 {
                     // rock collision
+                    if (this.shortImmunity == false)
+                    {
+                        this.shortImmunity = true;
+                        this.lowerHealth(this, scene);
+                    }
+
                 }
                 else if (pair.bodyB.collisionFilter.group == 0)
                 {
@@ -105,7 +154,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             scene.currentHeart--;
             player.setAlpha(0.4);
 
-            scene.clock = scene.time.delayedCall(1500, () => {
+            scene.clock = scene.time.delayedCall(1600, () => {
                 player.shortImmunity = false;
                 player.setAlpha(1);
             }, null, player);
@@ -126,7 +175,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             scene.currentHeart--;
             player.setAlpha(0.4);
 
-            scene.clock = scene.time.delayedCall(1500, () => {
+            scene.clock = scene.time.delayedCall(1600, () => {
                 player.shortImmunity = false;
                 player.setAlpha(1);
             }, null, player);
@@ -607,11 +656,13 @@ class KickState extends State
     {
         const { left, right, space, down }  = scene.keys;
         const keyQ = scene.keys.keyQ;
+        player.isKicking = true;
 
         //--------------------------------------------------------------------
 
         if (player.isGrounded)
         {
+            player.isKicking = false;
             this.stateMachine.transition('idle');
             return;
         }
