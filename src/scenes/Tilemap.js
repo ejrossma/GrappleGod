@@ -129,10 +129,11 @@ class Tilemap extends Phaser.Scene {
             key: 'beetle_walk',
             frames: this.anims.generateFrameNames('beetlewalk', {
                 start: 0,
-                end: 4,
-                first: 0
+                end: 3,
+                first: 0,
             }),
-            frameRate: 12
+            frameRate: 12,
+            repeat: -1
         });
 
 
@@ -257,7 +258,7 @@ class Tilemap extends Phaser.Scene {
             child.setScrollFactor(0);
         });
         this.currentHeart = 2;
-        this.lowerHealth(this.healthChildren);
+        this.lowerHealth(this.healthChildren, this.player);
 
         let nameConfig = {
             fontFamily: 'Georgia',
@@ -358,6 +359,7 @@ class Tilemap extends Phaser.Scene {
             }
             //on the boss level if the rock hits the ground destroy it
             if (currentLevel == 6) {
+                this.beetleFSM.step();
                 this.wallPadOne.update();
                 this.wallPadTwo.update();
             }
@@ -467,7 +469,7 @@ class Tilemap extends Phaser.Scene {
                 this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
                 if (this.deadzone != null)
                     this.hitDeadZone = this.matter.add.rectangle(this.deadzone.x + this.deadzone.width/2, this.deadzone.y, this.deadzone.width, this.deadzone.height);
-                this.lowerHealth(this.healthChildren);
+                this.lowerHealth(this.healthChildren, this.player);
                 this.matter.world.setBounds(0, -50, map.widthInPixels, map.heightInPixels + 50);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
@@ -533,10 +535,12 @@ class Tilemap extends Phaser.Scene {
                     let rockOnePos = map.filterObjects('Objects', obj => obj.name === 'rockOne');
                     rockOnePos.map((element) => {
                         this.rockOne = this.matter.add.image(element.x + 8, element.y + 8, 'rock').setBody('circle').setIgnoreGravity(true);
+                        this.rockOne.setCollisionGroup(3);
                     });
                     let rockTwoPos = map.filterObjects('Objects', obj => obj.name === 'rockTwo');
                     rockTwoPos.map((element) => {
                         this.rockTwo = this.matter.add.image(element.x + 8, element.y + 8, 'rock').setBody('circle').setIgnoreGravity(true);
+                        this.rockTwo.setCollisionGroup(3);
                     });
 
                     //setup wallPadOne & wallPadTwo
@@ -554,7 +558,7 @@ class Tilemap extends Phaser.Scene {
 
                     let beetleObject = map.filterObjects("Objects", obj => obj.name === 'beetle');
                     beetleObject.map((element) => {
-                    this.beetle = new Beetle(this, element.x, element.y, this.MAX_VELOCITY, 'beetle_walk', 'beetle_walk0001');   // player using matter physic
+                    this.beetle = new Beetle(this, element.x, element.y, this.MAX_VELOCITY, 'beetlewalk');   // player using matter physic
                     });
                     this.beetleFSM = new StateMachine('groundpound', {
                         groundpound: new GroundPoundState(),
@@ -583,7 +587,7 @@ class Tilemap extends Phaser.Scene {
         this.player.setY(y);
     }
 
-    lowerHealth(health)
+    lowerHealth(health, player)
     {
         // when hitting deadzone
         if (this.deadzone != null)
@@ -610,6 +614,11 @@ class Tilemap extends Phaser.Scene {
                 }
             });
         }
+    }
+
+    updateHealth(num)
+    {
+        this.healthChildren[num].setTexture('heartEmpty');
     }
 
     gameOverScreen()

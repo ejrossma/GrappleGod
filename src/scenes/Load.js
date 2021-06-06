@@ -26,7 +26,7 @@ class Load extends Phaser.Scene {
             frameWidth: 192,
             frameHeight: 64,
             startFrame: 0,
-            endFrame: 4
+            endFrame: 3
         });
 
         //backgrounds
