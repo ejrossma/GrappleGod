@@ -139,7 +139,6 @@ class Tilemap extends Phaser.Scene {
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
         const matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile));
-        console.log(map);
         //add next level collisionbox
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
@@ -213,7 +212,6 @@ class Tilemap extends Phaser.Scene {
         }, [this, this.player]);
 
         // branches
-        //console.log(map);
         let branchObject = map.filterObjects("Objects", obj => obj.name === 'branch');
         let branchList = branchObject;
         this.branches = this.add.group();
@@ -222,7 +220,6 @@ class Tilemap extends Phaser.Scene {
             this.branches.add(branch);
         }); 
         this.branchChildren = this.branches.getChildren();  // branches as an array for checking
-        //console.log(this.branchChildren);
 
         // branch state machine
         this.branchFSM = new StateMachine('detect', {
@@ -245,16 +242,13 @@ class Tilemap extends Phaser.Scene {
 
         // health
         this.healthGroup = this.add.group();
-        let health1 = this.matter.add.sprite(152.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
-        health1.setCollisionCategory(0);
+        let health1 = this.add.sprite(152.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health1.setDepth(1);
         this.healthGroup.add(health1);
-        let health2 = this.matter.add.sprite(172.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
-        health2.setCollisionCategory(0);
+        let health2 = this.add.sprite(172.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health2.setDepth(1);
         this.healthGroup.add(health2);
-        let health3 = this.matter.add.sprite(192.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
-        health3.setCollisionCategory(0);
+        let health3 = this.add.sprite(192.5, 119, 'heartFull', null, { isStatic: true }).setOrigin(0.5);
         health3.setDepth(1);
         this.healthGroup.add(health3);  
         this.healthChildren = this.healthGroup.getChildren();
@@ -362,19 +356,8 @@ class Tilemap extends Phaser.Scene {
             }
             //on the boss level if the rock hits the ground destroy it
             if (currentLevel == 6) {
-                this.rockChildren.forEach( function(rock) {
-                    rock.setOnCollideActive(pair => {
-                        console.log(pair.bodyB);
-                        // if (pair.bodyB == this.player.body) {
-                        //     //player loses 1 health
-                        // } else if (pair.bodyB == this.boss.body) {
-                        //     //boss shell gets cracked
-                        // }
-                        rock.destroy();
-                    });               
-                });
                 this.wallPadOne.update();
-                // this.wallPadTwo.update();
+                this.wallPadTwo.update();
             }
         }
         if (currentLevel != 0) {
@@ -461,7 +444,6 @@ class Tilemap extends Phaser.Scene {
                 map.removeAllLayers(); //remove visuals
                 matterTiles.forEach(tile => tile.destroy()); //remove collisions
                 map = this.add.tilemap(this.levels[++currentLevel]); //change map
-                //console.log(map);
                 var tilesett = map.addTilesetImage('Tilemap', 'tileset');
                 map.createLayer('Decoration', tilesett, 0, 0); //add new decor visuals
                 terrainLayer = map.createLayer('Terrain', tilesett, 0, 0); //add new terrain visuals
@@ -487,7 +469,6 @@ class Tilemap extends Phaser.Scene {
                 this.matter.world.setBounds(0, -50, map.widthInPixels, map.heightInPixels + 50);
                 this.cameras.main.setBounds(0, 0, map.widthInPixels, map.heightInPixels);
                 var playerLoc = map.filterObjects('Objects', obj => obj.name === 'player');
-                //console.log(map);
                 playerLoc.map((element) => {
                     this.player.x = element.x;
                     this.respawnX = element.x;
@@ -534,31 +515,38 @@ class Tilemap extends Phaser.Scene {
                             child.alpha = 1;
                         });
                     });
-                    console.log(map);
                     //setup gateOne & gateTwo
                     let gateOnePos = map.filterObjects('Objects', obj => obj.name === 'rockGateOne');
                     gateOnePos.map((element) => {
-                        this.gateOne = this.matter.add.image(element.x, element.y, 'gateFive', { isStatic: true});
+                        this.gateOne = this.matter.add.image(element.x + 40, element.y, 'gateFive', { isStatic: true}).setIgnoreGravity(true);
                     });
                     
                     
-                    // let gateTwoPos = map.filterObjects('Objects', obj => obj.name === 'rockGateTwo');
-                    // let gateTwo = this.add.matter.image(gateTwoPos.x, gateTwoPos.y, 'gateFive', { isStatic: true});
+                    let gateTwoPos = map.filterObjects('Objects', obj => obj.name === 'rockGateTwo');
+                    gateTwoPos.map((element) => {
+                        this.gateTwo = this.matter.add.image(element.x + 40, element.y, 'gateFive', { isStatic: true}).setIgnoreGravity(true);
+                    });
                     
                     //setup rock above both
-                    let rocks = map.filterObjects('Objects', obj => obj.name === 'rock');
-                    rocks.map((element) => {
-                        let rock = this.matter.add.image(element.x, element.y, 'rock');
-                        this.rocksGroup.add(rock);
+                    let rockOnePos = map.filterObjects('Objects', obj => obj.name === 'rockOne');
+                    rockOnePos.map((element) => {
+                        this.rockOne = this.matter.add.image(element.x + 8, element.y + 8, 'rock').setBody('circle').setIgnoreGravity(true);
                     });
-                    this.rockChildren = this.rocksGroup.getChildren();
+                    let rockTwoPos = map.filterObjects('Objects', obj => obj.name === 'rockTwo');
+                    rockTwoPos.map((element) => {
+                        this.rockTwo = this.matter.add.image(element.x + 8, element.y + 8, 'rock').setBody('circle').setIgnoreGravity(true);
+                    });
+
                     //setup wallPadOne & wallPadTwo
                     let wallPadOnePos = map.filterObjects('Objects', obj => obj.name === 'wallPadOne');
                     wallPadOnePos.map((element) => {
-                        this.wallPadOne = new WallPad(this, element.x, element.y, 'wallPad', 5, this.gateOne);
+                        this.wallPadOne = new WallPad(this, element.x + 8, element.y + 8, 'wallPad', 5, this.gateOne, this.rockOne);
                     });
-                    // let wallPadTwoPos = map.filterObjects('Objects', obj => obj.name === 'wallPadTwo');
-                    // this.wallPadTwo = new wallPad(this, wallPadTwoPos.x, wallPadTwoPos.y, 'wallPad', 5, gateTwo);
+                    let wallPadTwoPos = map.filterObjects('Objects', obj => obj.name === 'wallPadTwo');
+                    wallPadTwoPos.map((element) => {
+                        this.wallPadTwo = new WallPad(this, element.x + 8, element.y + 8, 'wallPad', 5, this.gateTwo, this.rockTwo);
+                        this.wallPadTwo.flipX = true;
+                    });
 
                     this.playerControl = true;
 

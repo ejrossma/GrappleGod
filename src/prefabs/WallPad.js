@@ -1,10 +1,14 @@
 class WallPad extends Phaser.Physics.Matter.Image {
-    constructor(scene, x, y, texture, resetTime, gate) {
+    constructor(scene, x, y, texture, resetTime, gate, rock) {
         super(scene.matter.world, x, y, texture);
-        console.log(x + ' ' + y);
         scene.add.existing(this);
         this.resetTime = resetTime;
+        
         this.gate = gate;
+        
+        this.rock = rock;
+        this.rockX = rock.x;
+        this.rockY = rock.y;
 
         this.body.isStatic = true;    //immovable
         this.setCollisionCategory(0); //prevent collision (will do with matter.overlap) https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Matter.MatterPhysics.html#overlap__anchor
@@ -37,5 +41,7 @@ class WallPad extends Phaser.Physics.Matter.Image {
         this.functional = false;
         this.pushedWallPad.alpha = 1;
         this.gate.alpha = 0;
+        this.gate.setCollisionCategory(0);
+        this.rock.setIgnoreGravity(false);
     }
 }
