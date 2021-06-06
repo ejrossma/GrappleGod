@@ -255,6 +255,7 @@ class Tilemap extends Phaser.Scene {
         this.healthChildren.forEach(function(child)
         {
             child.setScrollFactor(0);
+            child.setAlpha(0.75);
         });
         this.currentHeart = 2;
         this.lowerHealth(this.healthChildren);
@@ -512,8 +513,10 @@ class Tilemap extends Phaser.Scene {
                     this.cameras.main.once(Phaser.Cameras.Scene2D.Events.ZOOM_COMPLETE, (cam, effect) => {
                         this.playerTitle.alpha = 1;
                         this.healthChildren.forEach( function(child) {
-                            child.alpha = 1;
+                            child.alpha = 0.75;
                         });
+                        this.playerControl = true;
+                        this.entrance.alpha = 1;
                     });
                     //setup gateOne & gateTwo
                     let gateOnePos = map.filterObjects('Objects', obj => obj.name === 'rockGateOne');
@@ -548,7 +551,15 @@ class Tilemap extends Phaser.Scene {
                         this.wallPadTwo.flipX = true;
                     });
 
-                    this.playerControl = true;
+                    let exitGate = map.filterObjects('Objects', obj => obj.name === 'gateTwo');
+                    exitGate.map((element) => {
+                        this.exit = this.matter.add.image(element.x + 8, element.y + 8, 'gateThree');
+                    });
+                    
+                    let entranceGate = map.filterObjects('Objects', obj => obj.name === 'gateOne');
+                    entranceGate.map((element) => {
+                        this.entrance = this.matter.add.image(element.x + 8, element.y + 8, 'gateThree').setAlpha(0);
+                    });
 
                     let beetleObject = map.filterObjects("Objects", obj => obj.name === 'beetle');
                     beetleObject.map((element) => {
