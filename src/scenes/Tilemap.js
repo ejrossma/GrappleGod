@@ -322,6 +322,8 @@ class Tilemap extends Phaser.Scene {
         });
         this.menu.on('pointerdown', () => {
             this.scene.start('menuScene');
+            this.music.stop();                  //stop music
+            musicPlaying = false;
             this.anims.resumeAll();
         });
 
@@ -420,11 +422,11 @@ class Tilemap extends Phaser.Scene {
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
             this.music.stop();
-            this.treeMusic = this.sound.add('treeMusic', {
+            this.music = this.sound.add('bossMusic', {
                 loop:true,
                 volume: 0.3
             });
-            this.treeMusic.play();
+            this.music.play();
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
