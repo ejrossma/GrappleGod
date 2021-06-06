@@ -26,6 +26,8 @@ class Player extends Phaser.Physics.Matter.Sprite {
         this.canKick = true;                // bool for checking if player is allowed to kick again
         this.applyForceCounter = 0;
         this.currentHook = null;
+        this.shortImmunity = false;
+        this.immunityLeft = 0;
 
         // other things
         this.setFriction(0);                // remove sliding on walls
@@ -40,19 +42,102 @@ class Player extends Phaser.Physics.Matter.Sprite {
             //console.log(pair.bodyB);
             if (pair.bodyB.gameObject != null)
             {
-                if (this.checkCollide(pair.bodyB))
+                if (pair.bodyB.collisionFilter.group == 2)
                 {
-                    this.isGrounded = true;
-                    this.finishedGrappling = true;
-                    if (this.stopPlayer)
+                    // boss collision
+                    if (this.shortImmunity == false)
                     {
-                        this.scene.clock = this.scene.time.delayedCall(50, () => {
-                            player.setVelocityX(0);
-                        }, null, this);
+                        this.shortImmunity = true;
+                        this.lowerHealth(this, scene);
+                    }
+                    else if (this.shortImmunity == true)
+                    {
+                        if (scene.beetle.direction == 1)
+                        {
+                            this.setVelocityX(-this.MAX_VELOCITY*3);
+                            this.setVelocityY(this.JUMP_VELOCITY*2);
+                        }
+                        else if (scene.beetle.direction == 2)
+                        {
+                            this.setVelocityX(this.MAX_VELOCITY*3);
+                            this.setVelocityY(this.JUMP_VELOCITY*2);
+                        }
                     }
                 }
+                else if (pair.bodyB.collisionFilter.group == 3)
+                {
+                    // rock collision
+                }
+                else if (pair.bodyB.collisionFilter.group == 0)
+                {
+                    if (this.checkCollide(pair.bodyB))
+                    {
+                        this.isGrounded = true;
+                        this.finishedGrappling = true;
+                        if (this.stopPlayer)
+                        {
+                            this.scene.clock = this.scene.time.delayedCall(50, () => {
+                                player.setVelocityX(0);
+                            }, null, this);
+                        }
+                    }
+                }
+                
             }
         });
+    }
+
+    lowerHealth(player, scene)
+    {
+        if (scene.currentHeart == 2)
+        {
+            player.setVelocityY(player.JUMP_VELOCITY);
+            player.hitDirection = Phaser.Math.Between(1, 2);
+            if (scene.beetle.direction == 1)
+            {
+                player.setVelocityX(-player.MAX_VELOCITY*2);
+            }
+            else if (scene.beetle.direction == 2)
+            {
+                player.setVelocityX(player.MAX_VELOCITY*2);
+            }
+            scene.updateHealth(2);
+            scene.currentHeart--;
+            player.setAlpha(0.4);
+
+            scene.clock = scene.time.delayedCall(1500, () => {
+                player.shortImmunity = false;
+                player.setAlpha(1);
+            }, null, player);
+        }
+        else if (scene.currentHeart == 1)
+        {
+            player.setVelocityY(player.JUMP_VELOCITY);
+            player.hitDirection = Phaser.Math.Between(1, 2);
+            if (scene.beetle.direction == 1)
+            {
+                player.setVelocityX(-player.MAX_VELOCITY*2);
+            }
+            else if (scene.beetle.direction == 2)
+            {
+                player.setVelocityX(player.MAX_VELOCITY*2);
+            }
+            scene.updateHealth(1);
+            scene.currentHeart--;
+            player.setAlpha(0.4);
+
+            scene.clock = scene.time.delayedCall(1500, () => {
+                player.shortImmunity = false;
+                player.setAlpha(1);
+            }, null, player);
+        }
+        else if (scene.currentHeart == 0)
+        {
+            scene.updateHealth(0);
+            scene.currentHeart--;
+            scene.gameOver = true;
+            scene.gameOverScreen();
+        }
     }
 
     checkCollide(platform)

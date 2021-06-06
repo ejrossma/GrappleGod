@@ -78,6 +78,7 @@ class WallPad extends Phaser.Physics.Matter.Image {
                     //wait 3 seconds to spawn new rock
                     this.scene.clock = this.scene.time.delayedCall(3000, () => {
                         this.rock = this.scene.matter.add.image(this.rockX + 8, this.rockY - 8, 'rock').setBody('circle').setIgnoreGravity(true);
+                        this.rock.setCollisionGroup(3);
                         this.rocks = 1;
                     }, null, this);
                     //wait 5 seconds before button comes back
