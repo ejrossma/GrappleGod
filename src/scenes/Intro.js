@@ -10,6 +10,15 @@ class Intro extends Phaser.Scene {
         this.screenFinished = false;
         this.fieldsFilled = false;
 
+        if(musicPlaying == false){
+            this.music = this.sound.add('titleMusic', {
+                loop:true,
+                volume: 0.3
+            });
+            this.music.play();
+            musicPlaying = true;     
+        }
+
         //get the two html textboxes so the player can type
         this.nameField = document.getElementById('name');
         this.adjectiveField = document.getElementById('adjective');
@@ -53,6 +62,8 @@ class Intro extends Phaser.Scene {
             } else if (this.introIndex == 7) {
                 this.cameras.main.fadeOut(750, 0, 0, 0);
                 this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+                    this.music.stop();
+                    musicPlaying = false; 
                     this.scene.start('tilemapScene');
                 });
                 
