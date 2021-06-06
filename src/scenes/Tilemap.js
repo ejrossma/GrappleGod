@@ -116,6 +116,17 @@ class Tilemap extends Phaser.Scene {
         this.player.anims.play('player_idle'); //start idle animation
         this.player.setDepth(2);    // bring player to front
 
+        // beetle anims
+        this.anims.create({
+            key: 'beetle_walk',
+            frames: this.anims.generateFrameNames('beetlewalk', {
+                start: 0,
+                end: 4,
+                first: 0
+            }),
+            frameRate: 12
+        });
+
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
@@ -333,9 +344,12 @@ class Tilemap extends Phaser.Scene {
                 if (this.playerControl)
                 {
                     this.playerFSM.step();
+                    this.branchFSM.step();
                 }
-                this.branchFSM.step();
-                this.catFSM.step();
+                if (currentLevel != 6)
+                {
+                    this.catFSM.step();
+                }
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
             //on the boss level if the rock hits the ground destroy it
@@ -439,14 +453,16 @@ class Tilemap extends Phaser.Scene {
                 matterTiles = tiles.map(tile => new MatterTileBody(this.matter.world, tile)); //make a map of colliding tiles
                 this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
                 if (this.nextLevel != null)
+                {
                     this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
-                this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
-                this.cat = new Cat(this, this.nextLevel.x + this.nextLevel.width*.25, this.nextLevel.y + 5, this.MAX_VELOCITY, this.nextLevel.width*2, this.nextLevel.height, 'cat_animations', 'cat_idle0001');
-                this.cat.anims.play('cat_idle');
-                this.catFSM = new StateMachine('idle', {
-                    idle: new CatIdleState(),
-                    run: new CatRunState(),
-                }, [this, this.player, this.cat]);
+                    this.cat = new Cat(this, this.nextLevel.x + this.nextLevel.width*.25, this.nextLevel.y + 5, this.MAX_VELOCITY, this.nextLevel.width*2, this.nextLevel.height, 'cat_animations', 'cat_idle0001');
+                    this.cat.anims.play('cat_idle');
+                    this.catFSM = new StateMachine('idle', {
+                        idle: new CatIdleState(),
+                        run: new CatRunState(),
+                    }, [this, this.player, this.cat]);
+                }
+                //this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
                 this.deadzone = map.findObject("Objects", obj => obj.name === "deadZone");
                 if (this.deadzone != null)
                     this.hitDeadZone = this.matter.add.rectangle(this.deadzone.x + this.deadzone.width/2, this.deadzone.y, this.deadzone.width, this.deadzone.height);
@@ -528,6 +544,17 @@ class Tilemap extends Phaser.Scene {
                     // this.wallPadTwo = new wallPad(this, wallPadTwoPos.x, wallPadTwoPos.y, 'wallPad', 5, gateTwo);
 
                     this.playerControl = true;
+
+                    let beetleObject = map.filterObjects("Objects", obj => obj.name === 'beetle');
+                    beetleObject.map((element) => {
+                    this.beetle = new Beetle(this, element.x, element.y, this.MAX_VELOCITY, 'beetle_walk', 'beetle_walk0001');   // player using matter physic
+                    });
+                    this.beetleFSM = new StateMachine('groundpound', {
+                        groundpound: new GroundPoundState(),
+                        search: new SearchState(),
+                        charge: new ChargeState(),
+                        stunned: new StunnedState(),
+                    }, [this, this.player, this.beetle]);
                 }
                     
 
