@@ -55,6 +55,7 @@ class WallPad extends Phaser.Physics.Matter.Image {
                     //scene.thud.play();
                     this.rock.alpha = 0;
                     this.rock.body.enable = false;
+                    this.rock.setVelocity(0);
                     this.rock.x = 1000;
                     this.rock.y = 1000;
                     if (pair.bodyB.collisionFilter.group == 2) {
@@ -66,10 +67,11 @@ class WallPad extends Phaser.Physics.Matter.Image {
                     }, null, this);
                     //wait 3 seconds to spawn new rock
                     this.scene.clock = this.scene.time.delayedCall(3000, () => {
+                        this.rock.setVelocity(0);
                         this.rock.body.enable = true;
+                        this.rock.setIgnoreGravity(true);
                         this.rock.x = this.rockX + 8;
                         this.rock.y = this.rockY - 8;
-                        this.rock.setIgnoreGravity(true);
                         this.rock.alpha = 1;
                         // this.rock = this.scene.matter.add.image(this.rockX + 8, this.rockY - 8, 'rock').setBody('circle').setIgnoreGravity(true);
                         // this.rock.setCollisionGroup(3);
