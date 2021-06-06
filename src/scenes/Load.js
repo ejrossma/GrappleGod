@@ -5,12 +5,12 @@ class Load extends Phaser.Scene {
 
     preload() {
         //testing purposes (need to make)
-        this.load.image('rock', './assets/archive/playerArt.png');
-        this.load.image('wallPad', './assets/archive/treePlatform.png');
-        this.load.image('pressedWallPad', './assets/archive/treePlatformTwo.png');
+        this.load.image('rock', './assets/rock.png');
+        this.load.image('wallPad', './assets/wallPad.png');
+        this.load.image('pressedWallPad', './assets/pressedWallPad.png');
             //need to make
         this.load.image('gateThree', './assets/gateThree.png');
-        this.load.image('gateFive', './assets/smallBranch.png');
+        this.load.image('gateFive', './assets/gateFive.png');
 
         //sprites
         this.load.image('player', './assets/playerWithPack.png');
