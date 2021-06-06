@@ -16,7 +16,7 @@ let config = {
         default: 'matter',
         matter: {
             tileBias: 64,
-            debug: true,
+            debug: false,
             gravity: { y: 0.5 }
         }
     },
@@ -31,7 +31,7 @@ let cursors;
 let keyQ, keySpace, keyLEFT, keyRIGHT, keyDOWN;
 //current level index
 let mapScene = 0;
-let currentLevel = 5;
+let currentLevel = 1;
 let hearts = 3;
 let playerName = 'Alexander';
 let playerAdjective = 'Kindhearted';

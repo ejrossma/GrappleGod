@@ -52,6 +52,10 @@ class Player extends Phaser.Physics.Matter.Sprite {
                         if (this.shortImmunity == false)
                         {
                             this.shortImmunity = true;
+                            if (this.isKicking)
+                            {
+                                this.isGrounded = true;
+                            }
                             this.lowerHealth(this, scene);
                         }
                         else if (this.shortImmunity == true)

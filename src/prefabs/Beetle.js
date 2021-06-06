@@ -52,13 +52,13 @@ class Beetle extends Phaser.Physics.Matter.Sprite {
     spikeFall(scene)
     {
         scene.spikes = scene.add.group();
-        for (var i = 0; i < 18; i++)
+        for (var i = 0; i < 36; i++)
         {
-            scene.spike = scene.matter.add.image(132 + 32*i, 20, 'spike').setAlpha(0);
+            scene.spike = scene.matter.add.image(132 + 16*i, 20, 'spike').setAlpha(0);
             scene.spike.setIgnoreGravity(true);
             scene.spike.setCollisionGroup(3);
             scene.spike.setFixedRotation(0);
-            scene.spike.spawn = Phaser.Math.Between(1,3);
+            scene.spike.spawn = Phaser.Math.Between(1,5);
             scene.spikes.add(scene.spike);
         }
         this.spikeChildren = scene.spikes.getChildren();
