@@ -116,7 +116,14 @@ class GroundPoundState extends State
         if (beetle.animPlaying)
         {
             beetle.animPlaying = false;
-            scene.beetle.setTexture('beetlewalk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.setTexture('beetlewalk');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkdamaged');
+            }
         }
 
         //--------------------------------------------------------------------
@@ -139,8 +146,16 @@ class GroundPoundState extends State
         if (beetle.shakeCount < 1 && !beetle.isShaking && !beetle.spikesFalling)
         {
             beetle.spikesFalling = true;
-            scene.beetle.setTexture('beetlewalk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.setTexture('beetlewalk');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkdamaged');
+            }
             scene.clock = scene.time.delayedCall(750, () => {
+                scene.roar.play();
                 scene.cameras.main.shake(500);
                 beetle.spikeFall(scene);
             }, null, this);
@@ -166,12 +181,26 @@ class ChargeState extends State
         if (beetle.pauseAnims)
         {
             beetle.animPlaying = false;
-            scene.beetle.setTexture('beetlewalk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.setTexture('beetlewalk');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkdamaged');
+            }
         }
         if (!beetle.animPlaying)
         {
             beetle.animPlaying = true;
-            scene.beetle.anims.play('beetle_walk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.anims.play('beetle_walk');
+            }
+            else
+            {
+                scene.beetle.anims.play('beetle_walk_damaged');
+            }
         }
 
         //--------------------------------------------------------------------
@@ -247,12 +276,26 @@ class SearchState extends State
         if (beetle.pauseAnims)
         {
             beetle.animPlaying = false;
-            scene.beetle.setTexture('beetlewalk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.setTexture('beetlewalk');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkdamaged');
+            }
         }
         if (!beetle.animPlaying)
         {
             beetle.animPlaying = true;
-            scene.beetle.anims.play('beetle_walk');
+            if (beetle.timesHit < 1)
+            {
+                scene.beetle.anims.play('beetle_walk');
+            }
+            else
+            {
+                scene.beetle.anims.play('beetle_walk_damaged');
+            }
         }
 
         //--------------------------------------------------------------------
@@ -310,11 +353,18 @@ class StunnedState extends State
     execute(scene, player, beetle)
     {
         beetle.animPlaying = false;
-        scene.beetle.setTexture('beetlewalk');
+        if (beetle.timesHit < 1)
+        {
+            scene.beetle.setTexture('beetlewalk');
+        }
+        else
+        {
+            scene.beetle.setTexture('beetlewalkdamaged');
+        }
 
         //--------------------------------------------------------------------
 
-        if (!beetle.isStunned)
+        if (!beetle.isStunned & !scene.beetleDestroyed)
         {
             beetle.shakeCount = 0;
             beetle.hitOnce = false;
@@ -336,6 +386,19 @@ class StunnedState extends State
             if (beetle.shellCracked && beetle.kickStunned)
             {
                 beetle.health--;
+            }
+            if (beetle.health <= 0)
+            {
+                scene.beetleDestroyed = true;
+                scene.roar.play();
+                scene.cameras.main.shake(2000);
+                scene.cameras.main.on('camerashakestart', function () {
+                    
+                });
+        
+                scene.cameras.main.on('camerashakecomplete', function () {
+                    scene.finalSceneTransition();
+                });
             }
             console.log('Shell Cracked:' + beetle.shellCracked);
             console.log('Times Hit:' + beetle.timesHit);

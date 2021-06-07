@@ -9,6 +9,7 @@ class WallPad extends Phaser.Physics.Matter.Image {
         this.rock = rock;
         this.rockX = rock.x;
         this.rockY = rock.y;
+        
 
         this.body.isStatic = true;    //immovable
         this.setCollisionCategory(0); //prevent collision (will do with matter.overlap) https://photonstorm.github.io/phaser3-docs/Phaser.Physics.Matter.MatterPhysics.html#overlap__anchor

@@ -29,6 +29,12 @@ class Load extends Phaser.Scene {
             startFrame: 0,
             endFrame: 3
         });
+        this.load.spritesheet('beetlewalkdamaged', './assets/beetlewalkDamaged.png', {
+            frameWidth: 192,
+            frameHeight: 64,
+            startFrame: 0,
+            endFrame: 3
+        });
 
         //backgrounds
         this.load.image('background', './assets/starterBackground.png');
@@ -63,6 +69,7 @@ class Load extends Phaser.Scene {
         //sfx
         this.load.audio('walking', './assets/sounds/Walking.wav');
         this.load.audio('hooking', './assets/sounds/hook.wav');
+        this.load.audio('bossRoar', './assets/sounds/BossRoar.wav');
 
             //need to make
         // this.load.audio('wallPadPress', './assets/sounds/wallPadPress.wav');
