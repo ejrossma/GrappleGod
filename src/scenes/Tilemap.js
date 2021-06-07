@@ -20,6 +20,7 @@ class Tilemap extends Phaser.Scene {
         this.finishedGrappling = false;
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
+        this.running = false;
 
         //groups
         this.rocksGroup = this.add.group();
@@ -207,6 +208,7 @@ class Tilemap extends Phaser.Scene {
             grappled: new GrappledState(),
             falling: new FallingState(),
             kick: new KickState(),
+            run: new RunState(),
         }, [this, this.player]);
 
         // branches
@@ -304,10 +306,16 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
+<<<<<<< HEAD
             if(currentLevel == 6){
                 currentLevel = 5;
                 this.music.stop();
                 musicPlaying = false;
+=======
+            if (currentLevel == 6)
+            {
+                currentLevel = 5;
+>>>>>>> 4927107a6c218e610dac0daa79cf47cdd7dc9384
             }
             this.scene.start('tilemapScene');
         });
@@ -325,8 +333,6 @@ class Tilemap extends Phaser.Scene {
         });
         this.menu.on('pointerdown', () => {
             this.scene.start('menuScene');
-            this.music.stop();                  //stop music
-            musicPlaying = false;
             this.anims.resumeAll();
         });
 
@@ -356,6 +362,10 @@ class Tilemap extends Phaser.Scene {
                 if (currentLevel != 6)
                 {
                     this.catFSM.step();
+                }
+                if (this.player.running)
+                {
+                    this.playerFSM.step();
                 }
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
@@ -404,6 +414,7 @@ class Tilemap extends Phaser.Scene {
         // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
+<<<<<<< HEAD
             this.clock = this.time.delayedCall(2400, () => {
                 this.music.stop();
                 this.music = this.sound.add('bossMusic', {
@@ -412,16 +423,25 @@ class Tilemap extends Phaser.Scene {
                 });
                 this.music.play();
             });
+=======
+            this.music.stop();
+            this.treeMusic = this.sound.add('treeMusic', {
+                loop:true,
+                volume: 0.3
+            });
+            this.treeMusic.play();
+>>>>>>> 4927107a6c218e610dac0daa79cf47cdd7dc9384
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
+            this.player.running = true;
             this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
+            this.transfer.collisionFilter.category = 0;
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.walk.stop();
-            this.player.setVelocityX(0);
-            this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
+                this.player.running = false;
                 this.cat.destroy();
                 this.matter.world.remove(this.cat);
                 if (this.deadzone != null)
@@ -513,6 +533,7 @@ class Tilemap extends Phaser.Scene {
                     gateTwoPos.map((element) => {
                         this.gateTwo = this.matter.add.image(element.x + 40, element.y, 'gateFive', { isStatic: true}).setIgnoreGravity(true);
                     });
+                    console.log(this.gameTwo);
                     
                     //setup rock above both
                     let rockOnePos = map.filterObjects('Objects', obj => obj.name === 'rockOne');
@@ -550,7 +571,6 @@ class Tilemap extends Phaser.Scene {
                         stunned: new StunnedState(),
                     }, [this, this.player, this.beetle]);
                 }
-                    
 
                 //fade back in after changing the map
                 this.cameras.main.fadeIn(1000, 0, 0, 0);

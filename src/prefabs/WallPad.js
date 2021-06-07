@@ -50,35 +50,29 @@ class WallPad extends Phaser.Physics.Matter.Image {
 
             //when rock hits something it thuds, despawns, deal damage to player/boss if it hits them, show gate again, & spawn another rcok
             this.rock.setOnCollideActive(pair => {
-                console.log(this.rocks);
                 this.rocks--;
                 if (this.rocks === 0) {
                     //scene.thud.play();
-                    this.rock.destroy();
-                    //if (pair.bodyB == scene.player.body) {
-                        //scene.lowerHealth(scene.healthChildren);
-                    //} else if (pair.bodyB == scene.boss.body) {
-                        //if (boss.shell == 3) {  //unharmed
-                            //scene.boss.shell = 2;
-                            //stun boss for 2-3 seconds
-                            //update visuals or can be handled in boss script
-                        //} else if (boss.shell == 2) {  //cracked
-                            //scene.boss.shell = 1;
-                            //stun boss for 2-3 seconds
-                            //update visuals or can be handled in boss script
-                        //} else if (boss.shell == 1) {  //broken
-                            //deal damage
-                            //stun boss for 2-3 seconds
-                        //}
-                    //}
+                    this.rock.alpha = 0;
+                    this.rock.body.enable = false;
+                    this.rock.setVelocity(0);
+                    this.rock.x = 1000;
+                    this.rock.y = 1000;
+                    if (pair.bodyB.collisionFilter.group == 2) {
+                        this.scene.beetle.isStunned = true;
+                    }
                     //wait 1 second to show gate again
                     this.scene.clock = this.scene.time.delayedCall(1000, () => {
                         this.gate.setAlpha(1);
                     }, null, this);
                     //wait 3 seconds to spawn new rock
                     this.scene.clock = this.scene.time.delayedCall(3000, () => {
-                        this.rock = this.scene.matter.add.image(this.rockX + 8, this.rockY - 8, 'rock').setBody('circle').setIgnoreGravity(true);
-                        this.rock.setCollisionGroup(3);
+                        this.rock.setVelocity(0);
+                        this.rock.body.enable = true;
+                        this.rock.setIgnoreGravity(true);
+                        this.rock.x = this.rockX + 8;
+                        this.rock.y = this.rockY - 8;
+                        this.rock.alpha = 1;
                         this.rocks = 1;
                     }, null, this);
                     //wait 5 seconds before button comes back

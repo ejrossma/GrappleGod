@@ -22,6 +22,7 @@ class Load extends Phaser.Scene {
         this.load.image('cat', './assets/cat.png');
         this.load.image('controls', './assets/controls.png');
         this.load.image('gameover', './assets/gameOver.png');
+        this.load.image('spike', './assets/fallingSpike.png');
         this.load.spritesheet('beetlewalk', './assets/beetlewalk.png', {
             frameWidth: 192,
             frameHeight: 64,
