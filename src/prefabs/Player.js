@@ -329,6 +329,13 @@ class IdleState extends State
             return;
         }
 
+        if (player.running)
+        {
+            scene.player.anims.play('player_run');
+            this.stateMachine.transition('run');
+            return;
+        }
+
         //--------------------------------------------------------------------
 
         if (!player.isGrappling)
@@ -378,6 +385,13 @@ class MoveState extends State
         if (down.isDown && !player.isGrounded && player.canKick)
         {
             this.stateMachine.transition('kick');
+            return;
+        }
+
+        if (player.running)
+        {
+            scene.player.anims.play('player_run');
+            this.stateMachine.transition('run');
             return;
         }
 
@@ -614,6 +628,13 @@ class FallingState extends State
             return;
         }
 
+        if (player.running)
+        {
+            scene.player.anims.play('player_run');
+            this.stateMachine.transition('run');
+            return;
+        }
+
         //--------------------------------------------------------------------
         
         if (keyQ.isUp)
@@ -677,5 +698,25 @@ class KickState extends State
         scene.player.anims.play('player_kick');
         player.setVelocityX(0);
         player.setVelocityY(-player.JUMP_VELOCITY);
+    }
+}
+
+class RunState extends State
+{
+    execute(scene, player)
+    {
+
+        //--------------------------------------------------------------------
+
+        if (!player.running)
+        {
+            this.stateMachine.transition('idle');
+            return;
+        }
+
+        //--------------------------------------------------------------------
+
+        player.setVelocityX(player.MAX_VELOCITY/2);
+
     }
 }

@@ -20,6 +20,7 @@ class Tilemap extends Phaser.Scene {
         this.finishedGrappling = false;
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
+        this.running = false;
 
         //groups
         this.rocksGroup = this.add.group();
@@ -210,6 +211,7 @@ class Tilemap extends Phaser.Scene {
             grappled: new GrappledState(),
             falling: new FallingState(),
             kick: new KickState(),
+            run: new RunState(),
         }, [this, this.player]);
 
         // branches
@@ -357,6 +359,10 @@ class Tilemap extends Phaser.Scene {
                 {
                     this.catFSM.step();
                 }
+                if (this.player.running)
+                {
+                    this.playerFSM.step();
+                }
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
             //on the boss level if the rock hits the ground destroy it
@@ -434,13 +440,14 @@ class Tilemap extends Phaser.Scene {
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
+            this.player.running = true;
             this.playerControl = false; //take away player control (still need to implement with the state machine) (maybe add a state called cutscene)
+            this.transfer.collisionFilter.category = 0;
             this.cameras.main.fadeOut(1000, 0, 0, 0);
             this.walk.stop();
-            this.player.setVelocityX(0);
-            this.player.setVelocityY(0);
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                 this.matter.world.remove(this.transfer);
+                this.player.running = false;
                 this.cat.destroy();
                 this.matter.world.remove(this.cat);
                 if (this.deadzone != null)

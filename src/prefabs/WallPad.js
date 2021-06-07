@@ -73,8 +73,6 @@ class WallPad extends Phaser.Physics.Matter.Image {
                         this.rock.x = this.rockX + 8;
                         this.rock.y = this.rockY - 8;
                         this.rock.alpha = 1;
-                        // this.rock = this.scene.matter.add.image(this.rockX + 8, this.rockY - 8, 'rock').setBody('circle').setIgnoreGravity(true);
-                        // this.rock.setCollisionGroup(3);
                         this.rocks = 1;
                     }, null, this);
                     //wait 5 seconds before button comes back
