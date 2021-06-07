@@ -384,12 +384,6 @@ class Tilemap extends Phaser.Scene {
                 this.wallPadOne.update();
                 this.wallPadTwo.update();
             }
-            else if (currentLevel == 6 && this.beetleDestroyed)
-            {
-                this.wallPadOne.update();
-                this.wallPadTwo.update();
-                this.beetle.destroy();
-            }
         }
         if (currentLevel != 0) {
             this.move.alpha = 0;
@@ -637,6 +631,15 @@ class Tilemap extends Phaser.Scene {
         this.gameOverText.alpha = 1;
         this.continue.alpha = 1;
         this.menu.alpha = 1;
+    }
+
+    finalSceneTransition()
+    {
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+            this.beetle.destroy();
+            // transition to next scene here
+        });
     }
 
 }
