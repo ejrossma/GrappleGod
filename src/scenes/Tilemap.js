@@ -8,7 +8,7 @@ class Tilemap extends Phaser.Scene {
         this.cameras.main.fadeIn(750, 0, 0, 0);
         this.matter.world.update30Hz();
         this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_bossJSON'];
-        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6', 'background'];
+        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6', 'bossBackground'];
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -199,9 +199,6 @@ class Tilemap extends Phaser.Scene {
         //sound for hooking
         this.hook = this.sound.add('hooking', {volume: 0.5});
 
-        // change current scene
-        this.changeScene();
-
         // player state machine
         this.playerFSM = new StateMachine('idle', {
             idle: new IdleState(),
@@ -307,6 +304,11 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
+            if(currentLevel == 6){
+                currentLevel = 5;
+                this.music.stop();
+                musicPlaying = false;
+            }
             this.scene.start('tilemapScene');
         });
 
@@ -396,39 +398,20 @@ class Tilemap extends Phaser.Scene {
         }
     }
 
-    changeScene()
-    {
-        this.input.keyboard.on('keydown', (event) => {
-            switch(event.key) {
-                case '1':
-                    this.scene.start('firstScene');
-                    break;
-                case '2':
-                    this.scene.start('secondScene');
-                    break;
-                case 't':
-                    this.scene.start('testScene');
-                    break;
-                case 's':
-                    this.scene.start('tilemapScene');
-                default:
-                    break;
-            }
-        });
-    }
-
     //Sends the player to the next scene once they collide with the next zone marker
     nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody){
         // const nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
-            this.music.stop();
-            this.music = this.sound.add('bossMusic', {
-                loop:true,
-                volume: 0.3
+            this.clock = this.time.delayedCall(2400, () => {
+                this.music.stop();
+                this.music = this.sound.add('bossMusic', {
+                    loop:true,
+                    volume: 0.3
+                });
+                this.music.play();
             });
-            this.music.play();
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in

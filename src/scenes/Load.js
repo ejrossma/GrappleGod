@@ -36,6 +36,7 @@ class Load extends Phaser.Scene {
         this.load.image('background4', './assets/starter4Background.png');
         this.load.image('background5', './assets/starter5Background.png');
         this.load.image('background6', './assets/empty.png');
+        this.load.image('bossBackground', './assets/bossBackground.png');
         this.load.image('menuBackground', './assets/treeIntro.png');
 
         //tilemap images/jsons
