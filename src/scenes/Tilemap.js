@@ -306,16 +306,10 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
-<<<<<<< HEAD
             if(currentLevel == 6){
                 currentLevel = 5;
                 this.music.stop();
                 musicPlaying = false;
-=======
-            if (currentLevel == 6)
-            {
-                currentLevel = 5;
->>>>>>> 4927107a6c218e610dac0daa79cf47cdd7dc9384
             }
             this.scene.start('tilemapScene');
         });
@@ -414,7 +408,6 @@ class Tilemap extends Phaser.Scene {
         // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
-<<<<<<< HEAD
             this.clock = this.time.delayedCall(2400, () => {
                 this.music.stop();
                 this.music = this.sound.add('bossMusic', {
@@ -423,14 +416,6 @@ class Tilemap extends Phaser.Scene {
                 });
                 this.music.play();
             });
-=======
-            this.music.stop();
-            this.treeMusic = this.sound.add('treeMusic', {
-                loop:true,
-                volume: 0.3
-            });
-            this.treeMusic.play();
->>>>>>> 4927107a6c218e610dac0daa79cf47cdd7dc9384
         }
         this.player.setOnCollideWith(this.transfer, pair => {
             //take away player control -> fade to black -> replace tilemap & set player position to spot on tilemap -> fade back in
