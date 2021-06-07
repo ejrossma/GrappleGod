@@ -137,6 +137,17 @@ class Tilemap extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'beetle_walk_damaged',
+            frames: this.anims.generateFrameNames('beetlewalkdamaged', {
+                start: 0,
+                end: 3,
+                first: 0,
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
+
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
@@ -199,6 +210,9 @@ class Tilemap extends Phaser.Scene {
 
         //sound for hooking
         this.hook = this.sound.add('hooking', {volume: 0.5});
+        
+        // sound for boss roar
+        this.roar = this.sound.add('bossRoar', {volume: 0.5});
 
         // player state machine
         this.playerFSM = new StateMachine('idle', {
@@ -617,4 +631,5 @@ class Tilemap extends Phaser.Scene {
         this.continue.alpha = 1;
         this.menu.alpha = 1;
     }
+
 }
