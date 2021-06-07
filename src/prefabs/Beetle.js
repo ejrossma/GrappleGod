@@ -387,6 +387,10 @@ class StunnedState extends State
             {
                 beetle.health--;
             }
+            if (beetle.health <= 0)
+            {
+                scene.beetleDestroyed = true;
+            }
             console.log('Shell Cracked:' + beetle.shellCracked);
             console.log('Times Hit:' + beetle.timesHit);
             console.log('Beetle Health' + beetle.health);

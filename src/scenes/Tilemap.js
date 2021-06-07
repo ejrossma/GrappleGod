@@ -21,6 +21,7 @@ class Tilemap extends Phaser.Scene {
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
         this.running = false;
+        this.beetleDestroyed = false;
 
         //groups
         this.rocksGroup = this.add.group();
@@ -378,10 +379,16 @@ class Tilemap extends Phaser.Scene {
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
             //on the boss level if the rock hits the ground destroy it
-            if (currentLevel == 6) {
+            if (currentLevel == 6 && !this.beetleDestroyed) {
                 this.beetleFSM.step();
                 this.wallPadOne.update();
                 this.wallPadTwo.update();
+            }
+            else if (currentLevel == 6 && this.beetleDestroyed)
+            {
+                this.wallPadOne.update();
+                this.wallPadTwo.update();
+                this.beetle.destroy();
             }
         }
         if (currentLevel != 0) {
