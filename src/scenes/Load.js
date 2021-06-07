@@ -37,6 +37,9 @@ class Load extends Phaser.Scene {
         this.load.image('background4', './assets/starter4Background.png');
         this.load.image('background5', './assets/starter5Background.png');
         this.load.image('background6', './assets/empty.png');
+        this.load.image('background7', './assets/treeBackground1.png');
+        this.load.image('background8', './assets/treeBackground2.png');
+        this.load.image('background9', './assets/treeBackground3.png');
         this.load.image('bossBackground', './assets/bossBackground.png');
         this.load.image('menuBackground', './assets/treeIntro.png');
 
@@ -51,6 +54,9 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON('starterarea_fourJSON', './assets/Tilemaps/starterarea_four.json');
         this.load.tilemapTiledJSON('starterarea_fiveJSON', './assets/Tilemaps/starterarea_five.json');        
         this.load.tilemapTiledJSON('starterarea_sixJSON', './assets/Tilemaps/starterarea_six.json');
+        this.load.tilemapTiledJSON('treearea_oneJSON', './assets/Tilemaps/treearea_one.json');
+        this.load.tilemapTiledJSON('treearea_twoJSON', './assets/Tilemaps/treearea_two.json');
+        this.load.tilemapTiledJSON('treearea_threeJSON', './assets/Tilemaps/treearea_three.json');
 
         this.load.tilemapTiledJSON('treearea_bossJSON', './assets/Tilemaps/treearea_boss.json');
 
