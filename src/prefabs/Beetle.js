@@ -15,7 +15,7 @@ class Beetle extends Phaser.Physics.Matter.Sprite {
         this.pauseAnims = false;
         this.shellCracked = false;
         this.kickStunned = false;
-        this.health = 3;
+        this.health = 1;
         this.spikesFalling = false;
         this.hitOnce = false;
 
