@@ -341,6 +341,12 @@ class Tilemap extends Phaser.Scene {
             this.menu.setColor('#FFFFFF');
         });
         this.menu.on('pointerdown', () => {
+            //stop the music
+            this.music.stop();
+            musicPlaying = false;
+            if(currentLevel == 9){              //If they're on the boss stage, set them to the one before.
+                currentLevel = 8;
+            }
             this.scene.start('menuScene');
             this.anims.resumeAll();
         });
