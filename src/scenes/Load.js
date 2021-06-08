@@ -47,6 +47,7 @@ class Load extends Phaser.Scene {
         this.load.image('background8', './assets/treeBackground2.png');
         this.load.image('background9', './assets/treeBackground3.png');
         this.load.image('bossBackground', './assets/bossBackground.png');
+        this.load.image('hallwayBackground', './assets/treeBackgroundBeforeBoss.png');
         this.load.image('menuBackground', './assets/treeIntro.png');
 
         //tilemap images/jsons
@@ -63,7 +64,7 @@ class Load extends Phaser.Scene {
         this.load.tilemapTiledJSON('treearea_oneJSON', './assets/Tilemaps/treearea_one.json');
         this.load.tilemapTiledJSON('treearea_twoJSON', './assets/Tilemaps/treearea_two.json');
         this.load.tilemapTiledJSON('treearea_threeJSON', './assets/Tilemaps/treearea_three.json');
-
+        this.load.tilemapTiledJSON('treearea_hallwayJSON', './assets/Tilemaps/treearea_beforeBoss.json');
         this.load.tilemapTiledJSON('treearea_bossJSON', './assets/Tilemaps/treearea_boss.json');
 
         //sfx

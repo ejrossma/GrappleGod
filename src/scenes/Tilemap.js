@@ -7,8 +7,8 @@ class Tilemap extends Phaser.Scene {
     create() {
         this.cameras.main.fadeIn(750, 0, 0, 0);
         this.matter.world.update30Hz();
-        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_oneJSON', 'treearea_twoJSON', 'treearea_threeJSON', 'treearea_bossJSON'];
-        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background6','background7', 'background8', 'background9', 'bossBackground'];
+        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_oneJSON', 'treearea_twoJSON', 'treearea_threeJSON','treearea_hallwayJSON', 'treearea_bossJSON'];
+        this.backgrounds = [ 'background', 'background2', 'background3', 'background4', 'background5', 'background6','background7', 'background8', 'background9','hallwayBackground', 'bossBackground'];
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -321,8 +321,8 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
-            if(currentLevel == 9){
-                currentLevel = 8;
+            if(currentLevel == 10){
+                currentLevel = 9;
                 this.music.stop();
                 musicPlaying = false;
             }
@@ -344,8 +344,8 @@ class Tilemap extends Phaser.Scene {
             //stop the music
             this.music.stop();
             musicPlaying = false;
-            if(currentLevel == 9){              //If they're on the boss stage, set them to the one before.
-                currentLevel = 8;
+            if(currentLevel == 10){              //If they're on the boss stage, set them to the one before.
+                currentLevel = 9;
             }
             this.scene.start('menuScene');
             this.anims.resumeAll();
@@ -374,7 +374,7 @@ class Tilemap extends Phaser.Scene {
                     this.playerFSM.step();
                     this.branchFSM.step();
                 }
-                if (currentLevel != 9)
+                if (currentLevel != 10)
                 {
                     this.catFSM.step();
                 }
@@ -385,7 +385,7 @@ class Tilemap extends Phaser.Scene {
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
             //on the boss level if the rock hits the ground destroy it
-            if (currentLevel == 9 && !this.beetleDestroyed) {
+            if (currentLevel == 10 && !this.beetleDestroyed) {
                 this.beetleFSM.step();
                 this.wallPadOne.update();
                 this.wallPadTwo.update();
@@ -436,7 +436,7 @@ class Tilemap extends Phaser.Scene {
                 });
                 this.music.play();
         }
-        if(currentLevel == 9){
+        if(currentLevel == 10){
             this.clock = this.time.delayedCall(2400, () => {
                 this.music.stop();
                 this.music = this.sound.add('bossMusic', {
@@ -515,7 +515,7 @@ class Tilemap extends Phaser.Scene {
                 //if its the boss level
                     //zoom out & adjust UI Size
                     //setup WallPad, GateOne, GateTwo, RockGates, & Rock Object
-                if (currentLevel == 9) {
+                if (currentLevel == 10) {
                     //hide UI & change UI positions
                     this.playerTitle.x -= 135;
                     this.playerTitle.y -= 100;
@@ -591,7 +591,7 @@ class Tilemap extends Phaser.Scene {
             });
 
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                if (currentLevel != 9)
+                if (currentLevel != 10)
                     this.playerControl = true;
                 this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
             });
