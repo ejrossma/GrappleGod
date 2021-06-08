@@ -7,8 +7,8 @@ class Tilemap extends Phaser.Scene {
     create() {
         this.cameras.main.fadeIn(750, 0, 0, 0);
         this.matter.world.update30Hz();
-        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_bossJSON'];
-        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background 6', 'bossBackground'];
+        this.levels = ['starterarea_oneJSON', 'starterarea_twoJSON', 'starterarea_threeJSON', 'starterarea_fourJSON', 'starterarea_fiveJSON', 'starterarea_sixJSON', 'treearea_oneJSON', 'treearea_twoJSON', 'treearea_threeJSON', 'treearea_bossJSON'];
+        this.backgrounds = ['background', 'background2', 'background3', 'background4', 'background5', 'background6','background7', 'background8', 'background9', 'bossBackground'];
 
         this.MAX_VELOCITY = 2;      // x-velocity
         this.JUMP_VELOCITY = -4;    // y-velocity
@@ -21,6 +21,7 @@ class Tilemap extends Phaser.Scene {
         this.frameTime = 0;         // initialized variable
         this.graphics = this.add.graphics();    // for constraint
         this.running = false;
+        this.beetleDestroyed = false;
 
         //groups
         this.rocksGroup = this.add.group();
@@ -320,8 +321,8 @@ class Tilemap extends Phaser.Scene {
         });
         this.continue.on('pointerdown', () => {
             this.anims.resumeAll();
-            if(currentLevel == 6){
-                currentLevel = 5;
+            if(currentLevel == 9){
+                currentLevel = 8;
                 this.music.stop();
                 musicPlaying = false;
             }
@@ -367,7 +368,7 @@ class Tilemap extends Phaser.Scene {
                     this.playerFSM.step();
                     this.branchFSM.step();
                 }
-                if (currentLevel != 6)
+                if (currentLevel != 9)
                 {
                     this.catFSM.step();
                 }
@@ -378,7 +379,7 @@ class Tilemap extends Phaser.Scene {
                 this.checkFps(this.player, this.cat); // check fps and change variables depending on fps
             }
             //on the boss level if the rock hits the ground destroy it
-            if (currentLevel == 6) {
+            if (currentLevel == 9 && !this.beetleDestroyed) {
                 this.beetleFSM.step();
                 this.wallPadOne.update();
                 this.wallPadTwo.update();
@@ -422,6 +423,14 @@ class Tilemap extends Phaser.Scene {
         // this.transfer = this.matter.add.rectangle(nextLevel.x + 15, nextLevel.y, 32, 120);
         //Check to see if you need to change the soundtrack
         if(currentLevel == 6){
+                this.music.stop();
+                this.music = this.sound.add('treeMusic', {
+                    loop:true,
+                    volume: 0.3
+                });
+                this.music.play();
+        }
+        if(currentLevel == 9){
             this.clock = this.time.delayedCall(2400, () => {
                 this.music.stop();
                 this.music = this.sound.add('bossMusic', {
@@ -500,7 +509,7 @@ class Tilemap extends Phaser.Scene {
                 //if its the boss level
                     //zoom out & adjust UI Size
                     //setup WallPad, GateOne, GateTwo, RockGates, & Rock Object
-                if (currentLevel == 6) {
+                if (currentLevel == 9) {
                     //hide UI & change UI positions
                     this.playerTitle.x -= 135;
                     this.playerTitle.y -= 100;
@@ -576,7 +585,7 @@ class Tilemap extends Phaser.Scene {
             });
 
             this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
-                if (currentLevel != 6)
+                if (currentLevel != 9)
                     this.playerControl = true;
                 this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
             });
@@ -630,6 +639,15 @@ class Tilemap extends Phaser.Scene {
         this.gameOverText.alpha = 1;
         this.continue.alpha = 1;
         this.menu.alpha = 1;
+    }
+
+    finalSceneTransition()
+    {
+        this.cameras.main.fadeOut(1000, 0, 0, 0);
+        this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
+            this.beetle.destroy();
+            // transition to next scene here
+        });
     }
 
 }

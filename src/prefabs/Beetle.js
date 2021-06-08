@@ -364,7 +364,7 @@ class StunnedState extends State
 
         //--------------------------------------------------------------------
 
-        if (!beetle.isStunned)
+        if (!beetle.isStunned & !scene.beetleDestroyed)
         {
             beetle.shakeCount = 0;
             beetle.hitOnce = false;
@@ -386,6 +386,19 @@ class StunnedState extends State
             if (beetle.shellCracked && beetle.kickStunned)
             {
                 beetle.health--;
+            }
+            if (beetle.health <= 0)
+            {
+                scene.beetleDestroyed = true;
+                scene.roar.play();
+                scene.cameras.main.shake(2000);
+                scene.cameras.main.on('camerashakestart', function () {
+                    
+                });
+        
+                scene.cameras.main.on('camerashakecomplete', function () {
+                    scene.finalSceneTransition();
+                });
             }
             console.log('Shell Cracked:' + beetle.shellCracked);
             console.log('Times Hit:' + beetle.timesHit);
