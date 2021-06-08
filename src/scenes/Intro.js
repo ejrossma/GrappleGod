@@ -191,8 +191,8 @@ class Intro extends Phaser.Scene {
     playerSetup() {
         this.next.setAlpha(0);
         this.typeText('Enter your name & an adjective to describe you');
-        this.nameField.style = "display: ; position: absolute; top: 500px; left: 650px; height: 50px; font-size: 14pt;";
-        this.adjectiveField.style = "display: ; position: absolute; top: 500px; left: 1050px; height: 50px; font-size: 14pt;";
+        this.nameField.style = "display: ; position: absolute; top: 500px; left: 350px; height: 50px; font-size: 14pt;";
+        this.adjectiveField.style = "display: ; position: absolute; top: 500px; left: 750px; height: 50px; font-size: 14pt;";
     }
 
     playerLore() {
@@ -212,8 +212,8 @@ class Intro extends Phaser.Scene {
         this.player.setAlpha(0);
         this.cat.setAlpha(1);
         this.typeText('Enter your companions name & an adjective to describe them');
-        this.nameField.style = "display: ; position: absolute; top: 500px; left: 650px; height: 50px; font-size: 14pt;";
-        this.adjectiveField.style = "display: ; position: absolute; top: 500px; left: 1050px; height: 50px; font-size: 14pt;";
+        this.nameField.style = "display: ; position: absolute; top: 500px; left: 350px; height: 50px; font-size: 14pt;";
+        this.adjectiveField.style = "display: ; position: absolute; top: 500px; left: 750px; height: 50px; font-size: 14pt;";
     }
 
     catLore() {
