@@ -20,7 +20,7 @@ class Credits extends Phaser.Scene {
         'Kevin Lewis -\nLead Programmer (Movement, Collision, & World Interaction)', creditConfig).setOrigin(0.5, 0.5);
         
         this.kris = this.add.text(game.config.width/2 + 9, game.config.height/1.5 + 20, 
-        'Kristopher Yu -\nBackground & Boss & World Artist, Level Designer, Programmer', creditConfig).setOrigin(0.5, 0.5);
+        'Kristopher Yu -\nBackground/World Art, Sound Design, Level Design, Programmer', creditConfig).setOrigin(0.5, 0.5);
 
         this.back = this.add.text(game.config.width/2, game.config.height - 20, 'Back to Menu', creditConfig).setOrigin(0.5, 0.5).setFontSize('24px');
         this.back.setInteractive(new Phaser.Geom.Rectangle(0, 0, this.back.width, this.back.height), Phaser.Geom.Rectangle.Contains);
