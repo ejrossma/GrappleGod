@@ -44,6 +44,9 @@ class Tilemap extends Phaser.Scene {
             this.respawnX = element.x;
             this.respawnY = element.y;
         });
+        //Hit sounds
+        this.playerHit = this.sound.add('playerHit');
+        this.beetleHit = this.sound.add('beetleHit');
         //play overworld music
         if(musicPlaying == false){
             if(currentLevel >= 6){
@@ -629,6 +632,7 @@ class Tilemap extends Phaser.Scene {
                     this.gameOver = true;
                     this.gameOverScreen();
                 }
+                this.playerHit.play();
             });
         }
     }

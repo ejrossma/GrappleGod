@@ -18,6 +18,7 @@ class Beetle extends Phaser.Physics.Matter.Sprite {
         this.health = 3;
         this.spikesFalling = false;
         this.hitOnce = false;
+        
 
         this.setFriction(0);                // remove sliding on walls
         this.setFixedRotation(0);           // prevent player sprite from unnecessarily spinning when moving
@@ -403,6 +404,7 @@ class StunnedState extends State
             console.log('Shell Cracked:' + beetle.shellCracked);
             console.log('Times Hit:' + beetle.timesHit);
             console.log('Beetle Health' + beetle.health);
+            scene.beetleHit.play();
             scene.clock = scene.time.delayedCall(2000, () => {
                 beetle.isStunned = false;
                 beetle.kickStunned = false;

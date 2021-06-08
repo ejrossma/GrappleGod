@@ -191,6 +191,7 @@ class Player extends Phaser.Physics.Matter.Sprite {
             scene.gameOver = true;
             scene.gameOverScreen();
         }
+        scene.playerHit.play();
     }
 
     checkCollide(platform)
