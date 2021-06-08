@@ -48,7 +48,7 @@ class Outro extends Phaser.Scene {
                 this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
                     this.music.stop();
                     musicPlaying = false;
-                    currentLevel = 0; 
+                    currentLevel = 0;
                     this.scene.start('menuScene');
                 });
             }
