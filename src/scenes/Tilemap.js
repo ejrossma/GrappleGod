@@ -157,7 +157,7 @@ class Tilemap extends Phaser.Scene {
         this.nextLevel = map.findObject("Objects", obj => obj.name === "nextLevel");
         this.transfer = this.matter.add.rectangle(this.nextLevel.x + 15, this.nextLevel.y, 32, 120);
         this.cat = new Cat(this, this.nextLevel.x + this.nextLevel.width*.25, this.nextLevel.y + 5, this.MAX_VELOCITY, this.nextLevel.width*2, this.nextLevel.height, 'cat_animations', 'cat_idle0001');
-
+    
         // cat animation
         this.anims.create({
             key: 'cat_idle',
@@ -250,7 +250,7 @@ class Tilemap extends Phaser.Scene {
 
         //Create the next scene zone
         this.nextSceneSpawn(map, matterTiles, tileset, terrainLayer, MatterTileBody);
-        
+ 
         // create cursor and q keys for use
         this.keys = this.input.keyboard.createCursorKeys();
         this.keys.keyQ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Q);
@@ -645,6 +645,8 @@ class Tilemap extends Phaser.Scene {
         this.gameOverText.alpha = 1;
         this.continue.alpha = 1;
         this.menu.alpha = 1;
+        this.music.stop();
+        musicPlaying = false;
     }
 
     finalSceneTransition()
