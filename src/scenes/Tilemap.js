@@ -152,6 +152,17 @@ class Tilemap extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'beetle_walk_critical',
+            frames: this.anims.generateFrameNames('beetlewalkcritical', {
+                start: 0,
+                end: 3,
+                first: 0,
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
+
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
@@ -538,6 +549,7 @@ class Tilemap extends Phaser.Scene {
                         this.healthChildren.forEach( function(child) {
                             child.alpha = 1;
                         });
+                        this.playerControl = true;
                     });
                     //setup gateOne & gateTwo
                     let gateOnePos = map.filterObjects('Objects', obj => obj.name === 'rockGateOne');
@@ -574,8 +586,6 @@ class Tilemap extends Phaser.Scene {
                         this.wallPadTwo = new WallPad(this, element.x + 8, element.y + 8, 'wallPad', 5, this.gateTwo, this.rockTwo);
                         this.wallPadTwo.flipX = true;
                     });
-
-                    this.playerControl = true;
 
                     let beetleObject = map.filterObjects("Objects", obj => obj.name === 'beetle');
                     beetleObject.map((element) => {
@@ -658,7 +668,7 @@ class Tilemap extends Phaser.Scene {
         this.cameras.main.fadeOut(1000, 0, 0, 0);
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
             this.beetle.destroy();
-            // transition to next scene here
+            this.scene.start('outroScene');
         });
     }
 

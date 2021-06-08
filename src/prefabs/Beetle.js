@@ -15,7 +15,7 @@ class Beetle extends Phaser.Physics.Matter.Sprite {
         this.pauseAnims = false;
         this.shellCracked = false;
         this.kickStunned = false;
-        this.health = 3;
+        this.health = 1;
         this.spikesFalling = false;
         this.hitOnce = false;
         
@@ -121,9 +121,13 @@ class GroundPoundState extends State
             {
                 scene.beetle.setTexture('beetlewalk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.setTexture('beetlewalkdamaged');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkcritical');
             }
         }
 
@@ -151,9 +155,13 @@ class GroundPoundState extends State
             {
                 scene.beetle.setTexture('beetlewalk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.setTexture('beetlewalkdamaged');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkcritical');
             }
             scene.clock = scene.time.delayedCall(750, () => {
                 scene.roar.play();
@@ -186,9 +194,13 @@ class ChargeState extends State
             {
                 scene.beetle.setTexture('beetlewalk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.setTexture('beetlewalkdamaged');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkcritical');
             }
         }
         if (!beetle.animPlaying)
@@ -198,9 +210,13 @@ class ChargeState extends State
             {
                 scene.beetle.anims.play('beetle_walk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.anims.play('beetle_walk_damaged');
+            }
+            else
+            {
+                scene.beetle.anims.play('beetle_walk_critical');
             }
         }
 
@@ -281,9 +297,13 @@ class SearchState extends State
             {
                 scene.beetle.setTexture('beetlewalk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.setTexture('beetlewalkdamaged');
+            }
+            else
+            {
+                scene.beetle.setTexture('beetlewalkcritical');
             }
         }
         if (!beetle.animPlaying)
@@ -293,9 +313,13 @@ class SearchState extends State
             {
                 scene.beetle.anims.play('beetle_walk');
             }
-            else
+            else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
             {
                 scene.beetle.anims.play('beetle_walk_damaged');
+            }
+            else
+            {
+                scene.beetle.anims.play('beetle_walk_critical');
             }
         }
 
@@ -358,9 +382,13 @@ class StunnedState extends State
         {
             scene.beetle.setTexture('beetlewalk');
         }
-        else
+        else if (beetle.timesHit >= 1 && beetle.timesHit < 2)
         {
             scene.beetle.setTexture('beetlewalkdamaged');
+        }
+        else
+        {
+            scene.beetle.setTexture('beetlewalkcritical');
         }
 
         //--------------------------------------------------------------------
