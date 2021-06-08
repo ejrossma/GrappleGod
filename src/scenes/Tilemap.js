@@ -149,6 +149,17 @@ class Tilemap extends Phaser.Scene {
             repeat: -1
         });
 
+        this.anims.create({
+            key: 'beetle_walk_critical',
+            frames: this.anims.generateFrameNames('beetlewalkcritical', {
+                start: 0,
+                end: 3,
+                first: 0,
+            }),
+            frameRate: 12,
+            repeat: -1
+        });
+
 
         var tiles = terrainLayer.getTilesWithin(0, 0, terrainLayer.width, terrainLayer.height, { isColliding: true });
         const { TileBody: MatterTileBody } = Phaser.Physics.Matter;
