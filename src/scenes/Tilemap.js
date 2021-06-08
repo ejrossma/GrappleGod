@@ -44,6 +44,9 @@ class Tilemap extends Phaser.Scene {
             this.respawnX = element.x;
             this.respawnY = element.y;
         });
+        //Hit sounds
+        this.playerHit = this.sound.add('playerHit');
+        this.beetleHit = this.sound.add('beetleHit');
         //play overworld music
         if(musicPlaying == false){
             if(currentLevel >= 6){
@@ -639,6 +642,7 @@ class Tilemap extends Phaser.Scene {
                     this.gameOver = true;
                     this.gameOverScreen();
                 }
+                this.playerHit.play();
             });
         }
     }
@@ -661,6 +665,8 @@ class Tilemap extends Phaser.Scene {
 
     finalSceneTransition()
     {
+        this.music.stop();
+        musicPlaying = false;
         this.cameras.main.fadeOut(1000, 0, 0, 0);
         this.cameras.main.once(Phaser.Cameras.Scene2D.Events.FADE_OUT_COMPLETE, (cam, effect) => {
             this.beetle.destroy();

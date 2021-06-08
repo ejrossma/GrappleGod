@@ -10,7 +10,7 @@ class Outro extends Phaser.Scene {
         this.screenFinished = false;
 
         if(musicPlaying == false){
-            this.music = this.sound.add('titleMusic', {
+            this.music = this.sound.add('outsideMusic', {
                 loop:true,
                 volume: 0.3
             });

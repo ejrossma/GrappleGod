@@ -77,6 +77,8 @@ class Load extends Phaser.Scene {
         this.load.audio('walking', './assets/sounds/Walking.wav');
         this.load.audio('hooking', './assets/sounds/hook.wav');
         this.load.audio('bossRoar', './assets/sounds/BossRoar.wav');
+        this.load.audio('playerHit', './assets/sounds/playerHit.wav');
+        this.load.audio('beetleHit', './assets/sounds/beetleHit.wav');
 
             //need to make
         // this.load.audio('wallPadPress', './assets/sounds/wallPadPress.wav');
